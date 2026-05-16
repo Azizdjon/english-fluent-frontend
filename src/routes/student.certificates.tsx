@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trophy, Download, Award, Calendar, ArrowLeft, Loader2 } from "lucide-react";
-import { jsPDF } from "jspdf";
+// jsPDF is imported dynamically to avoid SSR issues
 import { toast } from "sonner";
 import { mockStudent } from "@/lib/mock-data";
 import { useState } from "react";
@@ -158,11 +158,12 @@ function drawCertificate(doc: jsPDF, cert: Cert, studentName: string) {
 function CertificatesPage() {
   const [downloading, setDownloading] = useState<number | null>(null);
 
-  const handleDownload = (cert: Cert) => {
+  const handleDownload = async (cert: Cert) => {
     setDownloading(cert.id);
     toast.loading("Sertifikat PDF tayyorlanmoqda...", { id: "cert" });
 
     try {
+      const { jsPDF } = await import("jspdf");
       const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
       drawCertificate(doc, cert, mockStudent.name);
 
