@@ -85,11 +85,7 @@ function Exercises() {
         <p className="text-sm text-muted-foreground mb-6">Play this interactive game to test your vocabulary.</p>
 
         <div className="rounded-xl overflow-hidden border-2 border-border bg-muted/20" style={{ height: '420px' }}>
-          <iframe 
-            style={{ width: '100%', height: '100%', border: 'none' }}
-            src="https://wordwall.net/ru/embed/f0721ce6f314499aab8953dd52e58697?themeId=1&templateId=38&fontStackId=0" 
-            allowFullScreen
-          ></iframe>
+          <iframe style="max-width:100%" src="https://wordwall.net/ru/embed/f0721ce6f314499aab8953dd52e58697?themeId=1&templateId=38&fontStackId=0" width="500" height="380" frameborder="0" allowfullscreen></iframe>
         </div>
         
         <div className="flex justify-center mt-4">
