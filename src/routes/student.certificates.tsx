@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trophy, Download, Award, Calendar, ArrowLeft, Loader2 } from "lucide-react";
-// jsPDF is imported dynamically to avoid SSR issues
+import type { jsPDF } from "jspdf";
 import { toast } from "sonner";
 import { mockStudent } from "@/lib/mock-data";
 import { useState } from "react";
