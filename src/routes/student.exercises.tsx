@@ -87,7 +87,7 @@ function Exercises() {
         <div className="rounded-xl overflow-hidden border-2 border-border bg-muted/20" style={{ height: '420px' }}>
           <iframe 
             style={{ width: '100%', height: '100%', border: 'none' }}
-            src="https://wordwall.net/embed/f0721ce6f314499aab8953dd52e58697?themeId=1&templateId=38&fontStackId=0" 
+            src="https://wordwall.net/ru/embed/f0721ce6f314499aab8953dd52e58697?themeId=1&templateId=38&fontStackId=0" 
             allowFullScreen
           ></iframe>
         </div>
