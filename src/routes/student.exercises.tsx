@@ -84,16 +84,16 @@ function Exercises() {
         <h2 className="text-xl font-semibold mb-1">Interactive Wordwall Activity</h2>
         <p className="text-sm text-muted-foreground mb-6">Play this interactive game to test your vocabulary.</p>
 
-        <div className="rounded-xl overflow-hidden border-2 border-border aspect-video bg-muted/20">
+        <div className="rounded-xl overflow-hidden border-2 border-border bg-muted/20" style={{ height: '420px' }}>
           <iframe 
             style={{ width: '100%', height: '100%', border: 'none' }}
-            src="https://wordwall.net/embed/4517336d3969446eb0c2a5e81804f5e0?themeId=1&templateId=5&fontStackId=0" 
+            src="https://wordwall.net/embed/f0721ce6f314499aab8953dd52e58697?themeId=1&templateId=38&fontStackId=0" 
             allowFullScreen
           ></iframe>
         </div>
         
         <div className="flex justify-center mt-4">
-          <Button variant="outline" onClick={() => window.open('https://wordwall.net/resource/744047/english/present-simple-quiz', '_blank')}>
+          <Button variant="outline" onClick={() => window.open('https://wordwall.net/resource/113437751/untitled1', '_blank')}>
             Open in new tab
           </Button>
         </div>
