@@ -79,25 +79,23 @@ function Exercises() {
       <Card className="p-8">
         <div className="flex items-center gap-2 mb-2">
           <Sparkles className="w-4 h-4 text-primary" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-primary">Match pairs</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-primary">Wordwall Games</span>
         </div>
-        <h2 className="text-xl font-semibold mb-6">Connect the idioms to their meanings</h2>
+        <h2 className="text-xl font-semibold mb-1">Interactive Wordwall Activity</h2>
+        <p className="text-sm text-muted-foreground mb-6">Play this interactive game to test your vocabulary.</p>
 
-        <div className="grid grid-cols-2 gap-8">
-          <div className="space-y-2">
-            {["Break the ice", "Hit the books", "Piece of cake", "Under the weather"].map((p) => (
-              <div key={p} className="p-3 rounded-lg border-2 border-border bg-card font-medium cursor-pointer hover:border-primary">
-                {p}
-              </div>
-            ))}
-          </div>
-          <div className="space-y-2">
-            {["Feeling unwell", "Study hard", "Start a conversation", "Very easy"].map((p) => (
-              <div key={p} className="p-3 rounded-lg border-2 border-dashed border-border bg-muted/30 text-muted-foreground cursor-pointer hover:border-primary">
-                {p}
-              </div>
-            ))}
-          </div>
+        <div className="rounded-xl overflow-hidden border-2 border-border aspect-video bg-muted/20">
+          <iframe 
+            style={{ width: '100%', height: '100%', border: 'none' }}
+            src="https://wordwall.net/embed/4517336d3969446eb0c2a5e81804f5e0?themeId=1&templateId=5&fontStackId=0" 
+            allowFullScreen
+          ></iframe>
+        </div>
+        
+        <div className="flex justify-center mt-4">
+          <Button variant="outline" onClick={() => window.open('https://wordwall.net/resource/744047/english/present-simple-quiz', '_blank')}>
+            Open in new tab
+          </Button>
         </div>
       </Card>
     </div>

@@ -98,6 +98,23 @@ function StudentDashboard() {
           })}
         </div>
       </section>
+      <section className="mt-12 bg-primary/5 rounded-2xl p-8 border border-primary/20 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="flex items-center gap-6">
+          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+            <Trophy className="w-10 h-10" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold">Your Certificates</h2>
+            <p className="text-muted-foreground mt-1">You've earned 2 certificates in your learning journey.</p>
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <Link to="/student/certificates">
+            <Button variant="outline">View All</Button>
+          </Link>
+          <Button className="bg-primary hover:bg-primary-hover text-white">Download Latest</Button>
+        </div>
+      </section>
     </div>
   );
 }
