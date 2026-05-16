@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "LinguaPath — English Learning Platform" },
+      { title: "PragmaLearn — English Learning Platform" },
       { name: "description", content: "Master English with personalized lessons, AI-powered speaking practice, and expert teachers." },
     ],
   }),
@@ -28,7 +28,7 @@ function Landing() {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold">L</div>
-            <span className="font-bold text-lg">LinguaPath</span>
+            <span className="font-bold text-lg">PragmaLearn</span>
           </div>
           <nav className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
             <a href="#features" className="hover:text-foreground">Features</a>
@@ -109,7 +109,7 @@ function Landing() {
       </section>
 
       <footer className="border-t border-border/50 py-8 text-center text-sm text-muted-foreground">
-        © 2026 LinguaPath. Crafted for learners.
+        © 2026 PragmaLearn. Crafted for learners.
       </footer>
     </div>
   );
