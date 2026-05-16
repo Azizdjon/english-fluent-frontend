@@ -82,16 +82,33 @@ function Exercises() {
           <span className="text-xs font-semibold uppercase tracking-wider text-primary">Wordwall Games</span>
         </div>
         <h2 className="text-xl font-semibold mb-1">Interactive Wordwall Activity</h2>
-        <p className="text-sm text-muted-foreground mb-6">Play this interactive game to test your vocabulary.</p>
+        <p className="text-sm text-muted-foreground mb-6">Play this interactive game to test your vocabulary and spelling skills.</p>
 
-        <div className="rounded-xl overflow-hidden border-2 border-border bg-muted/20" style={{ height: '420px' }}>
-          <iframe style="max-width:100%" src="https://wordwall.net/ru/embed/f0721ce6f314499aab8953dd52e58697?themeId=1&templateId=38&fontStackId=0" width="500" height="380" frameborder="0" allowfullscreen></iframe>
-        </div>
-        
-        <div className="flex justify-center mt-4">
-          <Button variant="outline" onClick={() => window.open('https://wordwall.net/resource/113437751/untitled1', '_blank')}>
-            Open in new tab
+        <div
+          className="rounded-2xl border-2 border-dashed border-primary/30 bg-gradient-to-br from-primary/5 to-purple-500/5 flex flex-col items-center justify-center gap-6 cursor-pointer hover:border-primary/60 hover:from-primary/10 hover:to-purple-500/10 transition-all group"
+          style={{ height: '320px' }}
+          onClick={() => window.open('https://wordwall.net/ru/resource/113437751/untitled1', '_blank')}
+        >
+          <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
+            <span className="text-5xl">🔤</span>
+          </div>
+          <div className="text-center px-6">
+            <h3 className="text-2xl font-bold mb-2">Anagram Challenge</h3>
+            <p className="text-muted-foreground text-sm max-w-sm">Harflarni to'g'ri tartibga soling va so'zlarni toping!</p>
+          </div>
+          <Button
+            size="lg"
+            className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-full text-base font-semibold shadow-lg group-hover:shadow-xl transition-all"
+            onClick={(e) => { e.stopPropagation(); window.open('https://wordwall.net/ru/resource/113437751/untitled1', '_blank'); }}
+          >
+            ▶ O'yinni Boshlash
           </Button>
+        </div>
+
+        <div className="flex items-center gap-3 mt-4 text-xs text-muted-foreground justify-center">
+          <span>🎮 Wordwall tomonidan yaratilgan</span>
+          <span>•</span>
+          <span>📱 Barcha qurilmalarda ishlaydi</span>
         </div>
       </Card>
     </div>
