@@ -27,10 +27,10 @@ export function AppShell({ role, userName, userMeta, nav, children }: Props) {
         <div className="p-6 border-b border-sidebar-border">
           <Link to="/" className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-lg bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground font-bold">
-              L
+              PL
             </div>
             <div>
-              <div className="font-bold text-base">LinguaPath</div>
+              <div className="font-bold text-base">PragmaLearn</div>
               <div className="text-xs text-sidebar-foreground/60">{role} Portal</div>
             </div>
           </Link>
