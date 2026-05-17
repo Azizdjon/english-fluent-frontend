@@ -21,6 +21,7 @@ import { Route as TeacherMessagesRouteImport } from './routes/teacher.messages'
 import { Route as TeacherHomeworkRouteImport } from './routes/teacher.homework'
 import { Route as StudentTestRouteImport } from './routes/student.test'
 import { Route as StudentSpeakingRouteImport } from './routes/student.speaking'
+import { Route as StudentPragmaticRouteImport } from './routes/student.pragmatic'
 import { Route as StudentLessonsRouteImport } from './routes/student.lessons'
 import { Route as StudentExercisesRouteImport } from './routes/student.exercises'
 import { Route as StudentCertificatesRouteImport } from './routes/student.certificates'
@@ -89,6 +90,11 @@ const StudentSpeakingRoute = StudentSpeakingRouteImport.update({
   path: '/speaking',
   getParentRoute: () => StudentRoute,
 } as any)
+const StudentPragmaticRoute = StudentPragmaticRouteImport.update({
+  id: '/pragmatic',
+  path: '/pragmatic',
+  getParentRoute: () => StudentRoute,
+} as any)
 const StudentLessonsRoute = StudentLessonsRouteImport.update({
   id: '/lessons',
   path: '/lessons',
@@ -136,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/student/certificates': typeof StudentCertificatesRoute
   '/student/exercises': typeof StudentExercisesRoute
   '/student/lessons': typeof StudentLessonsRouteWithChildren
+  '/student/pragmatic': typeof StudentPragmaticRoute
   '/student/speaking': typeof StudentSpeakingRoute
   '/student/test': typeof StudentTestRoute
   '/teacher/homework': typeof TeacherHomeworkRoute
@@ -154,6 +161,7 @@ export interface FileRoutesByTo {
   '/student/certificates': typeof StudentCertificatesRoute
   '/student/exercises': typeof StudentExercisesRoute
   '/student/lessons': typeof StudentLessonsRouteWithChildren
+  '/student/pragmatic': typeof StudentPragmaticRoute
   '/student/speaking': typeof StudentSpeakingRoute
   '/student/test': typeof StudentTestRoute
   '/teacher/homework': typeof TeacherHomeworkRoute
@@ -176,6 +184,7 @@ export interface FileRoutesById {
   '/student/certificates': typeof StudentCertificatesRoute
   '/student/exercises': typeof StudentExercisesRoute
   '/student/lessons': typeof StudentLessonsRouteWithChildren
+  '/student/pragmatic': typeof StudentPragmaticRoute
   '/student/speaking': typeof StudentSpeakingRoute
   '/student/test': typeof StudentTestRoute
   '/teacher/homework': typeof TeacherHomeworkRoute
@@ -199,6 +208,7 @@ export interface FileRouteTypes {
     | '/student/certificates'
     | '/student/exercises'
     | '/student/lessons'
+    | '/student/pragmatic'
     | '/student/speaking'
     | '/student/test'
     | '/teacher/homework'
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/student/certificates'
     | '/student/exercises'
     | '/student/lessons'
+    | '/student/pragmatic'
     | '/student/speaking'
     | '/student/test'
     | '/teacher/homework'
@@ -238,6 +249,7 @@ export interface FileRouteTypes {
     | '/student/certificates'
     | '/student/exercises'
     | '/student/lessons'
+    | '/student/pragmatic'
     | '/student/speaking'
     | '/student/test'
     | '/teacher/homework'
@@ -342,6 +354,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentSpeakingRouteImport
       parentRoute: typeof StudentRoute
     }
+    '/student/pragmatic': {
+      id: '/student/pragmatic'
+      path: '/pragmatic'
+      fullPath: '/student/pragmatic'
+      preLoaderRoute: typeof StudentPragmaticRouteImport
+      parentRoute: typeof StudentRoute
+    }
     '/student/lessons': {
       id: '/student/lessons'
       path: '/lessons'
@@ -426,6 +445,7 @@ interface StudentRouteChildren {
   StudentCertificatesRoute: typeof StudentCertificatesRoute
   StudentExercisesRoute: typeof StudentExercisesRoute
   StudentLessonsRoute: typeof StudentLessonsRouteWithChildren
+  StudentPragmaticRoute: typeof StudentPragmaticRoute
   StudentSpeakingRoute: typeof StudentSpeakingRoute
   StudentTestRoute: typeof StudentTestRoute
   StudentIndexRoute: typeof StudentIndexRoute
@@ -435,6 +455,7 @@ const StudentRouteChildren: StudentRouteChildren = {
   StudentCertificatesRoute: StudentCertificatesRoute,
   StudentExercisesRoute: StudentExercisesRoute,
   StudentLessonsRoute: StudentLessonsRouteWithChildren,
+  StudentPragmaticRoute: StudentPragmaticRoute,
   StudentSpeakingRoute: StudentSpeakingRoute,
   StudentTestRoute: StudentTestRoute,
   StudentIndexRoute: StudentIndexRoute,

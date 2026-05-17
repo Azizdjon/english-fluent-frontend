@@ -3,9 +3,20 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { modules } from "@/lib/mock-data";
-import { BookOpen, Library, Mic, MessageSquare, BookMarked, Headphones } from "lucide-react";
+import { BookOpen, Library, Mic, MessageSquare, BookMarked, Headphones, Clock } from "lucide-react";
 
 const iconMap = { BookOpen, Library, Mic, MessageSquare, BookMarked, Headphones };
+
+const videoLessons: Record<string, { title: string; duration: string; level: string; embed: string }[]> = {
+  Grammar: [
+    { title: "Mastering English Tenses", duration: "12 min", level: "B2", embed: "https://www.youtube.com/embed/Yt3DqLpXvRQ" },
+    { title: "Advanced Grammar Patterns", duration: "15 min", level: "C1", embed: "https://www.youtube.com/embed/Yt3DqLpXvRQ" },
+  ],
+  Speaking: [
+    { title: "Fluent Speaking Techniques", duration: "10 min", level: "B2", embed: "https://www.youtube.com/embed/IsBLzDTvHSE" },
+    { title: "Pronunciation Deep Dive", duration: "14 min", level: "C1", embed: "https://www.youtube.com/embed/IsBLzDTvHSE" },
+  ],
+};
 
 export const Route = createFileRoute("/student/lessons")({
   component: Lessons,
@@ -46,6 +57,41 @@ function Lessons() {
             </Link>
           );
         })}
+      </div>
+
+      <div className="mt-12">
+        <h2 className="text-2xl font-bold mb-1">Video Lessons</h2>
+        <p className="text-muted-foreground mb-6">Watch curated video lessons by category.</p>
+
+        {Object.entries(videoLessons).map(([category, videos]) => (
+          <div key={category} className="mb-8">
+            <h3 className="text-lg font-semibold mb-3">{category}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {videos.map((v) => (
+                <Card key={v.title} className="overflow-hidden">
+                  <div className="aspect-video bg-black">
+                    <iframe
+                      className="w-full h-full"
+                      src={v.embed}
+                      title={v.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                  <div className="p-4">
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <h4 className="font-semibold">{v.title}</h4>
+                      <Badge>{v.level}</Badge>
+                    </div>
+                    <div className="flex items-center text-xs text-muted-foreground gap-1">
+                      <Clock className="w-3.5 h-3.5" /> {v.duration}
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
