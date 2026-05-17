@@ -1,17 +1,43 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { GripVertical, Sparkles } from "lucide-react";
+import { GripVertical, Sparkles, Check } from "lucide-react";
 
 export const Route = createFileRoute("/student/exercises")({
   component: Exercises,
 });
 
 const dragWords = ["barely", "rarely", "usually", "always"];
+const CORRECT_WORD = "rarely";
 const fillSentence = ["I", "___", "go", "to", "the", "gym", "on", "Sundays."];
 
 function Exercises() {
+  const [dropped, setDropped] = useState<string | null>(null);
+  const [status, setStatus] = useState<"idle" | "correct" | "wrong">("idle");
+  const [isOver, setIsOver] = useState(false);
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsOver(false);
+    const word = e.dataTransfer.getData("text/plain");
+    if (!word) return;
+    setDropped(word);
+    if (word === CORRECT_WORD) {
+      setStatus("correct");
+      toast.success("Correct! 'Rarely' means almost never.");
+    } else {
+      setStatus("wrong");
+      toast.error(`"${word}" is not right. Try again!`);
+    }
+  };
+
+  const reset = () => {
+    setDropped(null);
+    setStatus("idle");
+  };
   return (
     <div className="p-8 max-w-5xl mx-auto space-y-8">
       <div>
@@ -30,8 +56,21 @@ function Exercises() {
 
         <div className="p-6 rounded-lg bg-muted/40 mb-6 text-lg leading-loose">
           I{" "}
-          <span className="inline-block min-w-24 px-4 py-1 mx-1 rounded-md border-2 border-dashed border-primary/50 bg-background text-muted-foreground text-base">
-            drop here
+          <span
+            onDragOver={(e) => { e.preventDefault(); setIsOver(true); }}
+            onDragLeave={() => setIsOver(false)}
+            onDrop={handleDrop}
+            className={`inline-block min-w-24 px-4 py-1 mx-1 rounded-md border-2 border-dashed text-base transition-colors ${
+              status === "correct"
+                ? "border-green-500 bg-green-500/10 text-green-700 dark:text-green-400 font-semibold"
+                : status === "wrong"
+                ? "border-destructive bg-destructive/10 text-destructive font-semibold"
+                : isOver
+                ? "border-primary bg-primary/10 text-foreground"
+                : "border-primary/50 bg-background text-muted-foreground"
+            }`}
+          >
+            {dropped ?? "drop here"}
           </span>{" "}
           go to the gym on Sundays — maybe once a year.
         </div>
@@ -40,13 +79,28 @@ function Exercises() {
           {dragWords.map((w) => (
             <div
               key={w}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-border bg-card cursor-grab hover:border-primary hover:shadow-sm transition-all"
+              draggable
+              onDragStart={(e) => e.dataTransfer.setData("text/plain", w)}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-border bg-card cursor-grab active:cursor-grabbing hover:border-primary hover:shadow-sm transition-all select-none"
             >
               <GripVertical className="w-4 h-4 text-muted-foreground" />
               <span className="font-medium">{w}</span>
             </div>
           ))}
         </div>
+
+        {dropped && (
+          <div className="mt-4 flex items-center gap-3">
+            {status === "correct" ? (
+              <span className="inline-flex items-center gap-1 text-sm text-green-600 dark:text-green-400 font-medium">
+                <Check className="w-4 h-4" /> Well done!
+              </span>
+            ) : (
+              <span className="text-sm text-destructive font-medium">Not quite — try another word.</span>
+            )}
+            <Button size="sm" variant="outline" onClick={reset}>Reset</Button>
+          </div>
+        )}
       </Card>
 
       <Card className="p-8">
