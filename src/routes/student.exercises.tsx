@@ -112,7 +112,6 @@ function Exercises() {
         </div>
       </Card>
         </div>
-      </Card>
       
       {/* Wordwall Activity 2 */}
       <Card className="overflow-hidden">
