@@ -1,17 +1,43 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { GripVertical, Sparkles } from "lucide-react";
+import { GripVertical, Sparkles, Check } from "lucide-react";
 
 export const Route = createFileRoute("/student/exercises")({
   component: Exercises,
 });
 
 const dragWords = ["barely", "rarely", "usually", "always"];
+const CORRECT_WORD = "rarely";
 const fillSentence = ["I", "___", "go", "to", "the", "gym", "on", "Sundays."];
 
 function Exercises() {
+  const [dropped, setDropped] = useState<string | null>(null);
+  const [status, setStatus] = useState<"idle" | "correct" | "wrong">("idle");
+  const [isOver, setIsOver] = useState(false);
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsOver(false);
+    const word = e.dataTransfer.getData("text/plain");
+    if (!word) return;
+    setDropped(word);
+    if (word === CORRECT_WORD) {
+      setStatus("correct");
+      toast.success("Correct! 'Rarely' means almost never.");
+    } else {
+      setStatus("wrong");
+      toast.error(`"${word}" is not right. Try again!`);
+    }
+  };
+
+  const reset = () => {
+    setDropped(null);
+    setStatus("idle");
+  };
   return (
     <div className="p-8 max-w-5xl mx-auto space-y-8">
       <div>
