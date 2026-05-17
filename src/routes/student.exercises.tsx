@@ -111,8 +111,7 @@ function Exercises() {
           <span>📱 Barcha qurilmalarda ishlaydi</span>
         </div>
       </Card>
-        </div>
-      
+
       {/* Wordwall Activity 2 */}
       <Card className="overflow-hidden">
         <div className="p-6">
@@ -132,8 +131,8 @@ function Exercises() {
             />
           </div>
         </div>
+      </Card>
 
-      
     </div>
   );
 }
