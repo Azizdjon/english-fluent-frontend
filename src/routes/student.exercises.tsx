@@ -111,6 +111,30 @@ function Exercises() {
           <span>📱 Barcha qurilmalarda ishlaydi</span>
         </div>
       </Card>
+        </div>
+      </Card>
+      
+      {/* Wordwall Activity 2 */}
+      <Card className="overflow-hidden">
+        <div className="p-6">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-blue-600 font-semibold text-sm uppercase tracking-wide">🎯 WORDWALL GAMES</span>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">Interactive Wordwall Activity 2</h3>
+          <p className="text-sm text-gray-500 mb-4">Practice your English skills with this interactive game.</p>
+          <div className="w-full overflow-hidden rounded-lg">
+            <iframe
+              style={{maxWidth: "100%"}}
+              src="https://wordwall.net/ru/embed/fc6372a6b01143448ad52de3c7597cc0?themeId=53&templateId=36&fontStackId=0"
+              width="500"
+              height="380"
+              frameBorder="0"
+              allowFullScreen
+            />
+          </div>
+        </div>
+
+      
     </div>
   );
 }
