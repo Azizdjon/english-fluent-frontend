@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { LayoutDashboard, Mic, ClipboardCheck, Puzzle, BookOpen, MessageSquare } from "lucide-react";
+import { LayoutDashboard, Mic, ClipboardCheck, Puzzle, BookOpen, MessageSquare, ClipboardList } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { mockStudent } from "@/lib/mock-data";
 
@@ -20,6 +20,7 @@ function StudentLayout() {
         { to: "/student/exercises", label: "Exercises", icon: Puzzle },
         { to: "/student/lessons", label: "Lessons", icon: BookOpen },
         { to: "/student/pragmatic", label: "Pragmatic", icon: MessageSquare },
+        { to: "/student/homework", label: "Homework", icon: ClipboardList },
       ]}
     >
       <Outlet />
