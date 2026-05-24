@@ -20,6 +20,7 @@ function StudentLayout() {
         { to: "/student/exercises", label: "Exercises", icon: Puzzle },
         { to: "/student/lessons", label: "Lessons", icon: BookOpen },
         { to: "/student/pragmatic", label: "Pragmatic", icon: MessageSquare },
+        { to: "/student/homework", label: "Homework", icon: ClipboardList },
       ]}
     >
       <Outlet />
