@@ -188,8 +188,8 @@ function HomeworkPage() {
                   </div>
                 </Card>
               );
-            }))
-            }
+            })}
+          </div>
           </div>
         )}
       </section>
