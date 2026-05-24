@@ -190,7 +190,6 @@ function HomeworkPage() {
               );
             })}
           </div>
-          </div>
         )}
       </section>
 
