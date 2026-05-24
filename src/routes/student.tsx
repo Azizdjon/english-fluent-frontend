@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { LayoutDashboard, Mic, ClipboardCheck, Puzzle, BookOpen, MessageSquare } from "lucide-react";
+import { LayoutDashboard, Mic, ClipboardCheck, Puzzle, BookOpen, MessageSquare, ClipboardList } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { mockStudent } from "@/lib/mock-data";
 
