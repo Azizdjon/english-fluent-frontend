@@ -23,6 +23,7 @@ import { Route as StudentTestRouteImport } from './routes/student.test'
 import { Route as StudentSpeakingRouteImport } from './routes/student.speaking'
 import { Route as StudentPragmaticRouteImport } from './routes/student.pragmatic'
 import { Route as StudentLessonsRouteImport } from './routes/student.lessons'
+import { Route as StudentHomeworkRouteImport } from './routes/student.homework'
 import { Route as StudentExercisesRouteImport } from './routes/student.exercises'
 import { Route as StudentCertificatesRouteImport } from './routes/student.certificates'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
@@ -100,6 +101,11 @@ const StudentLessonsRoute = StudentLessonsRouteImport.update({
   path: '/lessons',
   getParentRoute: () => StudentRoute,
 } as any)
+const StudentHomeworkRoute = StudentHomeworkRouteImport.update({
+  id: '/homework',
+  path: '/homework',
+  getParentRoute: () => StudentRoute,
+} as any)
 const StudentExercisesRoute = StudentExercisesRouteImport.update({
   id: '/exercises',
   path: '/exercises',
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AdminUsersRoute
   '/student/certificates': typeof StudentCertificatesRoute
   '/student/exercises': typeof StudentExercisesRoute
+  '/student/homework': typeof StudentHomeworkRoute
   '/student/lessons': typeof StudentLessonsRouteWithChildren
   '/student/pragmatic': typeof StudentPragmaticRoute
   '/student/speaking': typeof StudentSpeakingRoute
@@ -160,6 +167,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AdminUsersRoute
   '/student/certificates': typeof StudentCertificatesRoute
   '/student/exercises': typeof StudentExercisesRoute
+  '/student/homework': typeof StudentHomeworkRoute
   '/student/lessons': typeof StudentLessonsRouteWithChildren
   '/student/pragmatic': typeof StudentPragmaticRoute
   '/student/speaking': typeof StudentSpeakingRoute
@@ -183,6 +191,7 @@ export interface FileRoutesById {
   '/admin/users': typeof AdminUsersRoute
   '/student/certificates': typeof StudentCertificatesRoute
   '/student/exercises': typeof StudentExercisesRoute
+  '/student/homework': typeof StudentHomeworkRoute
   '/student/lessons': typeof StudentLessonsRouteWithChildren
   '/student/pragmatic': typeof StudentPragmaticRoute
   '/student/speaking': typeof StudentSpeakingRoute
@@ -207,6 +216,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/student/certificates'
     | '/student/exercises'
+    | '/student/homework'
     | '/student/lessons'
     | '/student/pragmatic'
     | '/student/speaking'
@@ -226,6 +236,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/student/certificates'
     | '/student/exercises'
+    | '/student/homework'
     | '/student/lessons'
     | '/student/pragmatic'
     | '/student/speaking'
@@ -248,6 +259,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/student/certificates'
     | '/student/exercises'
+    | '/student/homework'
     | '/student/lessons'
     | '/student/pragmatic'
     | '/student/speaking'
@@ -368,6 +380,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentLessonsRouteImport
       parentRoute: typeof StudentRoute
     }
+    '/student/homework': {
+      id: '/student/homework'
+      path: '/homework'
+      fullPath: '/student/homework'
+      preLoaderRoute: typeof StudentHomeworkRouteImport
+      parentRoute: typeof StudentRoute
+    }
     '/student/exercises': {
       id: '/student/exercises'
       path: '/exercises'
@@ -444,6 +463,7 @@ const StudentLessonsRouteWithChildren = StudentLessonsRoute._addFileChildren(
 interface StudentRouteChildren {
   StudentCertificatesRoute: typeof StudentCertificatesRoute
   StudentExercisesRoute: typeof StudentExercisesRoute
+  StudentHomeworkRoute: typeof StudentHomeworkRoute
   StudentLessonsRoute: typeof StudentLessonsRouteWithChildren
   StudentPragmaticRoute: typeof StudentPragmaticRoute
   StudentSpeakingRoute: typeof StudentSpeakingRoute
@@ -454,6 +474,7 @@ interface StudentRouteChildren {
 const StudentRouteChildren: StudentRouteChildren = {
   StudentCertificatesRoute: StudentCertificatesRoute,
   StudentExercisesRoute: StudentExercisesRoute,
+  StudentHomeworkRoute: StudentHomeworkRoute,
   StudentLessonsRoute: StudentLessonsRouteWithChildren,
   StudentPragmaticRoute: StudentPragmaticRoute,
   StudentSpeakingRoute: StudentSpeakingRoute,
@@ -490,13 +511,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
