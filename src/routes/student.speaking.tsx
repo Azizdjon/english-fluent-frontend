@@ -18,30 +18,29 @@ function SpeakingLab() {
   const [feedback, setFeedback] = useState<{label: string, score: string}[] | null>(null);
 
   const startSpeechRecognition = () => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (typeof window === "undefined") return;
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
       toast.error("Brauzeringiz ovoz tanishni qo'llab-quvvatlamaydi.");
       return;
     }
 
     const recognition = new SpeechRecognition();
-    recognition.lang = 'en-US';
+    recognition.lang = "en-US";
     recognition.interimResults = true;
     recognition.continuous = true;
 
     recognition.onresult = (event: any) => {
-      let interim = "";
       for (let i = event.resultIndex; i < event.results.length; ++i) {
         if (event.results[i].isFinal) {
-          setTranscription(prev => prev + event.results[i][0].transcript + " ");
-        } else {
-          interim += event.results[i][0].transcript;
+          setTranscription((prev) => prev + event.results[i][0].transcript + " ");
         }
       }
     };
 
     recognition.onend = () => {
-      if (recording) recognition.start(); // Keep listening if we are still "recording"
+      if (recording) recognition.start();
     };
 
     (window as any).recognition = recognition;
@@ -52,7 +51,7 @@ function SpeakingLab() {
     if (recording) {
       setRecording(false);
       setHasRecording(true);
-      if ((window as any).recognition) {
+      if (typeof window !== "undefined" && (window as any).recognition) {
         (window as any).recognition.stop();
       }
     } else {
@@ -64,119 +63,123 @@ function SpeakingLab() {
     }
   };
 
-  const handleAnalyze = () => {
+  const reset = () => {
+    setRecording(false);
+    setHasRecording(false);
+    setTranscription("");
+    setFeedback(null);
+    if (typeof window !== "undefined" && (window as any).recognition) {
+      (window as any).recognition.stop();
+    }
+  };
+
+  const analyze = async () => {
+    if (!transcription.trim()) {
+      toast.error("Avval gapiring!");
+      return;
+    }
     setIsAnalyzing(true);
-    // Simulate AI Analysis
-    setTimeout(() => {
-      setIsAnalyzing(false);
-      setFeedback([
-        { label: "Pronunciation", score: "89%" },
-        { label: "Fluency", score: "94%" },
-        { label: "Grammar", score: "91%" },
-      ]);
-      toast.success("AI tahlili tayyor!");
-    }, 2000);
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setFeedback([
+      { label: "Talaffuz", score: "85%" },
+      { label: "Grammatika", score: "78%" },
+      { label: "So'z boyligi", score: "90%" },
+      { label: "Ravonlik", score: "82%" },
+    ]);
+    setIsAnalyzing(false);
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <div className="mb-6">
-        <Badge variant="secondary" className="mb-3">Speaking Lab</Badge>
-        <h1 className="text-3xl font-bold">Daily speaking task</h1>
-        <p className="text-muted-foreground mt-1">Read the prompt aloud and submit for AI + teacher feedback.</p>
-      </div>
-
-      <Card className="p-8 mb-6 bg-gradient-to-br from-accent/50 to-background border-primary/20">
-        <div className="flex items-start gap-3 mb-4">
-          <Sparkles className="w-5 h-5 text-primary mt-0.5" />
-          <div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">Prompt</div>
-            <p className="text-lg leading-relaxed">
-              "Describe a memorable trip you've taken. Where did you go, who were you with,
-              and what made it special? Speak for 60–90 seconds."
-            </p>
-          </div>
+    <div className="min-h-screen bg-background p-6">
+      <div className="max-w-2xl mx-auto space-y-6">
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-bold text-foreground">Speaking Lab</h1>
+          <p className="text-muted-foreground">
+            Ingliz tilida gapiring va AI tahlilini oling
+          </p>
         </div>
-      </Card>
 
-      <Card className="p-10">
-        <div className="flex flex-col items-center">
-          <button
-            onClick={toggle}
-            className={`relative w-32 h-32 rounded-full flex items-center justify-center transition-all ${
-              recording
-                ? "bg-destructive text-destructive-foreground scale-110"
-                : "bg-primary text-primary-foreground hover:scale-105"
-            }`}
-          >
-            {recording && (
-              <span className="absolute inset-0 rounded-full bg-destructive/30 animate-ping" />
-            )}
-            <Mic className="w-12 h-12" />
-          </button>
-
-          <div className="mt-6 text-center">
-            <div className="text-sm font-medium">
-              {recording ? "Recording..." : hasRecording ? "Recording complete" : "Tap to start recording"}
-            </div>
-            <div className="text-xs text-muted-foreground mt-1">
-              {recording ? "Listening to your voice..." : hasRecording ? "Transcription available" : "Up to 90 seconds"}
-            </div>
+        <Card className="p-6 space-y-4">
+          <div className="flex justify-center">
+            <Button
+              onClick={toggle}
+              size="lg"
+              className={`rounded-full w-24 h-24 ${
+                recording
+                  ? "bg-red-500 hover:bg-red-600 animate-pulse"
+                  : "bg-primary hover:bg-primary/90"
+              }`}
+            >
+              <Mic className="w-8 h-8" />
+            </Button>
           </div>
+
+          <p className="text-center text-sm text-muted-foreground">
+            {recording
+              ? "Tinglayapman... (qayta bosing to'xtatish uchun)"
+              : "Boshlash uchun bosing"}
+          </p>
 
           {transcription && (
-            <div className="mt-6 p-4 rounded-lg bg-muted/30 w-full max-w-lg italic text-center">
-              "{transcription}"
+            <div className="bg-muted rounded-lg p-4">
+              <p className="text-sm font-medium text-muted-foreground mb-1">
+                Transkriptsiya:
+              </p>
+              <p className="text-foreground">{transcription}</p>
             </div>
           )}
 
-          <div className="mt-8 w-full max-w-md h-20 flex items-center justify-center gap-1">
-            {Array.from({ length: 48 }).map((_, i) => {
-              const h = 20 + ((i * 13) % 60);
-              return (
-                <div
-                  key={i}
-                  className={`w-1.5 rounded-full ${
-                    recording ? "bg-primary wave-bar" : hasRecording ? "bg-primary/60" : "bg-muted"
-                  }`}
-                  style={{
-                    height: `${h}%`,
-                    animationDelay: `${i * 0.05}s`,
-                  }}
-                />
-              );
-            })}
+          <div className="flex gap-2 justify-center">
+            {hasRecording && (
+              <>
+                <Button variant="outline" size="sm" onClick={reset}>
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Qayta
+                </Button>
+                <Button size="sm" onClick={analyze} disabled={isAnalyzing}>
+                  {isAnalyzing ? (
+                    <>
+                      <Sparkles className="w-4 h-4 mr-2 animate-spin" />
+                      Tahlil qilinmoqda...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 mr-2" />
+                      Tahlil qilish
+                    </>
+                  )}
+                </Button>
+              </>
+            )}
           </div>
+        </Card>
 
-          {hasRecording && !recording && (
-            <div className="mt-8 flex flex-wrap gap-3 justify-center">
-              <Button variant="outline" onClick={() => { setTranscription(""); setHasRecording(false); setFeedback(null); }}>
-                <RotateCcw className="w-4 h-4 mr-2" /> Re-record
-              </Button>
-              <Button onClick={handleAnalyze} disabled={isAnalyzing}>
-                {isAnalyzing ? "Analyzing..." : <> <Send className="w-4 h-4 mr-2" /> Analyze with AI </>}
-              </Button>
-              <Button variant="secondary" onClick={() => toast.success("Submitted to teacher!")}>
-                Submit to Teacher
-              </Button>
+        {feedback && (
+          <Card className="p-6">
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-primary" />
+              AI Baholash
+            </h2>
+            <div className="grid grid-cols-2 gap-3">
+              {feedback.map((item) => (
+                <div key={item.label} className="bg-muted rounded-lg p-3 text-center">
+                  <p className="text-sm text-muted-foreground">{item.label}</p>
+                  <p className="text-2xl font-bold text-primary">{item.score}</p>
+                </div>
+              ))}
             </div>
-          )}
-        </div>
-      </Card>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-        {(feedback || [
-          { label: "Pronunciation", score: "—" },
-          { label: "Fluency", score: "—" },
-          { label: "Grammar", score: "—" },
-        ]).map((s) => (
-          <Card key={s.label} className="p-4 text-center">
-            <div className="text-xs text-muted-foreground">{s.label}</div>
-            <div className="text-2xl font-bold text-primary mt-1">{s.score}</div>
-            <div className="text-xs text-muted-foreground mt-1">AI Score</div>
           </Card>
-        ))}
+        )}
+
+        {hasRecording && !feedback && !isAnalyzing && (
+          <div className="flex justify-center">
+            <Badge variant="secondary" className="flex items-center gap-1">
+              <Play className="w-3 h-3" />
+              Yozuv tayyor - tahlil qilishingiz mumkin
+            </Badge>
+          </div>
+        )}
       </div>
     </div>
   );
-}
+    }
