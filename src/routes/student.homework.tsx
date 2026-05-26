@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
-  CheckCircle2, Clock, Circle, FileText, Calendar, BookOpen, Headphones, Mic, PenLine, Upload,
+  CheckCircle2, Clock, Circle, FileText, Calendar, BookOpen, Headphones, Mic, PenLine, Upload, Square, Play, Trash2,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,8 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 
 interface HomeworkTask {
+  prompt?: string;
+  maxMinutes?: number;
   id: string;
   title: string;
   type: "essay" | "quiz" | "recording" | "reading" | "worksheet";
