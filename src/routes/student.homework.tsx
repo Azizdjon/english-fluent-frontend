@@ -174,33 +174,47 @@ function HomeworkPage() {
             {pending.map((task) => {
               const Icon = typeIcon[task.type];
               return (
-                <Card key={task.id} className="p-5 flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
-                  <div className={`w-12 h-12 rounded-lg flex-shrink-0 flex items-center justify-center ${typeColor[task.type]}`}>
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <div className="flex-1 min-w-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold">{task.title}</h3>
-                      <Badge variant="outline">{task.subject}</Badge>
+                <Card key={task.id} className="p-5">
+                  <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+                    <div className={`w-12 h-12 rounded-lg flex-shrink-0 flex items-center justify-center ${typeColor[task.type]}`}>
+                      <Icon className="w-5 h-5" />
                     </div>
-                    <p className="text-sm text-muted-foreground mb-2">{task.description}</p>
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5" />
-                        Due {task.deadline}
-                      </span>
+                    <div className="flex-1 min-w-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-semibold">{task.title}</h3>
+                        <Badge variant="outline">{task.subject}</Badge>
+                        {task.type === "speaking" && (
+                          <Badge className="bg-violet-100 text-violet-700 hover:bg-violet-100">Audio</Badge>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-2">{task.description}</p>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3.5 h-3.5" />
+                          Due {task.deadline}
+                        </span>
+                      </div>
                     </div>
+                    {task.type !== "speaking" && (
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm" className="gap-1">
+                          <Upload className="w-4 h-4" />
+                          Upload
+                        </Button>
+                        <Button size="sm" className="gap-1" onClick={() => markSubmitted(task.id)}>
+                          <CheckCircle2 className="w-4 h-4" />
+                          Submit
+                        </Button>
+                      </div>
+                    )}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" className="gap-1">
-                      <Upload className="w-4 h-4" />
-                      Upload
-                    </Button>
-                    <Button size="sm" className="gap-1" onClick={() => markSubmitted(task.id)}>
-                      <CheckCircle2 className="w-4 h-4" />
-                      Submit
-                    </Button>
-                  </div>
+                  {task.type === "speaking" && (
+                    <SpeakingRecorder
+                      prompt={task.prompt ?? ""}
+                      maxMinutes={task.maxMinutes ?? 2}
+                      onSubmit={() => markSubmitted(task.id)}
+                    />
+                  )}
                 </Card>
               );
             })}
