@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { modules } from "@/lib/mock-data";
-import { BookOpen, Library, Mic, MessageSquare, BookMarked, Headphones, Clock } from "lucide-react";
+import { BookOpen, Library, Mic, MessageSquare, BookMarked, Headphones, Clock, PenLine } from "lucide-react";
 
 const iconMap = { BookOpen, Library, Mic, MessageSquare, BookMarked, Headphones };
 
@@ -17,6 +17,13 @@ const videoLessons: Record<string, { title: string; duration: string; level: str
     { title: "Pronunciation Deep Dive", duration: "14 min", level: "C1", embed: "https://www.youtube.com/embed/IsBLzDTvHSE" },
   ],
 };
+
+const writingLessons = [
+  { title: "Formal Email Writing", duration: "18 min", level: "B2", description: "Learn structure, tone, and key phrases for professional correspondence." },
+  { title: "Essay Structure & Cohesion", duration: "22 min", level: "C1", description: "Master paragraph flow, transitions, and argumentative writing." },
+  { title: "Creative Storytelling", duration: "16 min", level: "B2", description: "Build narratives with vivid vocabulary and effective pacing." },
+  { title: "Report & Summary Writing", duration: "20 min", level: "C1", description: "Condense information clearly and objectively for academic and business contexts." },
+];
 
 export const Route = createFileRoute("/student/lessons")({
   component: Lessons,
@@ -92,6 +99,33 @@ function Lessons() {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="mt-12">
+        <h2 className="text-2xl font-bold mb-1">Writing</h2>
+        <p className="text-muted-foreground mb-6">Guided writing lessons to sharpen your written expression.</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {writingLessons.map((w) => (
+            <Card key={w.title} className="p-5 hover:shadow-lg transition-all cursor-pointer border-2 border-transparent hover:border-primary/20">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-500 to-slate-700 flex items-center justify-center text-white shrink-0 shadow-md">
+                  <PenLine className="w-6 h-6" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <h4 className="font-semibold">{w.title}</h4>
+                    <Badge variant="outline">{w.level}</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-3">{w.description}</p>
+                  <div className="flex items-center text-xs text-muted-foreground gap-1">
+                    <Clock className="w-3.5 h-3.5" /> {w.duration}
+                  </div>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   );
