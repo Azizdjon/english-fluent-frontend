@@ -51,6 +51,17 @@ const initialTasks: HomeworkTask[] = [
     subject: "Speaking",
   },
   {
+    id: "hw-speaking-1",
+    title: "Speaking Assignment: Describe Your Hometown",
+    type: "speaking",
+    description: "Your teacher has assigned a speaking task. Read the prompt and record your audio response below.",
+    prompt: "Describe a place that is important to you and explain why. Talk about what it looks like, what you do there, and what feelings it brings you. Use a range of descriptive adjectives and at least one conditional sentence.",
+    maxMinutes: 2,
+    deadline: "Next Tuesday, 11:59 PM",
+    status: "pending",
+    subject: "Speaking",
+  },
+  {
     id: "hw-4",
     title: "Reading Comprehension — Climate Change",
     type: "reading",
