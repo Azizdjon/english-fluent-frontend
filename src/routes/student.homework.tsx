@@ -84,6 +84,7 @@ const typeColor: Record<HomeworkTask["type"], string> = {
   essay: "bg-amber-100 text-amber-700",
   quiz: "bg-indigo-100 text-indigo-700",
   recording: "bg-rose-100 text-rose-700",
+  speaking: "bg-violet-100 text-violet-700",
   reading: "bg-emerald-100 text-emerald-700",
   worksheet: "bg-cyan-100 text-cyan-700",
 };
