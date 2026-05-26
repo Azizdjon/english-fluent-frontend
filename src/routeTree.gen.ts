@@ -21,6 +21,7 @@ import { Route as TeacherMessagesRouteImport } from './routes/teacher.messages'
 import { Route as TeacherHomeworkRouteImport } from './routes/teacher.homework'
 import { Route as StudentTestRouteImport } from './routes/student.test'
 import { Route as StudentSpeakingRouteImport } from './routes/student.speaking'
+import { Route as StudentProfileRouteImport } from './routes/student.profile'
 import { Route as StudentPragmaticRouteImport } from './routes/student.pragmatic'
 import { Route as StudentLessonsRouteImport } from './routes/student.lessons'
 import { Route as StudentHomeworkRouteImport } from './routes/student.homework'
@@ -91,6 +92,11 @@ const StudentSpeakingRoute = StudentSpeakingRouteImport.update({
   path: '/speaking',
   getParentRoute: () => StudentRoute,
 } as any)
+const StudentProfileRoute = StudentProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => StudentRoute,
+} as any)
 const StudentPragmaticRoute = StudentPragmaticRouteImport.update({
   id: '/pragmatic',
   path: '/pragmatic',
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/student/homework': typeof StudentHomeworkRoute
   '/student/lessons': typeof StudentLessonsRouteWithChildren
   '/student/pragmatic': typeof StudentPragmaticRoute
+  '/student/profile': typeof StudentProfileRoute
   '/student/speaking': typeof StudentSpeakingRoute
   '/student/test': typeof StudentTestRoute
   '/teacher/homework': typeof TeacherHomeworkRoute
@@ -170,6 +177,7 @@ export interface FileRoutesByTo {
   '/student/homework': typeof StudentHomeworkRoute
   '/student/lessons': typeof StudentLessonsRouteWithChildren
   '/student/pragmatic': typeof StudentPragmaticRoute
+  '/student/profile': typeof StudentProfileRoute
   '/student/speaking': typeof StudentSpeakingRoute
   '/student/test': typeof StudentTestRoute
   '/teacher/homework': typeof TeacherHomeworkRoute
@@ -194,6 +202,7 @@ export interface FileRoutesById {
   '/student/homework': typeof StudentHomeworkRoute
   '/student/lessons': typeof StudentLessonsRouteWithChildren
   '/student/pragmatic': typeof StudentPragmaticRoute
+  '/student/profile': typeof StudentProfileRoute
   '/student/speaking': typeof StudentSpeakingRoute
   '/student/test': typeof StudentTestRoute
   '/teacher/homework': typeof TeacherHomeworkRoute
@@ -219,6 +228,7 @@ export interface FileRouteTypes {
     | '/student/homework'
     | '/student/lessons'
     | '/student/pragmatic'
+    | '/student/profile'
     | '/student/speaking'
     | '/student/test'
     | '/teacher/homework'
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/student/homework'
     | '/student/lessons'
     | '/student/pragmatic'
+    | '/student/profile'
     | '/student/speaking'
     | '/student/test'
     | '/teacher/homework'
@@ -262,6 +273,7 @@ export interface FileRouteTypes {
     | '/student/homework'
     | '/student/lessons'
     | '/student/pragmatic'
+    | '/student/profile'
     | '/student/speaking'
     | '/student/test'
     | '/teacher/homework'
@@ -366,6 +378,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentSpeakingRouteImport
       parentRoute: typeof StudentRoute
     }
+    '/student/profile': {
+      id: '/student/profile'
+      path: '/profile'
+      fullPath: '/student/profile'
+      preLoaderRoute: typeof StudentProfileRouteImport
+      parentRoute: typeof StudentRoute
+    }
     '/student/pragmatic': {
       id: '/student/pragmatic'
       path: '/pragmatic'
@@ -466,6 +485,7 @@ interface StudentRouteChildren {
   StudentHomeworkRoute: typeof StudentHomeworkRoute
   StudentLessonsRoute: typeof StudentLessonsRouteWithChildren
   StudentPragmaticRoute: typeof StudentPragmaticRoute
+  StudentProfileRoute: typeof StudentProfileRoute
   StudentSpeakingRoute: typeof StudentSpeakingRoute
   StudentTestRoute: typeof StudentTestRoute
   StudentIndexRoute: typeof StudentIndexRoute
@@ -477,6 +497,7 @@ const StudentRouteChildren: StudentRouteChildren = {
   StudentHomeworkRoute: StudentHomeworkRoute,
   StudentLessonsRoute: StudentLessonsRouteWithChildren,
   StudentPragmaticRoute: StudentPragmaticRoute,
+  StudentProfileRoute: StudentProfileRoute,
   StudentSpeakingRoute: StudentSpeakingRoute,
   StudentTestRoute: StudentTestRoute,
   StudentIndexRoute: StudentIndexRoute,
