@@ -6,18 +6,47 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { mockHomework } from "@/lib/mock-data";
-import { Plus, FileText, MessageSquare } from "lucide-react";
+import { Plus, FileText, MessageSquare, Mic } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/teacher/homework")({
   component: Homework,
 });
 
+type AssignmentType = "essay" | "quiz" | "speaking" | "reading" | "worksheet";
+
 function Homework() {
   const [grade, setGrade] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [type, setType] = useState<AssignmentType>("essay");
+  const [title, setTitle] = useState("");
+  const [prompt, setPrompt] = useState("");
+  const [maxDuration, setMaxDuration] = useState("2");
+  const [open, setOpen] = useState(false);
+
+  function resetForm() {
+    setType("essay");
+    setTitle("");
+    setPrompt("");
+    setMaxDuration("2");
+  }
+
+  function handleCreate() {
+    if (!title.trim()) {
+      toast.error("Please enter a title");
+      return;
+    }
+    if (type === "speaking") {
+      toast.success(`Speaking assignment created — students will record up to ${maxDuration} min audio`);
+    } else {
+      toast.success("Assignment created!");
+    }
+    resetForm();
+    setOpen(false);
+  }
 
   return (
     <div className="p-8 max-w-6xl mx-auto">
@@ -27,7 +56,7 @@ function Homework() {
           <p className="text-muted-foreground mt-1">Assign tasks, set deadlines, grade submissions</p>
         </div>
 
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button><Plus className="w-4 h-4 mr-2" /> New assignment</Button>
           </DialogTrigger>
@@ -35,26 +64,76 @@ function Homework() {
             <DialogHeader><DialogTitle>Create assignment</DialogTitle></DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label>Title</Label>
-                <Input placeholder="e.g. Essay: Climate Change" />
+                <Label>Type</Label>
+                <Select value={type} onValueChange={(v) => setType(v as AssignmentType)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="essay">Essay</SelectItem>
+                    <SelectItem value="quiz">Quiz</SelectItem>
+                    <SelectItem value="speaking">
+                      <span className="flex items-center gap-2"><Mic className="w-4 h-4" /> Speaking (audio)</span>
+                    </SelectItem>
+                    <SelectItem value="reading">Reading</SelectItem>
+                    <SelectItem value="worksheet">Worksheet</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
+
               <div className="space-y-2">
-                <Label>Instructions</Label>
-                <Textarea placeholder="What should students do?" rows={4} />
+                <Label>Title</Label>
+                <Input
+                  placeholder={type === "speaking" ? "e.g. Describe Your Hometown" : "e.g. Essay: Climate Change"}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-2">
-                  <Label>Due date</Label>
-                  <Input type="date" />
-                </div>
-                <div className="space-y-2">
-                  <Label>Class</Label>
-                  <Input defaultValue="B2 - Morning" />
-                </div>
-              </div>
+
+              {type === "speaking" ? (
+                <>
+                  <div className="space-y-2">
+                    <Label>Speaking prompt</Label>
+                    <Textarea
+                      placeholder="Write the prompt students will respond to. e.g. 'Describe a place that is important to you and explain why...'"
+                      rows={4}
+                      value={prompt}
+                      onChange={(e) => setPrompt(e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Students will see this prompt and submit an audio recording from their homework page.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label>Max duration (min)</Label>
+                      <Input type="number" min={1} max={10} value={maxDuration} onChange={(e) => setMaxDuration(e.target.value)} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Due date</Label>
+                      <Input type="date" />
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <Label>Instructions</Label>
+                    <Textarea placeholder="What should students do?" rows={4} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label>Due date</Label>
+                      <Input type="date" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Class</Label>
+                      <Input defaultValue="B2 - Morning" />
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
             <DialogFooter>
-              <Button onClick={() => toast.success("Assignment created!")}>Assign to class</Button>
+              <Button onClick={handleCreate}>Assign to class</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

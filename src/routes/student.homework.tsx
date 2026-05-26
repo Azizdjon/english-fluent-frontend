@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
-  CheckCircle2, Clock, Circle, FileText, Calendar, BookOpen, Headphones, Mic, PenLine, Upload,
+  CheckCircle2, Clock, Circle, FileText, Calendar, BookOpen, Headphones, Mic, PenLine, Upload, Square, Play, Trash2,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,9 +10,11 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 
 interface HomeworkTask {
+  prompt?: string;
+  maxMinutes?: number;
   id: string;
   title: string;
-  type: "essay" | "quiz" | "recording" | "reading" | "worksheet";
+  type: "essay" | "quiz" | "recording" | "reading" | "worksheet" | "speaking";
   description: string;
   deadline: string;
   status: "pending" | "submitted" | "graded";
@@ -49,6 +51,17 @@ const initialTasks: HomeworkTask[] = [
     subject: "Speaking",
   },
   {
+    id: "hw-speaking-1",
+    title: "Speaking Assignment: Describe Your Hometown",
+    type: "speaking",
+    description: "Your teacher has assigned a speaking task. Read the prompt and record your audio response below.",
+    prompt: "Describe a place that is important to you and explain why. Talk about what it looks like, what you do there, and what feelings it brings you. Use a range of descriptive adjectives and at least one conditional sentence.",
+    maxMinutes: 2,
+    deadline: "Next Tuesday, 11:59 PM",
+    status: "pending",
+    subject: "Speaking",
+  },
+  {
     id: "hw-4",
     title: "Reading Comprehension — Climate Change",
     type: "reading",
@@ -73,6 +86,7 @@ const typeIcon: Record<HomeworkTask["type"], typeof FileText> = {
   essay: PenLine,
   quiz: BookOpen,
   recording: Mic,
+  speaking: Mic,
   reading: FileText,
   worksheet: Headphones,
 };
@@ -81,6 +95,7 @@ const typeColor: Record<HomeworkTask["type"], string> = {
   essay: "bg-amber-100 text-amber-700",
   quiz: "bg-indigo-100 text-indigo-700",
   recording: "bg-rose-100 text-rose-700",
+  speaking: "bg-violet-100 text-violet-700",
   reading: "bg-emerald-100 text-emerald-700",
   worksheet: "bg-cyan-100 text-cyan-700",
 };
@@ -159,33 +174,47 @@ function HomeworkPage() {
             {pending.map((task) => {
               const Icon = typeIcon[task.type];
               return (
-                <Card key={task.id} className="p-5 flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
-                  <div className={`w-12 h-12 rounded-lg flex-shrink-0 flex items-center justify-center ${typeColor[task.type]}`}>
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <div className="flex-1 min-w-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold">{task.title}</h3>
-                      <Badge variant="outline">{task.subject}</Badge>
+                <Card key={task.id} className="p-5">
+                  <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+                    <div className={`w-12 h-12 rounded-lg flex-shrink-0 flex items-center justify-center ${typeColor[task.type]}`}>
+                      <Icon className="w-5 h-5" />
                     </div>
-                    <p className="text-sm text-muted-foreground mb-2">{task.description}</p>
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5" />
-                        Due {task.deadline}
-                      </span>
+                    <div className="flex-1 min-w-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-semibold">{task.title}</h3>
+                        <Badge variant="outline">{task.subject}</Badge>
+                        {task.type === "speaking" && (
+                          <Badge className="bg-violet-100 text-violet-700 hover:bg-violet-100">Audio</Badge>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-2">{task.description}</p>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3.5 h-3.5" />
+                          Due {task.deadline}
+                        </span>
+                      </div>
                     </div>
+                    {task.type !== "speaking" && (
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm" className="gap-1">
+                          <Upload className="w-4 h-4" />
+                          Upload
+                        </Button>
+                        <Button size="sm" className="gap-1" onClick={() => markSubmitted(task.id)}>
+                          <CheckCircle2 className="w-4 h-4" />
+                          Submit
+                        </Button>
+                      </div>
+                    )}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" className="gap-1">
-                      <Upload className="w-4 h-4" />
-                      Upload
-                    </Button>
-                    <Button size="sm" className="gap-1" onClick={() => markSubmitted(task.id)}>
-                      <CheckCircle2 className="w-4 h-4" />
-                      Submit
-                    </Button>
-                  </div>
+                  {task.type === "speaking" && (
+                    <SpeakingRecorder
+                      prompt={task.prompt ?? ""}
+                      maxMinutes={task.maxMinutes ?? 2}
+                      onSubmit={() => markSubmitted(task.id)}
+                    />
+                  )}
                 </Card>
               );
             })}
@@ -261,6 +290,140 @@ function HomeworkPage() {
             })}
           </div>
         </section>
+      )}
+    </div>
+  );
+}
+
+function SpeakingRecorder({
+  prompt,
+  maxMinutes,
+  onSubmit,
+}: {
+  prompt: string;
+  maxMinutes: number;
+  onSubmit: () => void;
+}) {
+  const [recording, setRecording] = useState(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [elapsed, setElapsed] = useState(0);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const maxSeconds = maxMinutes * 60;
+
+  function stopTimer() {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }
+
+  async function startRecording() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+      const recorder = new MediaRecorder(stream);
+      chunksRef.current = [];
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+      recorder.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        setAudioUrl(URL.createObjectURL(blob));
+        stream.getTracks().forEach((t) => t.stop());
+        streamRef.current = null;
+      };
+      recorder.start();
+      recorderRef.current = recorder;
+      setRecording(true);
+      setElapsed(0);
+      setAudioUrl(null);
+      timerRef.current = setInterval(() => {
+        setElapsed((s) => {
+          const next = s + 1;
+          if (next >= maxSeconds) stopRecording();
+          return next;
+        });
+      }, 1000);
+    } catch {
+      toast.error("Microphone access denied. Please allow microphone permissions.");
+    }
+  }
+
+  function stopRecording() {
+    stopTimer();
+    if (recorderRef.current && recorderRef.current.state !== "inactive") {
+      recorderRef.current.stop();
+    }
+    setRecording(false);
+  }
+
+  function discard() {
+    if (audioUrl) URL.revokeObjectURL(audioUrl);
+    setAudioUrl(null);
+    setElapsed(0);
+  }
+
+  function submit() {
+    if (!audioUrl) {
+      toast.error("Please record your answer first");
+      return;
+    }
+    toast.success("Speaking recording submitted to your teacher!");
+    onSubmit();
+  }
+
+  const mm = String(Math.floor(elapsed / 60)).padStart(2, "0");
+  const ss = String(elapsed % 60).padStart(2, "0");
+
+  return (
+    <div className="mt-5 rounded-lg border border-violet-200 bg-violet-50/50 p-4 space-y-3">
+      <div>
+        <div className="text-xs font-semibold uppercase tracking-wide text-violet-700 mb-1">
+          Teacher's prompt
+        </div>
+        <p className="text-sm text-foreground/80">{prompt}</p>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        {!recording ? (
+          <Button size="sm" onClick={startRecording} className="gap-1 bg-violet-600 hover:bg-violet-700">
+            <Mic className="w-4 h-4" />
+            {audioUrl ? "Re-record" : "Start recording"}
+          </Button>
+        ) : (
+          <Button size="sm" variant="destructive" onClick={stopRecording} className="gap-1">
+            <Square className="w-4 h-4" />
+            Stop
+          </Button>
+        )}
+
+        <span className="text-sm font-mono tabular-nums text-muted-foreground">
+          {mm}:{ss} <span className="opacity-60">/ {maxMinutes}:00</span>
+        </span>
+
+        {recording && (
+          <span className="flex items-center gap-1 text-xs text-rose-600">
+            <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+            Recording…
+          </span>
+        )}
+      </div>
+
+      {audioUrl && !recording && (
+        <div className="flex flex-wrap items-center gap-3">
+          <audio src={audioUrl} controls className="h-9" />
+          <Button size="sm" variant="outline" onClick={discard} className="gap-1">
+            <Trash2 className="w-4 h-4" />
+            Discard
+          </Button>
+          <Button size="sm" onClick={submit} className="gap-1">
+            <Play className="w-4 h-4" />
+            Submit recording
+          </Button>
+        </div>
       )}
     </div>
   );
