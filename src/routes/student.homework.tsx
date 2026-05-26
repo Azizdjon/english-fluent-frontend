@@ -75,6 +75,7 @@ const typeIcon: Record<HomeworkTask["type"], typeof FileText> = {
   essay: PenLine,
   quiz: BookOpen,
   recording: Mic,
+  speaking: Mic,
   reading: FileText,
   worksheet: Headphones,
 };
