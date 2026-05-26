@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeacherRouteImport } from './routes/teacher'
+import { Route as StudentProgressRouteImport } from './routes/student.progress'
 import { Route as StudentRouteImport } from './routes/student'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -97,6 +98,11 @@ const StudentProfileRoute = StudentProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => StudentRoute,
 } as any)
+const StudentProgressRoute = StudentProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => StudentRoute,
+} as any)
 const StudentPragmaticRoute = StudentPragmaticRouteImport.update({
   id: '/pragmatic',
   path: '/pragmatic',
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/student': typeof StudentRouteWithChildren
   '/teacher': typeof TeacherRouteWithChildren
   '/admin/courses': typeof AdminCoursesRoute
+'/student/progress': typeof StudentProgressRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/student/certificates': typeof StudentCertificatesRoute
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/admin/courses': typeof AdminCoursesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/users': typeof AdminUsersRoute
+'/student/progress': typeof StudentProgressRoute
   '/student/certificates': typeof StudentCertificatesRoute
   '/student/exercises': typeof StudentExercisesRoute
   '/student/homework': typeof StudentHomeworkRoute
@@ -489,6 +497,7 @@ interface StudentRouteChildren {
   StudentSpeakingRoute: typeof StudentSpeakingRoute
   StudentTestRoute: typeof StudentTestRoute
   StudentIndexRoute: typeof StudentIndexRoute
+  StudentProgressRoute: typeof StudentProgressRoute
 }
 
 const StudentRouteChildren: StudentRouteChildren = {
@@ -501,6 +510,7 @@ const StudentRouteChildren: StudentRouteChildren = {
   StudentSpeakingRoute: StudentSpeakingRoute,
   StudentTestRoute: StudentTestRoute,
   StudentIndexRoute: StudentIndexRoute,
+  StudentProgressRoute: StudentProgressRoute,
 }
 
 const StudentRouteWithChildren =
