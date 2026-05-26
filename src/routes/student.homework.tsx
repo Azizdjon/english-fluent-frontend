@@ -14,7 +14,7 @@ interface HomeworkTask {
   maxMinutes?: number;
   id: string;
   title: string;
-  type: "essay" | "quiz" | "recording" | "reading" | "worksheet";
+  type: "essay" | "quiz" | "recording" | "reading" | "worksheet" | "speaking";
   description: string;
   deadline: string;
   status: "pending" | "submitted" | "graded";
