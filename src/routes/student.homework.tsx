@@ -294,3 +294,137 @@ function HomeworkPage() {
     </div>
   );
 }
+
+function SpeakingRecorder({
+  prompt,
+  maxMinutes,
+  onSubmit,
+}: {
+  prompt: string;
+  maxMinutes: number;
+  onSubmit: () => void;
+}) {
+  const [recording, setRecording] = useState(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [elapsed, setElapsed] = useState(0);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const maxSeconds = maxMinutes * 60;
+
+  function stopTimer() {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }
+
+  async function startRecording() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+      const recorder = new MediaRecorder(stream);
+      chunksRef.current = [];
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+      recorder.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        setAudioUrl(URL.createObjectURL(blob));
+        stream.getTracks().forEach((t) => t.stop());
+        streamRef.current = null;
+      };
+      recorder.start();
+      recorderRef.current = recorder;
+      setRecording(true);
+      setElapsed(0);
+      setAudioUrl(null);
+      timerRef.current = setInterval(() => {
+        setElapsed((s) => {
+          const next = s + 1;
+          if (next >= maxSeconds) stopRecording();
+          return next;
+        });
+      }, 1000);
+    } catch {
+      toast.error("Microphone access denied. Please allow microphone permissions.");
+    }
+  }
+
+  function stopRecording() {
+    stopTimer();
+    if (recorderRef.current && recorderRef.current.state !== "inactive") {
+      recorderRef.current.stop();
+    }
+    setRecording(false);
+  }
+
+  function discard() {
+    if (audioUrl) URL.revokeObjectURL(audioUrl);
+    setAudioUrl(null);
+    setElapsed(0);
+  }
+
+  function submit() {
+    if (!audioUrl) {
+      toast.error("Please record your answer first");
+      return;
+    }
+    toast.success("Speaking recording submitted to your teacher!");
+    onSubmit();
+  }
+
+  const mm = String(Math.floor(elapsed / 60)).padStart(2, "0");
+  const ss = String(elapsed % 60).padStart(2, "0");
+
+  return (
+    <div className="mt-5 rounded-lg border border-violet-200 bg-violet-50/50 p-4 space-y-3">
+      <div>
+        <div className="text-xs font-semibold uppercase tracking-wide text-violet-700 mb-1">
+          Teacher's prompt
+        </div>
+        <p className="text-sm text-foreground/80">{prompt}</p>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        {!recording ? (
+          <Button size="sm" onClick={startRecording} className="gap-1 bg-violet-600 hover:bg-violet-700">
+            <Mic className="w-4 h-4" />
+            {audioUrl ? "Re-record" : "Start recording"}
+          </Button>
+        ) : (
+          <Button size="sm" variant="destructive" onClick={stopRecording} className="gap-1">
+            <Square className="w-4 h-4" />
+            Stop
+          </Button>
+        )}
+
+        <span className="text-sm font-mono tabular-nums text-muted-foreground">
+          {mm}:{ss} <span className="opacity-60">/ {maxMinutes}:00</span>
+        </span>
+
+        {recording && (
+          <span className="flex items-center gap-1 text-xs text-rose-600">
+            <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+            Recording…
+          </span>
+        )}
+      </div>
+
+      {audioUrl && !recording && (
+        <div className="flex flex-wrap items-center gap-3">
+          <audio src={audioUrl} controls className="h-9" />
+          <Button size="sm" variant="outline" onClick={discard} className="gap-1">
+            <Trash2 className="w-4 h-4" />
+            Discard
+          </Button>
+          <Button size="sm" onClick={submit} className="gap-1">
+            <Play className="w-4 h-4" />
+            Submit recording
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
