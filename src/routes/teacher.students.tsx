@@ -57,7 +57,7 @@ function Students() {
                 <TableCell className="text-muted-foreground">{s.lessons}</TableCell>
                 <TableCell className="text-muted-foreground text-sm">{s.lastActive}</TableCell>
                 <TableCell className="text-right">
-                  <Button variant="ghost" size="sm">View</Button>
+                  <Button variant="ghost" size="sm" onClick={() => { const info = `${s.name} | Level ${s.level} | Score: ${s.score}% | ${s.lessons} lessons | Last active: ${s.lastActive}`; toast.info(info, { description: "Full student profile coming soon" }); }}>View</Button>
                 </TableCell>
               </TableRow>
             ))}
