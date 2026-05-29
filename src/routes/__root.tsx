@@ -5,7 +5,7 @@ import {
   useNavigate,
   useRouter,
 } from "@tanstack/react-router";
-import { Meta, Scripts } from "@tanstack/start";
+import { Meta, Scripts } from "@tanstack/react-start";
 import appCss from "../styles.css?url";
 import { Toaster } from "@/components/ui/sonner";
 import { useEffect, useState } from "react";
