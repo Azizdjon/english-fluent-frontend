@@ -25,17 +25,17 @@ const feedbackTemplates = [
 function SpeakingLab() {
   const [selected, setSelected] = useState(prompts[0]);
   const [isRecording, setIsRecording] = useState(false);
-  const [audioUrl, setAudioUrl] = useState(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [timer, setTimer] = useState(0);
-  const [feedback, setFeedback] = useState(null);
+  const [feedback, setFeedback] = useState<typeof feedbackTemplates[number] | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
-  const mediaRef = useRef(null);
-  const chunksRef = useRef([]);
-  const timerRef = useRef(null);
+  const mediaRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => () => { if (timerRef.current) clearInterval(timerRef.current); }, []);
 
-  const fmt = (s) => String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+  const fmt = (s: number) => String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
 
   const startRec = async () => {
     try {
