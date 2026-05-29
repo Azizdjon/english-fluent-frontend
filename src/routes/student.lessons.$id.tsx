@@ -39,17 +39,21 @@ function GrammarPage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {topic.wordwallIds.map((wwId, i) => (
-                  <div key={wwId} className="rounded-xl overflow-hidden border border-border">
-                    <div className="bg-muted/40 px-3 py-2 text-xs font-medium text-muted-foreground">Exercise {i + 1}</div>
-                    <iframe
-                      src={`https://wordwall.net/embed/resource/${wwId}?themeId=1&templateId=46&fontStackId=0`}
-                      width="100%"
-                      height="380"
-                      style={{ border: "none" }}
-                      allowFullScreen
-                      title={`${topic.title} Exercise ${i + 1}`}
-                    />
-                  </div>
+                  <a
+                    key={wwId}
+                    href={`https://wordwall.net/resource/${wwId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-border hover:border-primary/50 hover:bg-primary/5 transition-all group text-center"
+                  >
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <Play className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-sm">Exercise {i + 1}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">Opens in new tab</div>
+                    </div>
+                  </a>
                 ))}
               </div>
             </div>
@@ -88,7 +92,7 @@ function LessonPlayer() {
           <h1 className="text-3xl font-bold mb-2">Mastering {id.charAt(0).toUpperCase() + id.slice(1)}</h1>
           <div className="flex items-center gap-3 mb-6">
             <Badge>B2 Intermediate</Badge>
-            <span className="text-sm text-muted-foreground">Video Lesson ÃÂ· 15 mins</span>
+            <span className="text-sm text-muted-foreground">Video Lesson ÃÂÃÂ· 15 mins</span>
           </div>
 
           <Card className="p-6">
@@ -99,7 +103,7 @@ function LessonPlayer() {
                   <FileText className="w-5 h-5 text-primary" />
                   <div>
                     <div className="font-medium">Grammar_Cheat_Sheet.pdf</div>
-                    <div className="text-xs text-muted-foreground">PDF ÃÂ· 1.2 MB</div>
+                    <div className="text-xs text-muted-foreground">PDF ÃÂÃÂ· 1.2 MB</div>
                   </div>
                 </div>
                 <Button variant="outline" size="sm">Download</Button>
@@ -109,7 +113,7 @@ function LessonPlayer() {
                   <FileText className="w-5 h-5 text-primary" />
                   <div>
                     <div className="font-medium">Vocabulary_List.pdf</div>
-                    <div className="text-xs text-muted-foreground">PDF ÃÂ· 850 KB</div>
+                    <div className="text-xs text-muted-foreground">PDF ÃÂÃÂ· 850 KB</div>
                   </div>
                 </div>
                 <Button variant="outline" size="sm">Download</Button>
@@ -141,7 +145,7 @@ function LessonPlayer() {
                 </div>
               ))}
             </div>
-            <Button className="w-full mt-6">Next Lesson Ã¢ÂÂ</Button>
+            <Button className="w-full mt-6">Next Lesson ÃÂ¢ÃÂÃÂ</Button>
           </Card>
         </div>
       </div>
