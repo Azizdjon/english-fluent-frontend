@@ -1,8 +1,7 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { LayoutDashboard, Mic, ClipboardCheck, Puzzle, BookOpen, MessageSquare, ClipboardList, User } from "lucide-react";
+import { LayoutDashboard, Mic, ClipboardCheck, Puzzle, BookOpen, MessageSquare, ClipboardList, User, TrendingUp } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { mockStudent } from "@/lib/mock-data";
-import { LayoutDashboard, Mic, ClipboardCheck, Puzzle, BookOpen, MessageSquare, ClipboardList, User, TrendingUp } from "lucide-react";
 
 export const Route = createFileRoute("/student")({
   component: StudentLayout,
