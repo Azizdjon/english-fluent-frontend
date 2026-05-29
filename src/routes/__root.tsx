@@ -5,6 +5,7 @@ import {
   useNavigate,
   useRouter,
 } from "@tanstack/react-router";
+import { Meta, Scripts } from "@tanstack/start";
 import appCss from "../styles.css?url";
 import { Toaster } from "@/components/ui/sonner";
 import { useEffect, useState } from "react";
@@ -22,12 +23,11 @@ const queryClient = new QueryClient();
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
-  const router = useRouter();
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
     const publicPaths = ["/login", "/"];
-    const currentPath = router.state.location.pathname;
+    const currentPath = window.location.pathname;
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session && !publicPaths.includes(currentPath)) {
@@ -36,7 +36,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
       setChecking(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_OUT") {
         navigate({ to: "/login" });
       }
@@ -61,11 +61,19 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthGuard>
-        <Outlet />
-      </AuthGuard>
-      <Toaster />
-    </QueryClientProvider>
+    <html>
+      <head>
+        <Meta />
+      </head>
+      <body>
+        <QueryClientProvider client={queryClient}>
+          <AuthGuard>
+            <Outlet />
+          </AuthGuard>
+          <Toaster />
+        </QueryClientProvider>
+        <Scripts />
+      </body>
+    </html>
   );
 }
