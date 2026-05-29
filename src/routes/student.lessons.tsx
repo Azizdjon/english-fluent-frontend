@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useChildMatches } from "@tanstack/react-router";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -30,6 +30,8 @@ export const Route = createFileRoute("/student/lessons")({
 });
 
 function Lessons() {
+  const childMatches = useChildMatches();
+  if (childMatches.length > 0) return <Outlet />;
   return (
     <div className="p-8 max-w-6xl mx-auto">
       <div className="mb-6">
