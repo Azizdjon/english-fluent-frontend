@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -63,7 +64,10 @@ function UserManagement() {
                 </TableCell>
                 <TableCell className="text-muted-foreground text-sm">{u.joined}</TableCell>
                 <TableCell className="text-right">
-                  <Button variant="ghost" size="icon"><MoreHorizontal className="w-4 h-4" /></Button>
+                  <div className="flex gap-1 justify-end">
+                    <Button variant="ghost" size="sm" onClick={() => toast.info(`Edit: ${u.name}`, { description: `Role: ${u.role} · ${u.email}` })}>Edit</Button>
+                    <Button variant="ghost" size="sm" className={`${u.status === 'Active' ? 'text-destructive' : 'text-emerald-600'}`} onClick={() => toast.success(`${u.status === 'Active' ? 'Deactivated' : 'Activated'}: ${u.name}`)}>{u.status === 'Active' ? 'Deactivate' : 'Activate'}</Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
