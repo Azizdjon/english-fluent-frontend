@@ -45,7 +45,7 @@ function GrammarPage() {
                       src={`https://wordwall.net/embed/${wwId}?themeId=1&templateId=46&fontStackId=0`}
                       width="100%"
                       height="380"
-                      frameBorder="0"
+                      style={{ border: "none" }}
                       allowFullScreen
                       title={`${topic.title} Exercise ${i + 1}`}
                     />
@@ -88,7 +88,7 @@ function LessonPlayer() {
           <h1 className="text-3xl font-bold mb-2">Mastering {id.charAt(0).toUpperCase() + id.slice(1)}</h1>
           <div className="flex items-center gap-3 mb-6">
             <Badge>B2 Intermediate</Badge>
-            <span className="text-sm text-muted-foreground">Video Lesson · 15 mins</span>
+            <span className="text-sm text-muted-foreground">Video Lesson Â· 15 mins</span>
           </div>
 
           <Card className="p-6">
@@ -99,7 +99,7 @@ function LessonPlayer() {
                   <FileText className="w-5 h-5 text-primary" />
                   <div>
                     <div className="font-medium">Grammar_Cheat_Sheet.pdf</div>
-                    <div className="text-xs text-muted-foreground">PDF · 1.2 MB</div>
+                    <div className="text-xs text-muted-foreground">PDF Â· 1.2 MB</div>
                   </div>
                 </div>
                 <Button variant="outline" size="sm">Download</Button>
@@ -109,7 +109,7 @@ function LessonPlayer() {
                   <FileText className="w-5 h-5 text-primary" />
                   <div>
                     <div className="font-medium">Vocabulary_List.pdf</div>
-                    <div className="text-xs text-muted-foreground">PDF · 850 KB</div>
+                    <div className="text-xs text-muted-foreground">PDF Â· 850 KB</div>
                   </div>
                 </div>
                 <Button variant="outline" size="sm">Download</Button>
@@ -141,7 +141,7 @@ function LessonPlayer() {
                 </div>
               ))}
             </div>
-            <Button className="w-full mt-6">Next Lesson →</Button>
+            <Button className="w-full mt-6">Next Lesson â</Button>
           </Card>
         </div>
       </div>
