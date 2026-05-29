@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -38,7 +39,7 @@ function Courses() {
             </div>
             <h3 className="font-semibold mb-1">{c.name}</h3>
             <div className="text-xs text-muted-foreground mb-4">Level {c.level} · {c.students} students</div>
-            <Button variant="outline" size="sm" className="w-full">Manage</Button>
+            <Button variant="outline" size="sm" className="w-full" onClick={() => toast.info(`Managing: ${c.name}`, { description: `${c.students} students enrolled · Level ${c.level}. Full course editor coming soon.` })}>Manage</Button>
           </Card>
         ))}
       </div>
