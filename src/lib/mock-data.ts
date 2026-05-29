@@ -31,8 +31,8 @@ export const mockStudents = [
   { id: 3, name: "Yuki Tanaka", level: "C1", score: 94, lastActive: "30m ago", lessons: 62 },
   { id: 4, name: "Diego Hernandez", level: "A2", score: 68, lastActive: "3h ago", lessons: 18 },
   { id: 5, name: "Priya Patel", level: "B2", score: 85, lastActive: "5h ago", lessons: 44 },
-  { id: 6, name: "Lucas MÃ¼ller", level: "C1", score: 91, lastActive: "1h ago", lessons: 58 },
-  { id: 7, name: "AmÃ©lie Dubois", level: "B1", score: 79, lastActive: "2d ago", lessons: 28 },
+  { id: 6, name: "Lucas MÃÂ¼ller", level: "C1", score: 91, lastActive: "1h ago", lessons: 58 },
+  { id: 7, name: "AmÃÂ©lie Dubois", level: "B1", score: 79, lastActive: "2d ago", lessons: 28 },
 ];
 
 export const mockHomework = [
