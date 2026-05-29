@@ -48,7 +48,7 @@ function Settings() {
       </Card>
 
       <div className="flex justify-end">
-        <Button>Save changes</Button>
+        <Button onClick={() => toast.success("Settings saved!", { description: "Your changes have been applied." })}>Save changes</Button>
       </div>
     </div>
   );
