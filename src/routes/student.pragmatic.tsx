@@ -206,7 +206,7 @@ function PragmaticDialogues() {
                 </Button>
                 <Button
                   className="flex-1"
-                  onClick={() => toast.success(`Starting practice: ${s.title}`)}
+                  onClick={() => { setActive(s.id); toast.success(`Practice started: ${s.title}`, { description: "Read Speaker A lines aloud, then check your pronunciation in Speaking Lab." }); }}
                 >
                   <Play className="w-4 h-4" /> Practice
                 </Button>
