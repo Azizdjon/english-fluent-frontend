@@ -222,7 +222,7 @@ function CertificatesPage() {
                       : <><Download className="w-4 h-4 mr-2" /> Download PDF</>
                     }
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => toast.info("Link nusxalandi!")}>
+                  <Button size="sm" variant="outline" onClick={() => { navigator.clipboard.writeText(window.location.href).then(() => toast.success("Certificate link copied!")).catch(() => toast.info("Link: " + window.location.href)); }}>
                     Share
                   </Button>
                 </div>
