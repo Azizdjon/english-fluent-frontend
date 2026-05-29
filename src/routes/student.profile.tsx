@@ -10,7 +10,7 @@ export const Route = createFileRoute("/student/profile")({
 });
 
 function ProfilePage() {
-  const initials = mockStudent.name.split(" ").map((p) => p[0]).join("").slice(1, 2);
+  const initials = mockStudent.avatar;
   const overallProgress = Math.round(
     modules.reduce((sum, m) => sum + m.progress, 0) / modules.length
   );
