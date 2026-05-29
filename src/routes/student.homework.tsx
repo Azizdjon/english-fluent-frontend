@@ -106,6 +106,8 @@ export const Route = createFileRoute("/student/homework")({
 
 function HomeworkPage() {
   const [tasks, setTasks] = useState<HomeworkTask[]>(initialTasks);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadedFile, setUploadedFile] = useState<string>('');
 
   const pending = tasks.filter((t) => t.status === "pending");
   const submitted = tasks.filter((t) => t.status === "submitted");
@@ -197,10 +199,13 @@ function HomeworkPage() {
                     </div>
                     {task.type !== "speaking" && (
                       <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" className="gap-1">
+                        <>
+                        <input type="file" ref={fileInputRef} className="hidden" accept=".pdf,.doc,.docx,.jpg,.png" onChange={e => { const f = e.target.files?.[0]; if (f) { setUploadedFile(f.name); toast.success("File attached: " + f.name, { description: "Click Submit to send your work." }); } }} />
+                        <Button variant="outline" size="sm" className="gap-1" onClick={() => fileInputRef.current?.click()}>
                           <Upload className="w-4 h-4" />
-                          Upload
+                          {uploadedFile ? uploadedFile.substring(0,12) + (uploadedFile.length > 12 ? "…" : "") : "Upload"}
                         </Button>
+                      </>
                         <Button size="sm" className="gap-1" onClick={() => markSubmitted(task.id)}>
                           <CheckCircle2 className="w-4 h-4" />
                           Submit
