@@ -1,6 +1,7 @@
-import { Outlet } from '@tanstack/react-router';
+import { Outlet, useNavigate } from '@tanstack/react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRootRoute } from '@tanstack/react-router';
+import { Meta, Scripts } from '@tanstack/react-start';
 import { Toaster } from '@/components/ui/sonner';
 import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
@@ -11,6 +12,7 @@ const PUBLIC_PATHS = ['/login', '/'];
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const [checking, setChecking] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const currentPath = window.location.pathname;
@@ -20,8 +22,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
       .then(({ data: { session } }) => {
         clearTimeout(timeout);
         if (!session && !PUBLIC_PATHS.includes(currentPath)) {
-          window.location.replace('/login');
-          return;
+          navigate({ to: '/login' });
         }
         setChecking(false);
       })
@@ -31,7 +32,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
       });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_OUT') window.location.replace('/login');
+      if (event === 'SIGNED_OUT') navigate({ to: '/login' });
     });
 
     return () => { clearTimeout(timeout); subscription.unsubscribe(); };
@@ -52,10 +53,20 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthGuard><Outlet /></AuthGuard>
-      <Toaster />
-    </QueryClientProvider>
+    <html lang="en">
+      <head>
+        <Meta />
+      </head>
+      <body>
+        <QueryClientProvider client={queryClient}>
+          <AuthGuard>
+            <Outlet />
+          </AuthGuard>
+          <Toaster />
+        </QueryClientProvider>
+        <Scripts />
+      </body>
+    </html>
   );
 }
 
