@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeacherRouteImport } from './routes/teacher'
-import { Route as StudentProgressRouteImport } from './routes/student.progress'
 import { Route as StudentRouteImport } from './routes/student'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -22,6 +21,7 @@ import { Route as TeacherMessagesRouteImport } from './routes/teacher.messages'
 import { Route as TeacherHomeworkRouteImport } from './routes/teacher.homework'
 import { Route as StudentTestRouteImport } from './routes/student.test'
 import { Route as StudentSpeakingRouteImport } from './routes/student.speaking'
+import { Route as StudentProgressRouteImport } from './routes/student.progress'
 import { Route as StudentProfileRouteImport } from './routes/student.profile'
 import { Route as StudentPragmaticRouteImport } from './routes/student.pragmatic'
 import { Route as StudentLessonsRouteImport } from './routes/student.lessons'
@@ -93,14 +93,14 @@ const StudentSpeakingRoute = StudentSpeakingRouteImport.update({
   path: '/speaking',
   getParentRoute: () => StudentRoute,
 } as any)
-const StudentProfileRoute = StudentProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => StudentRoute,
-} as any)
 const StudentProgressRoute = StudentProgressRouteImport.update({
   id: '/progress',
   path: '/progress',
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentProfileRoute = StudentProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => StudentRoute,
 } as any)
 const StudentPragmaticRoute = StudentPragmaticRouteImport.update({
@@ -155,7 +155,6 @@ export interface FileRoutesByFullPath {
   '/student': typeof StudentRouteWithChildren
   '/teacher': typeof TeacherRouteWithChildren
   '/admin/courses': typeof AdminCoursesRoute
-'/student/progress': typeof StudentProgressRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/student/certificates': typeof StudentCertificatesRoute
@@ -164,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/student/lessons': typeof StudentLessonsRouteWithChildren
   '/student/pragmatic': typeof StudentPragmaticRoute
   '/student/profile': typeof StudentProfileRoute
+  '/student/progress': typeof StudentProgressRoute
   '/student/speaking': typeof StudentSpeakingRoute
   '/student/test': typeof StudentTestRoute
   '/teacher/homework': typeof TeacherHomeworkRoute
@@ -179,13 +179,13 @@ export interface FileRoutesByTo {
   '/admin/courses': typeof AdminCoursesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/users': typeof AdminUsersRoute
-'/student/progress': typeof StudentProgressRoute
   '/student/certificates': typeof StudentCertificatesRoute
   '/student/exercises': typeof StudentExercisesRoute
   '/student/homework': typeof StudentHomeworkRoute
   '/student/lessons': typeof StudentLessonsRouteWithChildren
   '/student/pragmatic': typeof StudentPragmaticRoute
   '/student/profile': typeof StudentProfileRoute
+  '/student/progress': typeof StudentProgressRoute
   '/student/speaking': typeof StudentSpeakingRoute
   '/student/test': typeof StudentTestRoute
   '/teacher/homework': typeof TeacherHomeworkRoute
@@ -211,6 +211,7 @@ export interface FileRoutesById {
   '/student/lessons': typeof StudentLessonsRouteWithChildren
   '/student/pragmatic': typeof StudentPragmaticRoute
   '/student/profile': typeof StudentProfileRoute
+  '/student/progress': typeof StudentProgressRoute
   '/student/speaking': typeof StudentSpeakingRoute
   '/student/test': typeof StudentTestRoute
   '/teacher/homework': typeof TeacherHomeworkRoute
@@ -237,6 +238,7 @@ export interface FileRouteTypes {
     | '/student/lessons'
     | '/student/pragmatic'
     | '/student/profile'
+    | '/student/progress'
     | '/student/speaking'
     | '/student/test'
     | '/teacher/homework'
@@ -258,6 +260,7 @@ export interface FileRouteTypes {
     | '/student/lessons'
     | '/student/pragmatic'
     | '/student/profile'
+    | '/student/progress'
     | '/student/speaking'
     | '/student/test'
     | '/teacher/homework'
@@ -282,6 +285,7 @@ export interface FileRouteTypes {
     | '/student/lessons'
     | '/student/pragmatic'
     | '/student/profile'
+    | '/student/progress'
     | '/student/speaking'
     | '/student/test'
     | '/teacher/homework'
@@ -384,6 +388,13 @@ declare module '@tanstack/react-router' {
       path: '/speaking'
       fullPath: '/student/speaking'
       preLoaderRoute: typeof StudentSpeakingRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/student/progress': {
+      id: '/student/progress'
+      path: '/progress'
+      fullPath: '/student/progress'
+      preLoaderRoute: typeof StudentProgressRouteImport
       parentRoute: typeof StudentRoute
     }
     '/student/profile': {
@@ -494,10 +505,10 @@ interface StudentRouteChildren {
   StudentLessonsRoute: typeof StudentLessonsRouteWithChildren
   StudentPragmaticRoute: typeof StudentPragmaticRoute
   StudentProfileRoute: typeof StudentProfileRoute
+  StudentProgressRoute: typeof StudentProgressRoute
   StudentSpeakingRoute: typeof StudentSpeakingRoute
   StudentTestRoute: typeof StudentTestRoute
   StudentIndexRoute: typeof StudentIndexRoute
-  StudentProgressRoute: typeof StudentProgressRoute
 }
 
 const StudentRouteChildren: StudentRouteChildren = {
@@ -507,10 +518,10 @@ const StudentRouteChildren: StudentRouteChildren = {
   StudentLessonsRoute: StudentLessonsRouteWithChildren,
   StudentPragmaticRoute: StudentPragmaticRoute,
   StudentProfileRoute: StudentProfileRoute,
+  StudentProgressRoute: StudentProgressRoute,
   StudentSpeakingRoute: StudentSpeakingRoute,
   StudentTestRoute: StudentTestRoute,
   StudentIndexRoute: StudentIndexRoute,
-  StudentProgressRoute: StudentProgressRoute,
 }
 
 const StudentRouteWithChildren =
