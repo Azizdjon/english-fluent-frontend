@@ -1,11 +1,11 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   createRootRoute,
+  HeadContent,
   Outlet,
+  Scripts,
   useNavigate,
-  useRouter,
 } from "@tanstack/react-router";
-import { Meta, Scripts } from "@tanstack/react-start";
 import appCss from "../styles.css?url";
 import { Toaster } from "@/components/ui/sonner";
 import { useEffect, useState } from "react";
