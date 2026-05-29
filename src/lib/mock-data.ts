@@ -31,8 +31,8 @@ export const mockStudents = [
   { id: 3, name: "Yuki Tanaka", level: "C1", score: 94, lastActive: "30m ago", lessons: 62 },
   { id: 4, name: "Diego Hernandez", level: "A2", score: 68, lastActive: "3h ago", lessons: 18 },
   { id: 5, name: "Priya Patel", level: "B2", score: 85, lastActive: "5h ago", lessons: 44 },
-  { id: 6, name: "Lucas Müller", level: "C1", score: 91, lastActive: "1h ago", lessons: 58 },
-  { id: 7, name: "Amélie Dubois", level: "B1", score: 79, lastActive: "2d ago", lessons: 28 },
+  { id: 6, name: "Lucas MÃ¼ller", level: "C1", score: 91, lastActive: "1h ago", lessons: 58 },
+  { id: 7, name: "AmÃ©lie Dubois", level: "B1", score: 79, lastActive: "2d ago", lessons: 28 },
 ];
 
 export const mockHomework = [
@@ -102,4 +102,16 @@ export const quizQuestions = [
     options: ["wrote", "writed", "writen", "written"],
     correct: 3,
   },
+];
+
+export const grammarTopics = [
+  { id: "present-simple", title: "Present Simple Tense", description: "Used for habits, routines, general truths, and permanent situations. Formed with the base verb (add -s/-es for he/she/it).", wordwallIds: ["2077865", "23372957"] },
+  { id: "past-simple", title: "Past Simple Tense", description: "Used for completed actions at a specific time in the past. Regular verbs add -ed; irregular verbs have unique forms.", wordwallIds: ["13781736", "13635868"] },
+  { id: "future-simple", title: "Future Simple Tense", description: "Used for future predictions, spontaneous decisions, and promises. Formed with will + base verb.", wordwallIds: ["5567831", "59641533"] },
+  { id: "present-continuous", title: "Present Continuous Tense", description: "Used for actions happening right now or around the current time. Formed with am/is/are + verb-ing.", wordwallIds: ["35913723", "29887669"] },
+  { id: "past-continuous", title: "Past Continuous Tense", description: "Used for ongoing actions in the past, often interrupted by another event. Formed with was/were + verb-ing.", wordwallIds: ["98166121", "99489046"] },
+  { id: "future-continuous", title: "Future Continuous Tense", description: "Used for actions that will be in progress at a specific future time. Formed with will be + verb-ing.", wordwallIds: ["8621627", "1202887"] },
+  { id: "present-perfect", title: "Present Perfect Tense", description: "Used for past actions with present relevance or life experiences. Formed with have/has + past participle.", wordwallIds: ["32479514", "2674479"] },
+  { id: "past-perfect", title: "Past Perfect Tense", description: "Used for actions completed before another past event. Formed with had + past participle.", wordwallIds: ["25890534", "1959908"] },
+  { id: "future-perfect", title: "Future Perfect Tense", description: "Used for actions that will be completed before a specific future time. Formed with will have + past participle.", wordwallIds: ["67106354", "27645031"] },
 ];
