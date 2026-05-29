@@ -130,7 +130,7 @@ function LessonPlayer() {
           <div className="aspect-video rounded-2xl overflow-hidden bg-black mb-6 relative group border-4 border-primary/20">
             <iframe
               className="w-full h-full"
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+              src="https://www.youtube.com/embed/${moduleVideos[id] || moduleVideos.default}"
               title="YouTube video player"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
