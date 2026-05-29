@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from '@tanstack/react-router';
+import { Outlet } from '@tanstack/react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRootRoute } from '@tanstack/react-router';
 import { Toaster } from '@/components/ui/sonner';
@@ -7,29 +7,34 @@ import { Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 const queryClient = new QueryClient();
+const PUBLIC_PATHS = ['/login', '/'];
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const [checking, setChecking] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const publicPaths = ['/login', '/'];
     const currentPath = window.location.pathname;
+    const timeout = setTimeout(() => setChecking(false), 4000);
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session && !publicPaths.includes(currentPath)) {
-        navigate({ to: '/login' });
-      }
-      setChecking(false);
-    });
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        clearTimeout(timeout);
+        if (!session && !PUBLIC_PATHS.includes(currentPath)) {
+          window.location.replace('/login');
+          return;
+        }
+        setChecking(false);
+      })
+      .catch(() => {
+        clearTimeout(timeout);
+        setChecking(false);
+      });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_OUT') {
-        navigate({ to: '/login' });
-      }
+      if (event === 'SIGNED_OUT') window.location.replace('/login');
     });
 
-    return () => subscription.unsubscribe();
+    return () => { clearTimeout(timeout); subscription.unsubscribe(); };
   }, []);
 
   if (checking) {
@@ -42,21 +47,16 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
-
   return <>{children}</>;
 }
 
 function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthGuard>
-        <Outlet />
-      </AuthGuard>
+      <AuthGuard><Outlet /></AuthGuard>
       <Toaster />
     </QueryClientProvider>
   );
 }
 
-export const Route = createRootRoute({
-  component: RootComponent,
-});
+export const Route = createRootRoute({ component: RootComponent });
