@@ -4,189 +4,131 @@ import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { GripVertical, Sparkles, Check } from "lucide-react";
+import { GripVertical, Sparkles, Check, RotateCcw } from "lucide-react";
 
 export const Route = createFileRoute("/student/exercises")({
   component: Exercises,
 });
 
-const dragWords = ["barely", "rarely", "usually", "always"];
-const CORRECT_WORD = "rarely";
-const fillSentence = ["I", "___", "go", "to", "the", "gym", "on", "Sundays."];
+const WORDS = ["barely", "rarely", "usually", "always"];
+const CORRECT = "rarely";
 
 function Exercises() {
+  const [dragging, setDragging] = useState<string | null>(null);
   const [dropped, setDropped] = useState<string | null>(null);
-  const [status, setStatus] = useState<"idle" | "correct" | "wrong">("idle");
-  const [isOver, setIsOver] = useState(false);
+  const [result, setResult] = useState<"correct" | "wrong" | null>(null);
+  const [fillAnswer, setFillAnswer] = useState("");
+  const [fillChecked, setFillChecked] = useState(false);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    setIsOver(false);
-    const word = e.dataTransfer.getData("text/plain");
-    if (!word) return;
-    setDropped(word);
-    if (word === CORRECT_WORD) {
-      setStatus("correct");
-      toast.success("Correct! 'Rarely' means almost never.");
+    if (!dragging) return;
+    setDropped(dragging);
+    if (dragging === CORRECT) {
+      setResult("correct");
+      toast.success("Correct! \"Rarely\" — maybe once a year.", { duration: 3000 });
     } else {
-      setStatus("wrong");
-      toast.error(`"${word}" is not right. Try again!`);
+      setResult("wrong");
+      toast.error(`"${dragging}" is not correct here. Try again!`, { duration: 3000 });
     }
+    setDragging(null);
   };
 
-  const reset = () => {
-    setDropped(null);
-    setStatus("idle");
-  };
+  const reset = () => { setDropped(null); setResult(null); setDragging(null); };
+
   return (
-    <div className="p-8 max-w-5xl mx-auto space-y-8">
-      <div>
+    <div className="p-8 max-w-4xl mx-auto">
+      <div className="mb-6">
         <Badge variant="secondary" className="mb-2">Interactive Exercises</Badge>
         <h1 className="text-3xl font-bold">Practice what you've learned</h1>
         <p className="text-muted-foreground mt-1">Drag, drop, and fill in the blanks.</p>
       </div>
 
-      <Card className="p-8">
-        <div className="flex items-center gap-2 mb-2">
-          <Sparkles className="w-4 h-4 text-primary" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-primary">Drag & drop</span>
+      {/* DRAG & DROP */}
+      <Card className="p-6 mb-6">
+        <div className="flex items-center gap-2 mb-1">
+          <Badge variant="outline" className="text-xs">DRAG & DROP</Badge>
         </div>
-        <h2 className="text-xl font-semibold mb-1">Match the adverb of frequency</h2>
-        <p className="text-sm text-muted-foreground mb-6">Drag the correct word into the sentence.</p>
+        <h2 className="font-semibold mb-1">Match the adverb of frequency</h2>
+        <p className="text-sm text-muted-foreground mb-4">Drag the correct word into the sentence.</p>
 
-        <div className="p-6 rounded-lg bg-muted/40 mb-6 text-lg leading-loose">
-          I{" "}
-          <span
-            onDragOver={(e) => { e.preventDefault(); setIsOver(true); }}
-            onDragLeave={() => setIsOver(false)}
+        <div className="p-4 rounded-xl bg-muted/40 border mb-4 text-center text-lg font-medium flex items-center justify-center gap-2 flex-wrap">
+          <span>I</span>
+          <div
+            onDragOver={e => e.preventDefault()}
             onDrop={handleDrop}
-            className={`inline-block min-w-24 px-4 py-1 mx-1 rounded-md border-2 border-dashed text-base transition-colors ${
-              status === "correct"
-                ? "border-green-500 bg-green-500/10 text-green-700 dark:text-green-400 font-semibold"
-                : status === "wrong"
-                ? "border-destructive bg-destructive/10 text-destructive font-semibold"
-                : isOver
-                ? "border-primary bg-primary/10 text-foreground"
-                : "border-primary/50 bg-background text-muted-foreground"
-            }`}
+            className={`min-w-[120px] h-10 rounded-lg border-2 border-dashed flex items-center justify-center text-sm font-semibold transition-all ${ result === "correct" ? "border-emerald-500 bg-emerald-50 text-emerald-700" : result === "wrong" ? "border-destructive bg-red-50 text-destructive" : "border-primary/40 bg-background text-muted-foreground" }`}
           >
-            {dropped ?? "drop here"}
-          </span>{" "}
-          go to the gym on Sundays — maybe once a year.
+            {dropped ? dropped : "drop here"}
+          </div>
+          <span>go to the gym on Sundays — maybe once a year.</span>
         </div>
 
-        <div className="flex flex-wrap gap-3">
-          {dragWords.map((w) => (
+        <div className="flex gap-3 flex-wrap mb-4">
+          {WORDS.filter(w => w !== dropped).map(word => (
             <div
-              key={w}
+              key={word}
               draggable
-              onDragStart={(e) => e.dataTransfer.setData("text/plain", w)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-border bg-card cursor-grab active:cursor-grabbing hover:border-primary hover:shadow-sm transition-all select-none"
+              onDragStart={() => setDragging(word)}
+              onDragEnd={() => setDragging(null)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 bg-background cursor-grab active:cursor-grabbing select-none transition-all ${ dragging === word ? "border-primary shadow-lg scale-105" : "border-border hover:border-primary/60" }`}
             >
               <GripVertical className="w-4 h-4 text-muted-foreground" />
-              <span className="font-medium">{w}</span>
+              {word}
             </div>
           ))}
         </div>
 
-        {dropped && (
-          <div className="mt-4 flex items-center gap-3">
-            {status === "correct" ? (
-              <span className="inline-flex items-center gap-1 text-sm text-green-600 dark:text-green-400 font-medium">
-                <Check className="w-4 h-4" /> Well done!
-              </span>
+        {result && (
+          <div className="flex items-center gap-3">
+            {result === "correct" ? (
+              <div className="flex items-center gap-2 text-emerald-600 font-semibold"><Check className="w-5 h-5" /> Correct!</div>
             ) : (
-              <span className="text-sm text-destructive font-medium">Not quite — try another word.</span>
+              <div className="flex items-center gap-2 text-destructive font-semibold">Wrong — try another word</div>
             )}
-            <Button size="sm" variant="outline" onClick={reset}>Reset</Button>
+            <Button variant="outline" size="sm" onClick={reset}><RotateCcw className="w-4 h-4 mr-1" /> Reset</Button>
           </div>
         )}
       </Card>
 
-      <Card className="p-8">
-        <div className="flex items-center gap-2 mb-2">
-          <Sparkles className="w-4 h-4 text-primary" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-primary">Fill in the blank</span>
+      {/* FILL IN THE BLANK */}
+      <Card className="p-6 mb-6">
+        <Badge variant="outline" className="text-xs mb-1">FILL IN THE BLANK</Badge>
+        <h2 className="font-semibold mb-4">Complete the sentence</h2>
+        <div className="flex items-center gap-2 flex-wrap text-base mb-4">
+          <span>I</span>
+          <input
+            type="text"
+            value={fillAnswer}
+            onChange={e => { setFillAnswer(e.target.value); setFillChecked(false); }}
+            placeholder="verb..."
+            className="border-b-2 border-primary bg-transparent outline-none px-2 py-1 w-20 text-center"
+          />
+          <span>to the gym on Sundays.</span>
         </div>
-        <h2 className="text-xl font-semibold mb-1">Complete the sentence</h2>
-        <p className="text-sm text-muted-foreground mb-6">Type the missing word.</p>
-
-        <div className="p-6 rounded-lg bg-muted/40 text-lg leading-loose flex flex-wrap items-center gap-2">
-          {fillSentence.map((w, i) =>
-            w === "___" ? (
-              <input
-                key={i}
-                className="inline-block w-32 px-3 py-1.5 rounded-md border-2 border-primary/50 bg-background focus:outline-none focus:border-primary text-base"
-                placeholder="..."
-              />
-            ) : (
-              <span key={i}>{w}</span>
-            )
-          )}
-        </div>
-
-        <div className="flex justify-end mt-6">
-          <Button>Check answer</Button>
+        <div className="flex gap-2 items-center">
+          <Button size="sm" onClick={() => { setFillChecked(true); if(fillAnswer.toLowerCase().trim() === "go") toast.success("Correct! The answer is \"go\""); else toast.error(`"${fillAnswer}" is incorrect. Hint: present simple verb`); }}>Check answer</Button>
+          {fillChecked && fillAnswer.toLowerCase().trim() === "go" && <span className="text-emerald-600 font-semibold flex items-center gap-1"><Check className="w-4 h-4" /> go</span>}
         </div>
       </Card>
 
-      <Card className="p-8">
-        <div className="flex items-center gap-2 mb-2">
-          <Sparkles className="w-4 h-4 text-primary" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-primary">Wordwall Games</span>
+      {/* WORDWALL */}
+      <Card className="p-6 mb-4">
+        <div className="flex items-center gap-2 mb-3">
+          <Sparkles className="w-5 h-5 text-primary" />
+          <Badge variant="outline" className="text-xs">WORDWALL GAMES</Badge>
         </div>
-        <h2 className="text-xl font-semibold mb-1">Interactive Wordwall Activity</h2>
-        <p className="text-sm text-muted-foreground mb-6">Play this interactive game to test your vocabulary and spelling skills.</p>
-
-        <div
-          className="rounded-2xl border-2 border-dashed border-primary/30 bg-gradient-to-br from-primary/5 to-purple-500/5 flex flex-col items-center justify-center gap-6 cursor-pointer hover:border-primary/60 hover:from-primary/10 hover:to-purple-500/10 transition-all group"
-          style={{ height: '320px' }}
-          onClick={() => window.open('https://wordwall.net/ru/resource/113437751/untitled1', '_blank')}
-        >
-          <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
-            <span className="text-5xl">🔤</span>
+        <h2 className="font-semibold mb-1">Interactive Wordwall Activity</h2>
+        <p className="text-sm text-muted-foreground mb-4">Play this interactive game to test your vocabulary and spelling skills.</p>
+        <a href="https://wordwall.net/resource/2077865" target="_blank" rel="noopener noreferrer"
+          className="flex items-center gap-3 p-4 rounded-xl border-2 border-border hover:border-primary/50 hover:bg-primary/5 transition-all group">
+          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-xl">🔤</div>
+          <div>
+            <div className="font-semibold">Anagram Challenge</div>
+            <div className="text-xs text-muted-foreground">Opens in new tab · Wordwall</div>
           </div>
-          <div className="text-center px-6">
-            <h3 className="text-2xl font-bold mb-2">Anagram Challenge</h3>
-            <p className="text-muted-foreground text-sm max-w-sm">Harflarni to'g'ri tartibga soling va so'zlarni toping!</p>
-          </div>
-          <Button
-            size="lg"
-            className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-full text-base font-semibold shadow-lg group-hover:shadow-xl transition-all"
-            onClick={(e) => { e.stopPropagation(); window.open('https://wordwall.net/ru/resource/113437751/untitled1', '_blank'); }}
-          >
-            ▶ O'yinni Boshlash
-          </Button>
-        </div>
-
-        <div className="flex items-center gap-3 mt-4 text-xs text-muted-foreground justify-center">
-          <span>🎮 Wordwall tomonidan yaratilgan</span>
-          <span>•</span>
-          <span>📱 Barcha qurilmalarda ishlaydi</span>
-        </div>
+        </a>
       </Card>
-
-      {/* Wordwall Activity 2 */}
-      <Card className="overflow-hidden">
-        <div className="p-6">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-blue-600 font-semibold text-sm uppercase tracking-wide">🎯 WORDWALL GAMES</span>
-          </div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">Interactive Wordwall Activity 2</h3>
-          <p className="text-sm text-gray-500 mb-4">Practice your English skills with this interactive game.</p>
-          <div className="w-full overflow-hidden rounded-lg">
-            <iframe
-              style={{maxWidth: "100%"}}
-              src="https://wordwall.net/ru/embed/fc6372a6b01143448ad52de3c7597cc0?themeId=53&templateId=36&fontStackId=0"
-              width="500"
-              height="380"
-              frameBorder="0"
-              allowFullScreen
-            />
-          </div>
-        </div>
-      </Card>
-
     </div>
   );
 }
