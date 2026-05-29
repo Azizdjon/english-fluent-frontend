@@ -2,14 +2,70 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Play, FileText, CheckCircle } from "lucide-react";
+import { ArrowLeft, Play, FileText, CheckCircle, BookOpen } from "lucide-react";
+import { grammarTopics } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/student/lessons/$id")({
   component: LessonPlayer,
 });
 
+function GrammarPage() {
+  return (
+    <div className="p-8 max-w-4xl mx-auto">
+      <Link to="/student/lessons" className="flex items-center text-primary mb-6 hover:underline">
+        <ArrowLeft className="w-4 h-4 mr-2" /> Back to Lessons
+      </Link>
+      <div className="mb-8">
+        <Badge variant="secondary" className="mb-2">Grammar Module</Badge>
+        <h1 className="text-3xl font-bold">English Grammar: Tenses</h1>
+        <p className="text-muted-foreground mt-1">Master all 9 essential English tenses with interactive exercises.</p>
+      </div>
+      <div className="space-y-10">
+        {grammarTopics.map((topic, index) => (
+          <Card key={topic.id} className="p-6 border-2 border-border hover:border-primary/30 transition-all">
+            <div className="flex items-start gap-4 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center text-white font-bold shrink-0">
+                {index + 1}
+              </div>
+              <div>
+                <h2 className="text-xl font-bold">{topic.title}</h2>
+                <p className="text-muted-foreground text-sm mt-1">{topic.description}</p>
+              </div>
+            </div>
+            <div className="mt-4">
+              <div className="flex items-center gap-2 mb-3">
+                <BookOpen className="w-4 h-4 text-primary" />
+                <span className="text-sm font-semibold text-primary">Practice Exercises</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {topic.wordwallIds.map((wwId, i) => (
+                  <div key={wwId} className="rounded-xl overflow-hidden border border-border">
+                    <div className="bg-muted/40 px-3 py-2 text-xs font-medium text-muted-foreground">Exercise {i + 1}</div>
+                    <iframe
+                      src={`https://wordwall.net/embed/${wwId}?themeId=1&templateId=46&fontStackId=0`}
+                      width="100%"
+                      height="380"
+                      frameBorder="0"
+                      allowFullScreen
+                      title={`${topic.title} Exercise ${i + 1}`}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function LessonPlayer() {
   const { id } = Route.useParams();
+
+  if (id === "grammar") {
+    return <GrammarPage />;
+  }
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
@@ -20,11 +76,11 @@ function LessonPlayer() {
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="flex-1">
           <div className="aspect-video rounded-2xl overflow-hidden bg-black mb-6 relative group border-4 border-primary/20">
-            <iframe 
+            <iframe
               className="w-full h-full"
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
-              title="YouTube video player" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             ></iframe>
           </div>
@@ -73,13 +129,13 @@ function LessonPlayer() {
                 { title: "Practice Quiz", done: false },
                 { title: "Summary", done: false },
               ].map((step, i) => (
-                <div key={i} className={`flex items-start gap-3 p-2 rounded-lg ${step.active ? 'bg-primary/10 border border-primary/20' : ''}`}>
+                <div key={i} className={`flex items-start gap-3 p-2 rounded-lg ${step.active ? "bg-primary/10 border border-primary/20" : ""}`}>
                   {step.done ? (
                     <CheckCircle className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
                   ) : (
-                    <div className={`w-5 h-5 rounded-full border-2 shrink-0 mt-0.5 ${step.active ? 'border-primary' : 'border-muted-foreground'}`} />
+                    <div className={`w-5 h-5 rounded-full border-2 shrink-0 mt-0.5 ${step.active ? "border-primary" : "border-muted-foreground"}`} />
                   )}
-                  <div className={`text-sm ${step.active ? 'font-bold text-primary' : 'text-muted-foreground'}`}>
+                  <div className={`text-sm ${step.active ? "font-bold text-primary" : "text-muted-foreground"}`}>
                     {step.title}
                   </div>
                 </div>
