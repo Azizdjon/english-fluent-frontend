@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { mockStudents } from "@/lib/mock-data";
 import { Search } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/teacher/students")({
   component: Students,
