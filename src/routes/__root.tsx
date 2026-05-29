@@ -63,7 +63,7 @@ function RootComponent() {
   return (
     <html>
       <head>
-        <Meta />
+        <HeadContent />
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
