@@ -1,134 +1,111 @@
-import { createFileRoute, Link, Outlet, useChildMatches } from "@tanstack/react-router";
-import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { modules } from "@/lib/mock-data";
-import { BookOpen, Library, Mic, MessageSquare, BookMarked, Headphones, Clock, PenLine } from "lucide-react";
-
-const iconMap = { BookOpen, Library, Mic, MessageSquare, BookMarked, Headphones };
-
-const videoLessons: Record<string, { title: string; duration: string; level: string; embed: string }[]> = {
-  Grammar: [
-    { title: "Mastering English Tenses", duration: "12 min", level: "B2", embed: "https://www.youtube.com/embed/Yt3DqLpXvRQ" },
-    { title: "Advanced Grammar Patterns", duration: "15 min", level: "C1", embed: "https://www.youtube.com/embed/Yt3DqLpXvRQ" },
-  ],
-  Speaking: [
-    { title: "Fluent Speaking Techniques", duration: "10 min", level: "B2", embed: "https://www.youtube.com/embed/IsBLzDTvHSE" },
-    { title: "Pronunciation Deep Dive", duration: "14 min", level: "C1", embed: "https://www.youtube.com/embed/IsBLzDTvHSE" },
-  ],
-};
-
-const writingLessons = [
-  { title: "Formal Email Writing", duration: "18 min", level: "B2", description: "Learn structure, tone, and key phrases for professional correspondence." },
-  { title: "Essay Structure & Cohesion", duration: "22 min", level: "C1", description: "Master paragraph flow, transitions, and argumentative writing." },
-  { title: "Creative Storytelling", duration: "16 min", level: "B2", description: "Build narratives with vivid vocabulary and effective pacing." },
-  { title: "Report & Summary Writing", duration: "20 min", level: "C1", description: "Condense information clearly and objectively for academic and business contexts." },
-];
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
 export const Route = createFileRoute("/student/lessons")({
-  component: Lessons,
+  component: LessonsPage,
 });
 
-function Lessons() {
-  const childMatches = useChildMatches();
-  if (childMatches.length > 0) return <Outlet />;
-  return (
-    <div className="p-8 max-w-6xl mx-auto">
-      <div className="mb-6">
-        <Badge variant="secondary" className="mb-2">All Lessons</Badge>
-        <h1 className="text-3xl font-bold">Your learning path</h1>
-        <p className="text-muted-foreground mt-1">Explore every module in your B2 track.</p>
-      </div>
+interface Lesson { id: string; title: string; order_index: number; duration_minutes: number; video_url: string | null; }
+interface Module { id: string; title: string; order_index: number; lessons: Lesson[]; }
+interface Course { id: string; title: string; level: string; modules: Module[]; }
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {modules.map((m) => {
-          const Icon = iconMap[m.icon as keyof typeof iconMap];
-          return (
-            <Link key={m.id} to="/student/lessons/$id" params={{ id: m.id }}>
-              <Card className="p-6 hover:shadow-xl transition-all cursor-pointer border-2 border-transparent hover:border-primary/20">
-                <div className="flex items-center gap-5">
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${m.color} flex items-center justify-center text-white shrink-0 shadow-lg`}>
-                    <Icon className="w-8 h-8" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-bold text-xl">{m.name}</h3>
-                      <Badge variant="outline">{m.lessons} lessons</Badge>
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-                      <span>Course Progress</span>
-                      <span>{m.progress}%</span>
-                    </div>
-                    <Progress value={m.progress} className="h-2" />
-                  </div>
-                </div>
-              </Card>
-            </Link>
-          );
-        })}
-      </div>
+function SkeletonLine() { return <div className="h-4 bg-gray-700 rounded animate-pulse w-full" />; }
 
-      <div className="mt-12">
-        <h2 className="text-2xl font-bold mb-1">Video Lessons</h2>
-        <p className="text-muted-foreground mb-6">Watch curated video lessons by category.</p>
+function LessonsPage() {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
+  const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set());
 
-        {Object.entries(videoLessons).map(([category, videos]) => (
-          <div key={category} className="mb-8">
-            <h3 className="text-lg font-semibold mb-3">{category}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {videos.map((v) => (
-                <Card key={v.title} className="overflow-hidden">
-                  <div className="aspect-video bg-black">
-                    <iframe
-                      className="w-full h-full"
-                      src={v.embed}
-                      title={v.title}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
-                  <div className="p-4">
-                    <div className="flex items-start justify-between gap-3 mb-2">
-                      <h4 className="font-semibold">{v.title}</h4>
-                      <Badge>{v.level}</Badge>
-                    </div>
-                    <div className="flex items-center text-xs text-muted-foreground gap-1">
-                      <Clock className="w-3.5 h-3.5" /> {v.duration}
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
+  useEffect(() => { loadData(); }, []);
 
-      <div className="mt-12">
-        <h2 className="text-2xl font-bold mb-1">Writing</h2>
-        <p className="text-muted-foreground mb-6">Guided writing lessons to sharpen your written expression.</p>
+  async function loadData() {
+    setLoading(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setLoading(false); return; }
+    const [coursesRes, modulesRes, lessonsRes, progressRes] = await Promise.all([
+      supabase.from("courses").select("id,title,level").eq("is_active", true).order("created_at"),
+      supabase.from("modules").select("id,course_id,title,order_index").order("order_index"),
+      supabase.from("lessons").select("id,module_id,title,order_index,duration_minutes,video_url").order("order_index"),
+      supabase.from("lesson_progress").select("lesson_id").eq("student_id", user.id).eq("completed", true),
+    ]);
+    const completedSet = new Set((progressRes.data || []).map((p: any) => p.lesson_id));
+    setCompletedIds(completedSet);
+    const lessonsByModule: Record<string, Lesson[]> = {};
+    (lessonsRes.data || []).forEach((l: any) => {
+      if (!lessonsByModule[l.module_id]) lessonsByModule[l.module_id] = [];
+      lessonsByModule[l.module_id].push(l);
+    });
+    const modulesByCourse: Record<string, Module[]> = {};
+    (modulesRes.data || []).forEach((m: any) => {
+      if (!modulesByCourse[m.course_id]) modulesByCourse[m.course_id] = [];
+      modulesByCourse[m.course_id].push({ ...m, lessons: lessonsByModule[m.id] || [] });
+    });
+    const built: Course[] = (coursesRes.data || []).map((c: any) => ({ ...c, modules: modulesByCourse[c.id] || [] }));
+    setCourses(built);
+    if (built[0]?.modules[0]) setExpandedModules(new Set([built[0].modules[0].id]));
+    setLoading(false);
+  }
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {writingLessons.map((w) => (
-            <Card key={w.title} className="p-5 hover:shadow-lg transition-all cursor-pointer border-2 border-transparent hover:border-primary/20">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-500 to-slate-700 flex items-center justify-center text-white shrink-0 shadow-md">
-                  <PenLine className="w-6 h-6" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2 mb-1">
-                    <h4 className="font-semibold">{w.title}</h4>
-                    <Badge variant="outline">{w.level}</Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-3">{w.description}</p>
-                  <div className="flex items-center text-xs text-muted-foreground gap-1">
-                    <Clock className="w-3.5 h-3.5" /> {w.duration}
-                  </div>
-                </div>
-              </div>
-            </Card>
-          ))}
+  function toggleModule(id: string) {
+    setExpandedModules(prev => { const next = new Set(prev); if (next.has(id)) next.delete(id); else next.add(id); return next; });
+  }
+
+  if (loading) return (
+    <div className="p-4 md:p-6 space-y-6">
+      {[1,2].map(i => (
+        <div key={i} className="bg-gray-800 rounded-xl p-4 space-y-3">
+          <SkeletonLine /><SkeletonLine /><SkeletonLine />
         </div>
-      </div>
+      ))}
+    </div>
+  );
+
+  return (
+    <div className="p-4 md:p-6 max-w-3xl space-y-8">
+      <h1 className="text-2xl font-bold text-white">My Lessons</h1>
+      {courses.length === 0 && <p className="text-gray-400">No courses available yet.</p>}
+      {courses.map(course => (
+        <div key={course.id} className="bg-gray-800 rounded-xl overflow-hidden">
+          <div className="bg-gray-700 px-4 py-3 flex items-center justify-between">
+            <div>
+              <h2 className="text-white font-semibold text-lg">{course.title}</h2>
+              <span className="text-xs text-blue-400 bg-blue-900/30 px-2 py-0.5 rounded">{course.level}</span>
+            </div>
+            <span className="text-gray-400 text-sm hidden sm:inline">{course.modules.reduce((acc, m) => acc + m.lessons.length, 0)} lessons</span>
+          </div>
+          <div className="divide-y divide-gray-700">
+            {course.modules.map(mod => (
+              <div key={mod.id}>
+                <button onClick={() => toggleModule(mod.id)} className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-700/50 transition-colors">
+                  <span className="text-white font-medium text-sm md:text-base">{mod.title}</span>
+                  <div className="flex items-center gap-2 text-sm text-gray-400">
+                    <span>{mod.lessons.filter(l => completedIds.has(l.id)).length}/{mod.lessons.length}</span>
+                    <span>{expandedModules.has(mod.id) ? "▲" : "▼"}</span>
+                  </div>
+                </button>
+                {expandedModules.has(mod.id) && (
+                  <div className="bg-gray-900/30">
+                    {mod.lessons.map(lesson => (
+                      <Link key={lesson.id} to="/student/lessons/$id" params={{ id: lesson.id }}
+                        className="flex items-center gap-3 px-6 py-3 hover:bg-gray-700/30 transition-colors border-b border-gray-700/50 last:border-0">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0 ${completedIds.has(lesson.id) ? "bg-green-500 text-white" : "bg-gray-600 text-gray-300"}`}>
+                          {completedIds.has(lesson.id) ? "✓" : lesson.order_index}
+                        </div>
+                        <p className="flex-1 text-gray-200 text-sm truncate">{lesson.title}</p>
+                        <span className="text-xs text-gray-500 flex-shrink-0">{lesson.duration_minutes}m</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
+
+export default LessonsPage;
