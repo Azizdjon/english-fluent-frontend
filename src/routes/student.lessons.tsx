@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/student/lessons")({
   component: LessonsPage,
@@ -82,7 +82,7 @@ function LessonsPage() {
                   <span className="text-white font-medium text-sm md:text-base">{mod.title}</span>
                   <div className="flex items-center gap-2 text-sm text-gray-400">
                     <span>{mod.lessons.filter(l => completedIds.has(l.id)).length}/{mod.lessons.length}</span>
-                    <span>{expandedModules.has(mod.id) ? "▲" : "▼"}</span>
+                    <span>{expandedModules.has(mod.id) ? "â²" : "â¼"}</span>
                   </div>
                 </button>
                 {expandedModules.has(mod.id) && (
@@ -91,7 +91,7 @@ function LessonsPage() {
                       <Link key={lesson.id} to="/student/lessons/$id" params={{ id: lesson.id }}
                         className="flex items-center gap-3 px-6 py-3 hover:bg-gray-700/30 transition-colors border-b border-gray-700/50 last:border-0">
                         <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0 ${completedIds.has(lesson.id) ? "bg-green-500 text-white" : "bg-gray-600 text-gray-300"}`}>
-                          {completedIds.has(lesson.id) ? "✓" : lesson.order_index}
+                          {completedIds.has(lesson.id) ? "â" : lesson.order_index}
                         </div>
                         <p className="flex-1 text-gray-200 text-sm truncate">{lesson.title}</p>
                         <span className="text-xs text-gray-500 flex-shrink-0">{lesson.duration_minutes}m</span>
