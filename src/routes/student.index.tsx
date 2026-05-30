@@ -1,120 +1,304 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  Trophy, CalendarCheck, GraduationCap, Flame, ArrowRight,
-  BookOpen, Library, Mic, MessageSquare, BookMarked, Headphones,
-} from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { useState, useEffect } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { supabase } from "@/lib/supabase";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { mockStudent, modules, recommended } from "@/lib/mock-data";
-
-const iconMap = { BookOpen, Library, Mic, MessageSquare, BookMarked, Headphones };
+import { Progress } from "@/components/ui/progress";
+import {
+  BookOpen, Award, ClipboardList, TrendingUp,
+  ChevronRight, Star, Clock, CheckCircle2,
+} from "lucide-react";
 
 export const Route = createFileRoute("/student/")({
   component: StudentDashboard,
 });
 
-function StatCard({
-  icon: Icon, label, value, sub, tint,
-}: { icon: typeof Trophy; label: string; value: string; sub: string; tint: string }) {
+// ── Skeleton helpers ──────────────────────────────────────────────────────────
+function SkeletonLine({ w = "w-full", h = "h-4" }: { w?: string; h?: string }) {
+  return <div className={`${w} ${h} bg-slate-700 rounded animate-pulse`} />;
+}
+function SkeletonCard({ rows = 3 }: { rows?: number }) {
   return (
-    <Card className="p-6">
-      <div className="flex items-start justify-between">
-        <div>
-          <div className="text-sm text-muted-foreground mb-1">{label}</div>
-          <div className="text-3xl font-bold">{value}</div>
-          <div className="text-xs text-muted-foreground mt-2">{sub}</div>
-        </div>
-        <div className={`w-11 h-11 rounded-lg flex items-center justify-center ${tint}`}>
-          <Icon className="w-5 h-5" />
-        </div>
-      </div>
+    <Card className="bg-slate-800 border-slate-700">
+      <CardContent className="p-5 space-y-3">
+        {Array.from({ length: rows }).map((_, i) => (
+          <SkeletonLine key={i} w={i === 0 ? "w-1/3" : i === 1 ? "w-full" : "w-2/3"} />
+        ))}
+      </CardContent>
     </Card>
   );
 }
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface Profile {
+  full_name: string;
+  level: string;
+  avatar_initials: string;
+}
+interface Lesson {
+  id: string;
+  title: string;
+  modules: { title: string } | null;
+}
+interface Homework {
+  id: string;
+  title: string;
+  due_date: string;
+  status: string;
+}
 
 function StudentDashboard() {
+  const navigate = useNavigate();
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [homework, setHomework] = useState<Homework[]>([]);
+  const [certCount, setCertCount] = useState(0);
+  const [completedLessons, setCompletedLessons] = useState(0);
+  const [totalLessons, setTotalLessons] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const [
+          { data: prof },
+          { data: recentLessons },
+          { data: hw },
+          { data: certs },
+          { data: progress },
+          { count: total },
+        ] = await Promise.all([
+          supabase.from("profiles").select("full_name, level, avatar_initials").eq("id", user.id).single(),
+          supabase.from("lessons").select("id, title, modules(title)").limit(5).order("created_at", { ascending: false }),
+          supabase.from("homework").select("id, title, due_date, status").order("due_date", { ascending: true }).limit(4),
+          supabase.from("certificates").select("id", { count: "exact" }).eq("student_id", user.id),
+          supabase.from("lesson_progress").select("id", { count: "exact" }).eq("student_id", user.id).eq("completed", true),
+          supabase.from("lessons").select("*", { count: "exact", head: true }),
+        ]);
+
+        setProfile(prof ?? { full_name: "Student", level: "Beginner", avatar_initials: "ST" });
+        setLessons((recentLessons ?? []) as Lesson[]);
+        setHomework((hw ?? []) as Homework[]);
+        setCertCount(certs?.length ?? 0);
+        setCompletedLessons((progress as any)?.count ?? 0);
+        setTotalLessons((total as any) ?? 0);
+      } catch {
+        setProfile({ full_name: "Student", level: "Beginner", avatar_initials: "ST" });
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  const progressPct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+
+  const stats = [
+    { label: "Completed Lessons", value: completedLessons, icon: CheckCircle2, color: "text-green-400", bg: "bg-green-400/10" },
+    { label: "Certificates", value: certCount, icon: Award, color: "text-yellow-400", bg: "bg-yellow-400/10" },
+    { label: "Pending Homework", value: homework.filter(h => h.status !== "completed").length, icon: ClipboardList, color: "text-blue-400", bg: "bg-blue-400/10" },
+    { label: "Overall Progress", value: progressPct + "%", icon: TrendingUp, color: "text-purple-400", bg: "bg-purple-400/10" },
+  ];
+
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Welcome back, {mockStudent.name.split(" ")[0]} 👋</h1>
-        <p className="text-muted-foreground mt-1">
-          You're at level <Badge variant="secondary" className="ml-1">{mockStudent.level}</Badge> — keep the momentum going.
-        </p>
-      </div>
+    <div className="min-h-screen bg-slate-900 p-4 md:p-6">
+      <div className="max-w-5xl mx-auto space-y-6">
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-        <StatCard icon={Trophy} label="Total Score" value={mockStudent.totalScore.toLocaleString()} sub="+320 this week" tint="bg-amber-100 text-amber-700" />
-        <StatCard icon={CalendarCheck} label="Attendance" value={`${mockStudent.attendance}%`} sub="Above class average" tint="bg-emerald-100 text-emerald-700" />
-        <StatCard icon={GraduationCap} label="Lessons" value={`${mockStudent.completedLessons}/${mockStudent.totalLessons}`} sub="78% complete" tint="bg-indigo-100 text-indigo-700" />
-        <StatCard icon={Flame} label="Streak" value={`${mockStudent.streak} days`} sub="Personal best!" tint="bg-rose-100 text-rose-700" />
-      </div>
-
-      <section className="mb-10">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Recommended for you</h2>
-          <Badge variant="outline">Path · {mockStudent.level}</Badge>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {recommended.map((r) => (
-            <Card key={r.title} className="p-5 hover:shadow-md transition-shadow cursor-pointer group">
-              <Badge variant="secondary" className="mb-3">{r.type}</Badge>
-              <h3 className="font-semibold mb-2 group-hover:text-primary transition-colors">{r.title}</h3>
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>{r.duration} · Level {r.level}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      <section>
-        <h2 className="text-xl font-semibold mb-4">Study modules</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {modules.map((m) => {
-            const Icon = iconMap[m.icon as keyof typeof iconMap];
-            const isSpeaking = m.id === "speaking";
-            const card = (
-              <Card className="p-6 hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer h-full">
-                <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${m.color} flex items-center justify-center text-white mb-4`}>
-                  <Icon className="w-6 h-6" />
-                </div>
-                <h3 className="font-semibold mb-1">{m.name}</h3>
-                <p className="text-xs text-muted-foreground mb-4">{m.lessons} lessons</p>
-                <Progress value={m.progress} className="h-1.5 mb-2" />
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">{m.progress}% complete</span>
-                  <Button variant="ghost" size="sm" className="h-auto p-0 text-primary">Continue →</Button>
-                </div>
-              </Card>
-            );
-            return isSpeaking ? (
-              <Link key={m.id} to="/student/speaking">{card}</Link>
-            ) : (
-              <div key={m.id}>{card}</div>
-            );
-          })}
-        </div>
-      </section>
-      <section className="mt-12 bg-primary/5 rounded-2xl p-8 border border-primary/20 flex flex-col md:flex-row items-center justify-between gap-8">
-        <div className="flex items-center gap-6">
-          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-            <Trophy className="w-10 h-10" />
+        {/* Welcome header */}
+        {loading ? (
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-full bg-slate-700 animate-pulse" />
+            <div className="space-y-2 flex-1">
+              <SkeletonLine w="w-48" h="h-6" />
+              <SkeletonLine w="w-32" h="h-4" />
+            </div>
           </div>
+        ) : (
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+              {profile?.avatar_initials ?? "ST"}
+            </div>
+            <div>
+              <h1 className="text-xl md:text-2xl font-bold text-white">
+                Xush kelibsiz, {profile?.full_name?.split(" ")[0] ?? "Student"}!
+              </h1>
+              <Badge className="bg-blue-600/20 text-blue-400 border-blue-600/30 mt-1">
+                {profile?.level ?? "Beginner"}
+              </Badge>
+            </div>
+          </div>
+        )}
+
+        {/* Overall progress bar */}
+        {loading ? (
+          <div className="bg-slate-800 rounded-xl p-4 space-y-2">
+            <SkeletonLine w="w-40" h="h-4" />
+            <SkeletonLine w="w-full" h="h-3" />
+          </div>
+        ) : (
+          <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
+            <div className="flex justify-between text-sm mb-2">
+              <span className="text-slate-300 font-medium">Overall Progress</span>
+              <span className="text-blue-400 font-bold">{progressPct}%</span>
+            </div>
+            <Progress value={progressPct} className="h-2.5 bg-slate-700" />
+            <p className="text-slate-500 text-xs mt-2">
+              {completedLessons} of {totalLessons} lessons completed
+            </p>
+          </div>
+        )}
+
+        {/* Stats grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {loading
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="bg-slate-800 rounded-xl p-4 space-y-2">
+                  <div className="w-8 h-8 rounded-lg bg-slate-700 animate-pulse" />
+                  <SkeletonLine w="w-12" h="h-6" />
+                  <SkeletonLine w="w-full" h="h-3" />
+                </div>
+              ))
+            : stats.map((s) => (
+                <Card key={s.label} className="bg-slate-800 border-slate-700">
+                  <CardContent className="p-4">
+                    <div className={`w-8 h-8 rounded-lg ${s.bg} flex items-center justify-center mb-3`}>
+                      <s.icon className={`w-4 h-4 ${s.color}`} />
+                    </div>
+                    <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
+                    <p className="text-slate-400 text-xs mt-1">{s.label}</p>
+                  </CardContent>
+                </Card>
+              ))}
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Recent Lessons */}
           <div>
-            <h2 className="text-2xl font-bold">Your Certificates</h2>
-            <p className="text-muted-foreground mt-1">You've earned 2 certificates in your learning journey.</p>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-base font-semibold text-white flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-blue-400" />
+                Recent Lessons
+              </h2>
+              <button
+                onClick={() => navigate({ to: "/student/lessons" })}
+                className="text-blue-400 text-xs hover:underline flex items-center gap-1"
+              >
+                See all <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="space-y-2">
+              {loading
+                ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} rows={2} />)
+                : lessons.length === 0
+                ? (
+                  <Card className="bg-slate-800 border-slate-700">
+                    <CardContent className="p-6 text-center">
+                      <BookOpen className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+                      <p className="text-slate-500 text-sm">No lessons yet</p>
+                    </CardContent>
+                  </Card>
+                )
+                : lessons.map((lesson) => (
+                  <button
+                    key={lesson.id}
+                    onClick={() => navigate({ to: "/student/lessons/$id", params: { id: lesson.id } })}
+                    className="w-full text-left bg-slate-800 hover:bg-slate-750 border border-slate-700 hover:border-blue-500/40 rounded-xl p-3 flex items-center gap-3 transition-all group"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-blue-600/20 flex items-center justify-center flex-shrink-0">
+                      <Star className="w-4 h-4 text-blue-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white text-sm font-medium truncate group-hover:text-blue-300 transition-colors">
+                        {lesson.title}
+                      </p>
+                      {lesson.modules && (
+                        <p className="text-slate-500 text-xs truncate">{lesson.modules.title}</p>
+                      )}
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-blue-400 transition-colors flex-shrink-0" />
+                  </button>
+                ))}
+            </div>
+          </div>
+
+          {/* Upcoming Homework */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-base font-semibold text-white flex items-center gap-2">
+                <ClipboardList className="w-4 h-4 text-orange-400" />
+                Homework
+              </h2>
+              <button
+                onClick={() => navigate({ to: "/student/homework" })}
+                className="text-blue-400 text-xs hover:underline flex items-center gap-1"
+              >
+                See all <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="space-y-2">
+              {loading
+                ? Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} rows={2} />)
+                : homework.length === 0
+                ? (
+                  <Card className="bg-slate-800 border-slate-700">
+                    <CardContent className="p-6 text-center">
+                      <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-2" />
+                      <p className="text-slate-500 text-sm">All caught up!</p>
+                    </CardContent>
+                  </Card>
+                )
+                : homework.map((hw) => {
+                  const due = new Date(hw.due_date);
+                  const isOverdue = due < new Date() && hw.status !== "completed";
+                  return (
+                    <div
+                      key={hw.id}
+                      className="bg-slate-800 border border-slate-700 rounded-xl p-3 flex items-start gap-3"
+                    >
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${hw.status === "completed" ? "bg-green-600/20" : isOverdue ? "bg-red-600/20" : "bg-orange-600/20"}`}>
+                        <Clock className={`w-4 h-4 ${hw.status === "completed" ? "text-green-400" : isOverdue ? "text-red-400" : "text-orange-400"}`} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white text-sm font-medium truncate">{hw.title}</p>
+                        <p className={`text-xs mt-0.5 ${isOverdue ? "text-red-400" : "text-slate-500"}`}>
+                          {isOverdue ? "Overdue — " : "Due: "}
+                          {due.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                        </p>
+                      </div>
+                      <Badge className={`text-xs flex-shrink-0 ${hw.status === "completed" ? "bg-green-600" : isOverdue ? "bg-red-600" : "bg-orange-600"} text-white`}>
+                        {hw.status === "completed" ? "Done" : isOverdue ? "Late" : "Pending"}
+                      </Badge>
+                    </div>
+                  );
+                })}
+            </div>
+
+            {/* Quick actions */}
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <Button
+                onClick={() => navigate({ to: "/student/progress" })}
+                variant="outline"
+                className="border-slate-600 text-slate-300 hover:bg-slate-700 text-xs h-9"
+              >
+                <TrendingUp className="w-3 h-3 mr-1.5" />
+                My Progress
+              </Button>
+              <Button
+                onClick={() => navigate({ to: "/student/certificates" })}
+                variant="outline"
+                className="border-slate-600 text-slate-300 hover:bg-slate-700 text-xs h-9"
+              >
+                <Award className="w-3 h-3 mr-1.5" />
+                Certificates
+              </Button>
+            </div>
           </div>
         </div>
-        <div className="flex gap-4">
-          <Link to="/student/certificates">
-            <Button variant="outline">View All</Button>
-          </Link>
-          <Button className="bg-primary hover:bg-primary-hover text-white">Download Latest</Button>
-        </div>
-      </section>
+      </div>
     </div>
   );
 }
