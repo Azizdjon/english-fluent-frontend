@@ -1,118 +1,100 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
-import { Send } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState, useRef } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
-export const Route = createFileRoute('/teacher/messages')({
-  component: Messages,
-});
+export const Route = createFileRoute("/teacher/messages")({ component: MessagesPage });
 
-const conversations = [
-  {
-    id: 1, name: 'Alex Johnson', avatar: 'AJ', time: '2m ago', unread: 2,
-    messages: [
-      { from: 'student', text: 'Hi! I have a question about the homework.', time: '10:30' },
-      { from: 'student', text: 'Can you clarify exercise 3?', time: '10:31' },
-      { from: 'teacher', text: 'Of course! Exercise 3 asks you to use Present Perfect.', time: '10:35' },
-    ]
-  },
-  {
-    id: 2, name: 'Sarah Chen', avatar: 'SC', time: '1h ago', unread: 0,
-    messages: [
-      { from: 'teacher', text: 'Great work on your essay, Sarah!', time: '09:10' },
-      { from: 'student', text: 'Thank you so much! I worked really hard on it.', time: '09:15' },
-      { from: 'teacher', text: 'Your vocabulary usage was impressive.', time: '09:20' },
-    ]
-  },
-  {
-    id: 3, name: 'Marco Rossi', avatar: 'MR', time: 'Yesterday', unread: 1,
-    messages: [
-      { from: 'student', text: 'I missed class today, what did we cover?', time: 'Yesterday' },
-      { from: 'teacher', text: 'We covered Past Continuous tense. Check the lesson notes.', time: 'Yesterday' },
-    ]
-  },
-  {
-    id: 4, name: 'Yuki Tanaka', avatar: 'YT', time: '2d ago', unread: 0,
-    messages: [
-      { from: 'student', text: 'Could you recommend resources for C1 preparation?', time: '2d ago' },
-      { from: 'teacher', text: 'I recommend Cambridge Advanced Grammar in Use.', time: '2d ago' },
-      { from: 'student', text: 'Perfect, thank you!', time: '2d ago' },
-    ]
-  },
-];
+function MessagesPage() {
+  const [messages, setMessages] = useState<any[]>([]);
+  const [students, setStudents] = useState<any[]>([]);
+  const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
+  const [newMessage, setNewMessage] = useState("");
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
-function Messages() {
-  const [active, setActive] = useState(conversations[0]);
-  const [input, setInput] = useState('');
-  const [msgs, setMsgs] = useState<Record<number, typeof conversations[0]['messages']>>(
-    Object.fromEntries(conversations.map(c => [c.id, c.messages]))
+  useEffect(() => { loadData(); }, []);
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, selectedStudent]);
+
+  async function loadData() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setLoading(false); return; }
+    setCurrentUser(user);
+    const [msgRes, studRes] = await Promise.all([
+      supabase.from("messages").select("*").or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`).order("created_at"),
+      supabase.from("profiles").select("id,full_name,email").eq("role", "student"),
+    ]);
+    setMessages(msgRes.data || []);
+    setStudents(studRes.data || []);
+    if ((studRes.data || []).length > 0) setSelectedStudent(studRes.data![0].id);
+    setLoading(false);
+  }
+
+  async function sendMessage() {
+    if (!newMessage.trim() || !selectedStudent || !currentUser) return;
+    const { data, error } = await supabase.from("messages").insert({
+      sender_id: currentUser.id, receiver_id: selectedStudent, content: newMessage.trim(), is_read: false,
+    }).select().single();
+    if (!error && data) { setMessages(prev => [...prev, data]); setNewMessage(""); }
+  }
+
+  const convoMessages = messages.filter(m =>
+    (m.sender_id === currentUser?.id && m.receiver_id === selectedStudent) ||
+    (m.receiver_id === currentUser?.id && m.sender_id === selectedStudent)
   );
+  const student = students.find(s => s.id === selectedStudent);
 
-  const send = () => {
-    if (!input.trim()) return;
-    const newMsg = { from: 'teacher' as const, text: input.trim(), time: new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) };
-    setMsgs(prev => ({ ...prev, [active.id]: [...(prev[active.id] || []), newMsg] }));
-    setInput('');
-    toast.success('Message sent!');
-  };
+  if (loading) return <div className="p-6 text-gray-400">Loading...</div>;
 
   return (
-    <div className="flex h-[calc(100vh-120px)] bg-white rounded-xl border overflow-hidden">
-      {/* Sidebar */}
-      <div className="w-72 border-r flex flex-col">
-        <div className="p-4 border-b font-semibold text-lg">Messages</div>
-        <div className="flex-1 overflow-y-auto">
-          {conversations.map(c => (
-            <div
-              key={c.id}
-              onClick={() => setActive(c)}
-              className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 ${active.id === c.id ? 'bg-blue-50 border-l-4 border-blue-500' : ''}`}
-            >
-              <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-semibold flex-shrink-0">{c.avatar}</div>
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium text-sm truncate">{c.name}</span>
-                  <span className="text-xs text-gray-400 ml-1 flex-shrink-0">{c.time}</span>
+    <div className="p-4 md:p-6 max-w-4xl">
+      <h1 className="text-2xl font-bold text-white mb-6">Messages</h1>
+      <div className="bg-gray-800 rounded-xl flex h-[500px] overflow-hidden">
+        <div className="w-48 md:w-64 border-r border-gray-700 overflow-y-auto flex-shrink-0">
+          {students.map(s => {
+            const unread = messages.filter(m => m.sender_id === s.id && m.receiver_id === currentUser?.id && !m.is_read).length;
+            return (
+              <button key={s.id} onClick={() => setSelectedStudent(s.id)}
+                className={`w-full text-left px-3 py-3 hover:bg-gray-700 transition-colors border-b border-gray-700/50 ${selectedStudent === s.id ? "bg-gray-700" : ""}`}>
+                <div className="flex items-center justify-between">
+                  <p className="text-white text-sm font-medium truncate">{s.full_name || s.email?.split("@")[0]}</p>
+                  {unread > 0 && <span className="bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0">{unread}</span>}
                 </div>
-                <div className="text-xs text-gray-500 truncate">{(msgs[c.id]||[]).slice(-1)[0]?.text || '...'}</div>
-              </div>
-              {c.unread > 0 && <div className="w-5 h-5 rounded-full bg-blue-500 text-white text-xs flex items-center justify-center flex-shrink-0">{c.unread}</div>}
-            </div>
-          ))}
+              </button>
+            );
+          })}
+          {students.length === 0 && <p className="text-gray-400 text-sm p-4">No students</p>}
         </div>
-      </div>
-      {/* Chat area */}
-      <div className="flex-1 flex flex-col">
-        <div className="p-4 border-b flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-semibold">{active.avatar}</div>
-          <div>
-            <div className="font-semibold">{active.name}</div>
-            <div className="text-xs text-gray-500">Student</div>
+        <div className="flex-1 flex flex-col min-w-0">
+          <div className="px-4 py-3 border-b border-gray-700 flex-shrink-0">
+            <p className="text-white font-medium text-sm">{student?.full_name || student?.email || "Select a student"}</p>
           </div>
-        </div>
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          {(msgs[active.id] || []).map((m, i) => (
-            <div key={i} className={`flex ${m.from === 'teacher' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-xs px-4 py-2 rounded-2xl text-sm ${m.from === 'teacher' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-800'}`}>
-                <p>{m.text}</p>
-                <p className={`text-xs mt-1 ${m.from === 'teacher' ? 'text-blue-200' : 'text-gray-400'}`}>{m.time}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="p-4 border-t flex gap-2">
-          <Input
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && send()}
-            placeholder="Type a message..."
-            className="flex-1"
-          />
-          <Button onClick={send} size="sm"><Send className="w-4 h-4" /></Button>
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            {convoMessages.map(m => {
+              const isMe = m.sender_id === currentUser?.id;
+              return (
+                <div key={m.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
+                  <div className={`max-w-xs rounded-lg px-3 py-2 text-sm ${isMe ? "bg-blue-600 text-white" : "bg-gray-700 text-gray-200"}`}>
+                    <p>{m.content}</p>
+                    <p className={`text-xs mt-1 ${isMe ? "text-blue-200" : "text-gray-400"}`}>
+                      {new Date(m.created_at).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+            {convoMessages.length === 0 && <p className="text-gray-400 text-center text-sm mt-8">No messages yet</p>}
+            <div ref={bottomRef} />
+          </div>
+          <div className="p-3 border-t border-gray-700 flex gap-2 flex-shrink-0">
+            <input value={newMessage} onChange={e => setNewMessage(e.target.value)} onKeyDown={e => e.key === "Enter" && sendMessage()}
+              placeholder="Type a message..." className="flex-1 bg-gray-700 text-white rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 min-w-0" />
+            <button onClick={sendMessage} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm flex-shrink-0">Send</button>
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
+export default MessagesPage;
