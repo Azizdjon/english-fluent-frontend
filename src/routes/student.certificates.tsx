@@ -29,72 +29,74 @@ function gradeColor(g: string) {
   return "bg-yellow-500";
 }
 
+function loadJsPDF(): Promise<any> {
+  return new Promise((resolve, reject) => {
+    const w = window as any;
+    if (w.jspdf?.jsPDF) { resolve(w.jspdf.jsPDF); return; }
+    const s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+    s.onload = () => resolve((window as any).jspdf.jsPDF);
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
 async function downloadPDF(cert: Certificate, name: string) {
-  // Dynamically load jsPDF only in browser
-  if (typeof window === "undefined") return;
-  const { jsPDF } = await import("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" as any);
-  const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+  const JsPDF = await loadJsPDF();
+  const doc = new JsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
   const W = 297, H = 210;
 
-  // Background
   doc.setFillColor(15, 23, 42);
   doc.rect(0, 0, W, H, "F");
 
-  // Gold border
   doc.setDrawColor(212, 175, 55);
   doc.setLineWidth(2);
   doc.rect(10, 10, W - 20, H - 20);
   doc.setLineWidth(0.5);
   doc.rect(13, 13, W - 26, H - 26);
 
-  // Title
   doc.setTextColor(212, 175, 55);
   doc.setFontSize(32);
   doc.setFont("helvetica", "bold");
   doc.text("CERTIFICATE OF COMPLETION", W / 2, 50, { align: "center" });
 
-  // Subtitle
   doc.setTextColor(148, 163, 184);
   doc.setFontSize(13);
   doc.setFont("helvetica", "normal");
   doc.text("This is to certify that", W / 2, 68, { align: "center" });
 
-  // Student name
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(26);
   doc.setFont("helvetica", "bold");
   doc.text(name, W / 2, 90, { align: "center" });
 
-  // Course line
   doc.setTextColor(148, 163, 184);
   doc.setFontSize(13);
   doc.setFont("helvetica", "normal");
   doc.text("has successfully completed the course", W / 2, 106, { align: "center" });
 
-  // Course name
   doc.setTextColor(212, 175, 55);
   doc.setFontSize(20);
   doc.setFont("helvetica", "bold");
   doc.text(cert.course_name, W / 2, 124, { align: "center" });
 
-  // Grade
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(13);
   doc.setFont("helvetica", "normal");
-  const date = new Date(cert.issued_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
-  doc.text(`Grade: ${cert.grade}   |   Date: ${date}`, W / 2, 145, { align: "center" });
+  const date = new Date(cert.issued_at).toLocaleDateString("en-US", {
+    year: "numeric", month: "long", day: "numeric",
+  });
+  doc.text("Grade: " + cert.grade + "   |   Date: " + date, W / 2, 145, { align: "center" });
 
-  // Divider
   doc.setDrawColor(212, 175, 55);
   doc.setLineWidth(0.5);
   doc.line(60, 158, W - 60, 158);
 
-  // Footer
   doc.setTextColor(100, 116, 139);
   doc.setFontSize(10);
   doc.text("PragmaLearn English Academy", W / 2, 170, { align: "center" });
 
-  doc.save(`certificate-${cert.id}.pdf`);
+  doc.save("certificate-" + cert.id + ".pdf");
 }
 
 function StudentCertificates() {
@@ -179,7 +181,7 @@ function StudentCertificates() {
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2">
                     <CardTitle className="text-white text-base leading-snug">{cert.course_name}</CardTitle>
-                    <Badge className={`text-white text-sm font-bold ${gradeColor(cert.grade)}`}>{cert.grade}</Badge>
+                    <Badge className={"text-white text-sm font-bold " + gradeColor(cert.grade)}>{cert.grade}</Badge>
                   </div>
                 </CardHeader>
                 <CardContent>
