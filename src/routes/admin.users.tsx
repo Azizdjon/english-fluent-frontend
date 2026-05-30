@@ -1,79 +1,70 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { toast } from "sonner";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { adminUsers } from "@/lib/mock-data";
-import { Search, UserPlus, MoreHorizontal } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
-export const Route = createFileRoute("/admin/users")({
-  component: UserManagement,
-});
+export const Route = createFileRoute("/admin/users")({ component: AdminUsersPage });
 
-function UserManagement() {
+function AdminUsersPage() {
+  const [users, setUsers] = useState<any[]>([]);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => { loadUsers(); }, []);
+
+  async function loadUsers() {
+    const { data } = await supabase.from("profiles").select("*").order("role");
+    setUsers(data || []);
+    setLoading(false);
+  }
+
+  const filtered = users.filter(u => !search ||
+    u.email?.toLowerCase().includes(search.toLowerCase()) ||
+    u.full_name?.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const roleColor: Record<string, string> = {
+    admin: "bg-red-900/30 text-red-400",
+    teacher: "bg-purple-900/30 text-purple-400",
+    student: "bg-blue-900/30 text-blue-400",
+  };
+
+  if (loading) return <div className="p-6 text-gray-400">Loading users...</div>;
+
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <div className="mb-6 flex items-end justify-between flex-wrap gap-4">
-        <div>
-          <h1 className="text-3xl font-bold">User Management</h1>
-          <p className="text-muted-foreground mt-1">Manage teachers, students, and admins</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="relative w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input placeholder="Search users..." className="pl-9" />
-          </div>
-          <Button><UserPlus className="w-4 h-4 mr-2" /> Add user</Button>
-        </div>
-      </div>
-
-      <Card>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Joined</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {adminUsers.map((u) => (
-              <TableRow key={u.id}>
-                <TableCell>
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-xs">
-                      {u.name.split(" ").map(p => p[0]).join("")}
-                    </div>
-                    <span className="font-medium">{u.name}</span>
-                  </div>
-                </TableCell>
-                <TableCell className="text-muted-foreground">{u.email}</TableCell>
-                <TableCell>
-                  <Badge variant={u.role === "Teacher" ? "default" : "secondary"}>{u.role}</Badge>
-                </TableCell>
-                <TableCell>
-                  <span className={`inline-flex items-center gap-1.5 text-sm ${u.status === "Active" ? "text-success" : "text-muted-foreground"}`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${u.status === "Active" ? "bg-success" : "bg-muted-foreground"}`} />
-                    {u.status}
-                  </span>
-                </TableCell>
-                <TableCell className="text-muted-foreground text-sm">{u.joined}</TableCell>
-                <TableCell className="text-right">
-                  <div className="flex gap-1 justify-end">
-                    <Button variant="ghost" size="sm" onClick={() => toast.info(`Edit: ${u.name}`, { description: `Role: ${u.role} · ${u.email}` })}>Edit</Button>
-                    <Button variant="ghost" size="sm" className={`${u.status === 'Active' ? 'text-destructive' : 'text-emerald-600'}`} onClick={() => toast.success(`${u.status === 'Active' ? 'Deactivated' : 'Activated'}: ${u.name}`)}>{u.status === 'Active' ? 'Deactivate' : 'Activate'}</Button>
-                  </div>
-                </TableCell>
-              </TableRow>
+    <div className="p-4 md:p-6">
+      <h1 className="text-2xl font-bold text-white mb-6">Users ({users.length})</h1>
+      <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name or email..."
+        className="mb-4 w-full max-w-md bg-gray-800 text-white rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+      <div className="bg-gray-800 rounded-xl overflow-x-auto">
+        <table className="w-full min-w-[400px]">
+          <thead className="bg-gray-700">
+            <tr>
+              <th className="text-left text-gray-300 text-sm px-4 py-3">User</th>
+              <th className="text-left text-gray-300 text-sm px-4 py-3">Role</th>
+              <th className="text-left text-gray-300 text-sm px-4 py-3 hidden md:table-cell">ID</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-700">
+            {filtered.map(u => (
+              <tr key={u.id} className="hover:bg-gray-700/30">
+                <td className="px-4 py-3">
+                  <div className="text-white text-sm font-medium">{u.full_name || "—"}</div>
+                  <div className="text-gray-400 text-xs">{u.email}</div>
+                </td>
+                <td className="px-4 py-3">
+                  <span className={`text-xs px-2 py-1 rounded-full ${roleColor[u.role] || "bg-gray-700 text-gray-300"}`}>{u.role}</span>
+                </td>
+                <td className="px-4 py-3 hidden md:table-cell">
+                  <code className="text-gray-500 text-xs">{u.id?.substring(0, 8)}...</code>
+                </td>
+              </tr>
             ))}
-          </TableBody>
-        </Table>
-      </Card>
+          </tbody>
+        </table>
+        {filtered.length === 0 && <p className="text-center text-gray-400 py-8 text-sm">No users found</p>}
+      </div>
     </div>
   );
 }
+
+export default AdminUsersPage;
