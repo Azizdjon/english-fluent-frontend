@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/teacher/students")({ component: StudentsPage });
 
@@ -53,7 +53,7 @@ function StudentsPage() {
             {filtered.map(s => (
               <tr key={s.id} className="hover:bg-gray-700/30">
                 <td className="px-4 py-3">
-                  <div className="text-white text-sm font-medium">{s.full_name || "—"}</div>
+                  <div className="text-white text-sm font-medium">{s.full_name || "â"}</div>
                   <div className="text-gray-400 text-xs">{s.email}</div>
                 </td>
                 <td className="px-4 py-3 hidden sm:table-cell">
