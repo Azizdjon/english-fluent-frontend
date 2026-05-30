@@ -1,201 +1,304 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Card } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Play, FileText, CheckCircle, BookOpen } from "lucide-react";
-import { grammarTopics } from "@/lib/mock-data";
+import { Progress } from "@/components/ui/progress";
+import {
+  ChevronLeft,
+  ChevronRight,
+  CheckCircle,
+  PlayCircle,
+  BookOpen,
+  ArrowLeft,
+} from "lucide-react";
 
 export const Route = createFileRoute("/student/lessons/$id")({
   component: LessonPlayer,
 });
 
-function GrammarPage() {
-  return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <Link to="/student/lessons" className="flex items-center text-primary mb-6 hover:underline">
-        <ArrowLeft className="w-4 h-4 mr-2" /> Back to Lessons
-      </Link>
-      <div className="mb-8">
-        <Badge variant="secondary" className="mb-2">Grammar Module</Badge>
-        <h1 className="text-3xl font-bold">English Grammar: Tenses</h1>
-        <p className="text-muted-foreground mt-1">Master all 9 essential English tenses with interactive exercises.</p>
-      </div>
-      <div className="space-y-10">
-        {grammarTopics.map((topic, index) => (
-          <Card key={topic.id} className="p-6 border-2 border-border hover:border-primary/30 transition-all">
-            <div className="flex items-start gap-4 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center text-white font-bold shrink-0">
-                {index + 1}
-              </div>
-              <div>
-                <h2 className="text-xl font-bold">{topic.title}</h2>
-                <p className="text-muted-foreground text-sm mt-1">{topic.description}</p>
-              </div>
-            </div>
-            <div className="mt-4">
-              <div className="flex items-center gap-2 mb-3">
-                <BookOpen className="w-4 h-4 text-primary" />
-                <span className="text-sm font-semibold text-primary">Practice Exercises</span>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {topic.wordwallIds.map((wwId, i) => (
-                  <a
-                    key={wwId}
-                    href={`https://wordwall.net/resource/${wwId}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-border hover:border-primary/50 hover:bg-primary/5 transition-all group text-center"
-                  >
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <Play className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-sm">Exercise {i + 1}</div>
-                      <div className="text-xs text-muted-foreground mt-0.5">Opens in new tab</div>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
-    </div>
+interface Lesson {
+  id: string;
+  title: string;
+  description: string | null;
+  video_url: string | null;
+  content: string | null;
+  order_index: number;
+  module_id: string;
+}
+
+interface Module {
+  id: string;
+  title: string;
+  course_id: string;
+}
+
+function getEmbedUrl(url: string | null): string | null {
+  if (!url) return null;
+  const ytMatch = url.match(
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/
   );
+  if (ytMatch) return "https://www.youtube.com/embed/" + ytMatch[1] + "?rel=0&modestbranding=1";
+  return url;
 }
 
 function LessonPlayer() {
   const { id } = Route.useParams();
+  const navigate = useNavigate();
 
-  if (id === "grammar") {
-    return <GrammarPage />;
+  const [lesson, setLesson] = useState<Lesson | null>(null);
+  const [module, setModule] = useState<Module | null>(null);
+  const [siblings, setSiblings] = useState<Lesson[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [completed, setCompleted] = useState(false);
+  const [marking, setMarking] = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      try {
+        // Fetch current lesson
+        const { data: l } = await supabase
+          .from("lessons")
+          .select("id, title, description, video_url, content, order_index, module_id")
+          .eq("id", id)
+          .single();
+
+        if (!l) {
+          setLoading(false);
+          return;
+        }
+        setLesson(l);
+
+        // Fetch module info
+        const { data: m } = await supabase
+          .from("modules")
+          .select("id, title, course_id")
+          .eq("id", l.module_id)
+          .single();
+        setModule(m ?? null);
+
+        // Fetch all lessons in same module ordered
+        const { data: all } = await supabase
+          .from("lessons")
+          .select("id, title, description, video_url, content, order_index, module_id")
+          .eq("module_id", l.module_id)
+          .order("order_index", { ascending: true });
+        setSiblings(all ?? []);
+
+        // Check completion status
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: prog } = await supabase
+            .from("lesson_progress")
+            .select("completed")
+            .eq("lesson_id", id)
+            .eq("student_id", user.id)
+            .single();
+          setCompleted(prog?.completed ?? false);
+        }
+      } catch {
+        // ignore
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, [id]);
+
+  const currentIndex = siblings.findIndex((s) => s.id === id);
+  const prevLesson = currentIndex > 0 ? siblings[currentIndex - 1] : null;
+  const nextLesson = currentIndex >= 0 && currentIndex < siblings.length - 1
+    ? siblings[currentIndex + 1]
+    : null;
+  const progress = siblings.length > 0
+    ? Math.round(((currentIndex + 1) / siblings.length) * 100)
+    : 0;
+
+  async function markComplete() {
+    setMarking(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user && lesson) {
+        await supabase.from("lesson_progress").upsert({
+          student_id: user.id,
+          lesson_id: lesson.id,
+          completed: true,
+          completed_at: new Date().toISOString(),
+        }, { onConflict: "student_id,lesson_id" });
+        setCompleted(true);
+      }
+    } catch {
+      // ignore
+    } finally {
+      setMarking(false);
+    }
   }
 
-  // Module-specific pages redirect to their dedicated routes
-  if (id === "speaking") {
+  async function goNext() {
+    if (!completed) await markComplete();
+    if (nextLesson) navigate({ to: "/student/lessons/$id", params: { id: nextLesson.id } });
+  }
+
+  function goPrev() {
+    if (prevLesson) navigate({ to: "/student/lessons/$id", params: { id: prevLesson.id } });
+  }
+
+  if (loading) {
     return (
-      <div className="p-8 max-w-3xl mx-auto">
-        <Link to="/student/lessons" className="flex items-center text-primary mb-6 hover:underline">
-          <ArrowLeft className="w-4 h-4 mr-2" /> Back to Lessons
-        </Link>
-        <div className="text-center py-16">
-          <div className="w-20 h-20 rounded-full bg-violet-500/10 flex items-center justify-center mx-auto mb-4">
-            <Play className="w-10 h-10 text-violet-500" />
-          </div>
-          <h1 className="text-2xl font-bold mb-2">Speaking Lab</h1>
-          <p className="text-muted-foreground mb-6">Practice pronunciation and fluency with real-time AI feedback.</p>
-          <Link to="/student/speaking">
-            <button className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold hover:bg-primary/90 transition-colors">Open Speaking Lab →</button>
-          </Link>
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-slate-400">Loading lesson...</p>
         </div>
       </div>
     );
   }
 
-  if (id === "pragmatic") {
+  if (!lesson) {
     return (
-      <div className="p-8 max-w-3xl mx-auto">
-        <Link to="/student/lessons" className="flex items-center text-primary mb-6 hover:underline">
-          <ArrowLeft className="w-4 h-4 mr-2" /> Back to Lessons
-        </Link>
-        <div className="text-center py-16">
-          <div className="w-20 h-20 rounded-full bg-pink-500/10 flex items-center justify-center mx-auto mb-4">
-            <Play className="w-10 h-10 text-pink-500" />
-          </div>
-          <h1 className="text-2xl font-bold mb-2">Pragmatic Dialogues</h1>
-          <p className="text-muted-foreground mb-6">Rehearse real B2/C1 scenarios — interviews, presentations, doctor visits.</p>
-          <Link to="/student/pragmatic">
-            <button className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold hover:bg-primary/90 transition-colors">Open Dialogues →</button>
-          </Link>
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <BookOpen className="w-12 h-12 text-slate-500 mx-auto mb-4" />
+          <p className="text-white font-semibold">Lesson not found</p>
+          <Button
+            onClick={() => navigate({ to: "/student" })}
+            className="mt-4 bg-blue-600 hover:bg-blue-500"
+          >
+            Back to Dashboard
+          </Button>
         </div>
       </div>
     );
   }
 
-  const moduleInfo: Record<string, { color: string; desc: string }> = {
-    vocabulary: { color: "from-blue-500 to-cyan-500", desc: "Build your word bank with 32 curated vocabulary lessons." },
-    reading: { color: "from-emerald-500 to-teal-500", desc: "Sharpen comprehension with 28 reading exercises across all levels." },
-    listening: { color: "from-amber-500 to-orange-500", desc: "Train your ear with 22 audio lessons from native speakers." },
-  };
-  const info = moduleInfo[id] || { color: "from-gray-400 to-gray-600", desc: "Lessons coming soon." };
+  const embedUrl = getEmbedUrl(lesson.video_url);
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
-      <Link to="/student/lessons" className="flex items-center text-primary mb-6 hover:underline">
-        <ArrowLeft className="w-4 h-4 mr-2" /> Back to Lessons
-      </Link>
-
-      <div className="flex flex-col lg:flex-row gap-8">
-        <div className="flex-1">
-          <div className="aspect-video rounded-2xl overflow-hidden bg-black mb-6 relative group border-4 border-primary/20">
-            <iframe
-              className="w-full h-full"
-              src="https://www.youtube.com/embed/${moduleVideos[id] || moduleVideos.default}"
-              title="YouTube video player"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-          </div>
-
-          <h1 className="text-3xl font-bold mb-2">Mastering {id.charAt(0).toUpperCase() + id.slice(1)}</h1>
-          <p className="text-muted-foreground mb-2">{info.desc}</p>
-          <div className="flex items-center gap-3 mb-6">
-            <Badge>B2 Intermediate</Badge>
-            <span className="text-sm text-muted-foreground">Video Lesson ÃÂÃÂÃÂÃÂ· 15 mins</span>
-          </div>
-
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Lesson Resources</h2>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40 border border-border">
-                <div className="flex items-center gap-3">
-                  <FileText className="w-5 h-5 text-primary" />
-                  <div>
-                    <div className="font-medium">Grammar_Cheat_Sheet.pdf</div>
-                    <div className="text-xs text-muted-foreground">PDF ÃÂÃÂÃÂÃÂ· 1.2 MB</div>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm">Download</Button>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40 border border-border">
-                <div className="flex items-center gap-3">
-                  <FileText className="w-5 h-5 text-primary" />
-                  <div>
-                    <div className="font-medium">Vocabulary_List.pdf</div>
-                    <div className="text-xs text-muted-foreground">PDF ÃÂÃÂÃÂÃÂ· 850 KB</div>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm">Download</Button>
-              </div>
-            </div>
-          </Card>
+    <div className="min-h-screen bg-slate-900 text-white">
+      {/* Top bar */}
+      <div className="bg-slate-800 border-b border-slate-700 px-4 py-3 flex items-center justify-between">
+        <button
+          onClick={() => navigate({ to: "/student" })}
+          className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back
+        </button>
+        <div className="flex items-center gap-3 flex-1 max-w-md mx-4">
+          <span className="text-slate-400 text-xs whitespace-nowrap">
+            {currentIndex + 1} / {siblings.length}
+          </span>
+          <Progress value={progress} className="flex-1 h-2 bg-slate-700" />
+          <span className="text-slate-400 text-xs">{progress}%</span>
         </div>
+        {completed && (
+          <Badge className="bg-green-600 text-white flex items-center gap-1">
+            <CheckCircle className="w-3 h-3" />
+            Completed
+          </Badge>
+        )}
+      </div>
 
-        <div className="w-full lg:w-80">
-          <Card className="p-6">
-            <h2 className="text-lg font-bold mb-4">Lesson Progress</h2>
-            <div className="space-y-4">
-              {[
-                { title: "Introduction", done: true },
-                { title: "Core Concepts", done: true },
-                { title: "Video Tutorial", done: false, active: true },
-                { title: "Practice Quiz", done: false },
-                { title: "Summary", done: false },
-              ].map((step, i) => (
-                <div key={i} className={`flex items-start gap-3 p-2 rounded-lg ${step.active ? "bg-primary/10 border border-primary/20" : ""}`}>
-                  {step.done ? (
-                    <CheckCircle className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
-                  ) : (
-                    <div className={`w-5 h-5 rounded-full border-2 shrink-0 mt-0.5 ${step.active ? "border-primary" : "border-muted-foreground"}`} />
-                  )}
-                  <div className={`text-sm ${step.active ? "font-bold text-primary" : "text-muted-foreground"}`}>
-                    {step.title}
-                  </div>
-                </div>
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        {/* Module & title */}
+        {module && (
+          <p className="text-blue-400 text-sm font-medium mb-1">{module.title}</p>
+        )}
+        <h1 className="text-2xl font-bold text-white mb-6">{lesson.title}</h1>
+
+        {/* Video */}
+        {embedUrl ? (
+          <div className="relative aspect-video bg-black rounded-xl overflow-hidden mb-6 shadow-2xl">
+            <iframe
+              src={embedUrl}
+              className="absolute inset-0 w-full h-full"
+              allowFullScreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            />
+          </div>
+        ) : (
+          <div className="aspect-video bg-slate-800 rounded-xl flex items-center justify-center mb-6">
+            <div className="text-center">
+              <PlayCircle className="w-16 h-16 text-slate-600 mx-auto mb-3" />
+              <p className="text-slate-500">No video for this lesson</p>
+            </div>
+          </div>
+        )}
+
+        {/* Description / Content */}
+        {(lesson.description || lesson.content) && (
+          <div className="bg-slate-800 rounded-xl p-5 mb-6 border border-slate-700">
+            <h2 className="text-base font-semibold text-white mb-3 flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-blue-400" />
+              Lesson Notes
+            </h2>
+            <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">
+              {lesson.content ?? lesson.description}
+            </p>
+          </div>
+        )}
+
+        {/* Lesson list */}
+        {siblings.length > 1 && (
+          <div className="bg-slate-800 rounded-xl p-4 mb-6 border border-slate-700">
+            <h3 className="text-sm font-semibold text-slate-400 mb-3 uppercase tracking-wide">
+              Module Lessons
+            </h3>
+            <div className="space-y-1">
+              {siblings.map((s, i) => (
+                <button
+                  key={s.id}
+                  onClick={() =>
+                    navigate({ to: "/student/lessons/$id", params: { id: s.id } })
+                  }
+                  className={
+                    "w-full text-left px-3 py-2 rounded-lg flex items-center gap-3 transition-colors text-sm " +
+                    (s.id === id
+                      ? "bg-blue-600 text-white"
+                      : "text-slate-300 hover:bg-slate-700")
+                  }
+                >
+                  <span className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 bg-slate-700 text-slate-400">
+                    {i + 1}
+                  </span>
+                  {s.title}
+                </button>
               ))}
             </div>
-            <Button className="w-full mt-6">Next Lesson ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ</Button>
-          </Card>
+          </div>
+        )}
+
+        {/* Navigation buttons */}
+        <div className="flex items-center justify-between gap-4">
+          <Button
+            onClick={goPrev}
+            disabled={!prevLesson}
+            variant="outline"
+            className="border-slate-600 text-slate-300 hover:bg-slate-700 disabled:opacity-30"
+          >
+            <ChevronLeft className="w-4 h-4 mr-1" />
+            {prevLesson ? prevLesson.title.substring(0, 20) + (prevLesson.title.length > 20 ? '...' : '') : 'Previous'}
+          </Button>
+
+          {nextLesson ? (
+            <Button
+              onClick={goNext}
+              className="bg-blue-600 hover:bg-blue-500 font-semibold flex-1 max-w-xs"
+            >
+              {completed ? '' : 'Complete & '}Next: {nextLesson.title.substring(0, 20)}{nextLesson.title.length > 20 ? '...' : ''}
+              <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          ) : (
+            <Button
+              onClick={markComplete}
+              disabled={completed || marking}
+              className="bg-green-600 hover:bg-green-500 font-semibold flex-1 max-w-xs"
+            >
+              <CheckCircle className="w-4 h-4 mr-2" />
+              {completed ? 'Completed!' : marking ? 'Saving...' : 'Mark as Complete'}
+            </Button>
+          )}
         </div>
       </div>
     </div>
