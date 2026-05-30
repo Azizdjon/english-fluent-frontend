@@ -81,7 +81,11 @@ function StudentDashboard() {
         ]);
 
         setProfile(prof ?? { full_name: "Student", level: "Beginner", avatar_initials: "ST" });
-        setLessons((recentLessons ?? []) as Lesson[]);
+        setLessons((recentLessons ?? []).map((l: any) => ({
+          id: l.id,
+          title: l.title,
+          modules: Array.isArray(l.modules) ? (l.modules[0] ?? null) : l.modules,
+        })) as Lesson[]);
         setHomework((hw ?? []) as Homework[]);
         setCertCount(certs?.length ?? 0);
         setCompletedLessons((progress as any)?.count ?? 0);
