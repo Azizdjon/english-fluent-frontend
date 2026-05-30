@@ -1,171 +1,99 @@
-import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { BookOpen, Award, ClipboardList, GraduationCap, Loader2 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
-export const Route = createFileRoute("/student/progress")({
-  component: ProgressPage,
-});
-
-interface Enrollment {
-  id: string;
-  progress: number | null;
-  courses: { title: string } | null;
-}
-
-interface ActivityDay {
-  day: string;
-  count: number;
-}
-
-function startOfWeek() {
-  const d = new Date();
-  const day = d.getDay(); // 0=Sun
-  const diff = (day + 6) % 7; // make Monday start
-  d.setDate(d.getDate() - diff);
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
+export const Route = createFileRoute("/student/progress")({ component: ProgressPage });
 
 function ProgressPage() {
+  const [stats, setStats] = useState({ completedLessons: 0, enrolledCourses: 0, submissions: 0, certificates: 0 });
+  const [enrollments, setEnrollments] = useState<any[]>([]);
+  const [weekActivity, setWeekActivity] = useState<number[]>(Array(7).fill(0));
   const [loading, setLoading] = useState(true);
-  const [lessonsCompleted, setLessonsCompleted] = useState(0);
-  const [enrolledCount, setEnrolledCount] = useState(0);
-  const [submissionsCount, setSubmissionsCount] = useState(0);
-  const [certCount, setCertCount] = useState(0);
-  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
-  const [activity, setActivity] = useState<ActivityDay[]>([]);
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          setLoading(false);
-          return;
-        }
+  useEffect(() => { loadData(); }, []);
 
-        const weekStart = startOfWeek();
-
-        const [
-          { count: lessonsDone },
-          { count: enrCount },
-          { count: subCount },
-          { count: certs },
-          { data: enrs },
-          { data: weekProgress },
-        ] = await Promise.all([
-          supabase.from("lesson_progress").select("*", { count: "exact", head: true }).eq("student_id", user.id).eq("completed", true),
-          supabase.from("enrollments").select("*", { count: "exact", head: true }).eq("student_id", user.id),
-          supabase.from("submissions").select("*", { count: "exact", head: true }).eq("student_id", user.id),
-          supabase.from("certificates").select("*", { count: "exact", head: true }).eq("student_id", user.id),
-          supabase.from("enrollments").select("id, progress, courses(title)").eq("student_id", user.id),
-          supabase.from("lesson_progress").select("completed_at").eq("student_id", user.id).eq("completed", true).gte("completed_at", weekStart.toISOString()),
-        ]);
-
-        setLessonsCompleted(lessonsDone ?? 0);
-        setEnrolledCount(enrCount ?? 0);
-        setSubmissionsCount(subCount ?? 0);
-        setCertCount(certs ?? 0);
-        setEnrollments((enrs ?? []) as unknown as Enrollment[]);
-
-        // Build weekly activity (Mon..Sun)
-        const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-        const buckets = days.map((day) => ({ day, count: 0 }));
-        (weekProgress ?? []).forEach((row: { completed_at: string | null }) => {
-          if (!row.completed_at) return;
-          const d = new Date(row.completed_at);
-          const idx = (d.getDay() + 6) % 7;
-          buckets[idx].count += 1;
-        });
-        setActivity(buckets);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="p-8 flex items-center justify-center min-h-[50vh] text-muted-foreground">
-        <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading progress…
-      </div>
-    );
+  async function loadData() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setLoading(false); return; }
+    const [progRes, enrollRes, subRes, certRes] = await Promise.all([
+      supabase.from("lesson_progress").select("lesson_id,completed_at").eq("student_id", user.id).eq("completed", true),
+      supabase.from("enrollments").select("course_id,progress,score,lessons_done,courses(title,level,total_lessons)").eq("student_id", user.id),
+      supabase.from("submissions").select("id").eq("student_id", user.id),
+      supabase.from("certificates").select("id").eq("student_id", user.id),
+    ]);
+    setStats({
+      completedLessons: (progRes.data || []).length,
+      enrolledCourses: (enrollRes.data || []).length,
+      submissions: (subRes.data || []).length,
+      certificates: (certRes.data || []).length,
+    });
+    setEnrollments(enrollRes.data || []);
+    const now = new Date();
+    const activity = Array(7).fill(0);
+    (progRes.data || []).forEach((p: any) => {
+      if (!p.completed_at) return;
+      const diff = Math.floor((now.getTime() - new Date(p.completed_at).getTime()) / (1000 * 60 * 60 * 24));
+      if (diff >= 0 && diff < 7) activity[6 - diff]++;
+    });
+    setWeekActivity(activity);
+    setLoading(false);
   }
 
-  const maxCount = Math.max(1, ...activity.map((d) => d.count));
+  const days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  const maxActivity = Math.max(...weekActivity, 1);
 
-  const stats = [
-    { label: "Lessons Completed", value: lessonsCompleted, icon: BookOpen, color: "text-blue-600" },
-    { label: "Enrolled Courses", value: enrolledCount, icon: GraduationCap, color: "text-indigo-600" },
-    { label: "Homework Submitted", value: submissionsCount, icon: ClipboardList, color: "text-orange-600" },
-    { label: "Certificates", value: certCount, icon: Award, color: "text-emerald-600" },
-  ];
+  if (loading) return <div className="p-6 text-gray-400">Loading progress...</div>;
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
-      <div className="mb-6">
-        <Badge variant="secondary" className="mb-2">Progress</Badge>
-        <h1 className="text-3xl font-bold">Your Progress</h1>
-        <p className="text-muted-foreground mt-1">Track your activity and course progress.</p>
-      </div>
-
-      {/* Summary stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        {stats.map((s) => (
-          <Card key={s.label} className="p-5">
-            <s.icon className={`w-5 h-5 mb-2 ${s.color}`} />
-            <p className={`text-3xl font-bold ${s.color}`}>{s.value}</p>
-            <p className="text-sm text-muted-foreground mt-1">{s.label}</p>
-          </Card>
+    <div className="p-4 md:p-6 max-w-4xl space-y-6">
+      <h1 className="text-2xl font-bold text-white">My Progress</h1>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { label: "Lessons Done", value: stats.completedLessons, color: "text-blue-400" },
+          { label: "Courses", value: stats.enrolledCourses, color: "text-purple-400" },
+          { label: "Homework", value: stats.submissions, color: "text-orange-400" },
+          { label: "Certificates", value: stats.certificates, color: "text-green-400" },
+        ].map(s => (
+          <div key={s.label} className="bg-gray-800 rounded-xl p-4 text-center">
+            <div className={`text-3xl font-bold ${s.color}`}>{s.value}</div>
+            <div className="text-gray-400 text-sm mt-1">{s.label}</div>
+          </div>
         ))}
       </div>
-
-      {/* Per-course progress */}
-      <Card className="p-6 mb-8">
-        <h2 className="text-lg font-semibold mb-5">Course Progress</h2>
-        {enrollments.length === 0 ? (
-          <p className="text-sm text-muted-foreground">You are not enrolled in any courses yet.</p>
-        ) : (
-          <div className="space-y-4">
-            {enrollments.map((e) => {
-              const pct = Math.max(0, Math.min(100, Number(e.progress ?? 0)));
-              return (
-                <div key={e.id}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium">{e.courses?.title ?? "Untitled course"}</span>
-                    <span className="text-sm font-semibold">{pct}%</span>
-                  </div>
-                  <Progress value={pct} className="h-2" />
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </Card>
-
-      {/* Weekly activity */}
-      <Card className="p-6">
-        <h2 className="text-lg font-semibold mb-5">This Week (lessons completed)</h2>
-        <div className="flex items-end gap-3 h-32">
-          {activity.map((d) => (
-            <div key={d.day} className="flex flex-col items-center flex-1 gap-1">
-              <span className="text-xs text-muted-foreground">{d.count}</span>
-              <div
-                className="w-full rounded-t-md bg-primary/80 min-h-[4px]"
-                style={{ height: `${(d.count / maxCount) * 100}%` }}
-              />
-              <span className="text-xs font-medium">{d.day}</span>
+      <div className="bg-gray-800 rounded-xl p-6">
+        <h2 className="text-white font-semibold mb-4">Weekly Activity (last 7 days)</h2>
+        <div className="flex items-end gap-2 h-24">
+          {weekActivity.map((count, i) => (
+            <div key={i} className="flex-1 flex flex-col items-center gap-1">
+              <div className="w-full bg-blue-500 rounded-t transition-all" style={{ height: `${(count / maxActivity) * 80}px`, minHeight: count > 0 ? "4px" : "0" }} />
+              <span className="text-xs text-gray-500">{days[i]}</span>
             </div>
           ))}
         </div>
-      </Card>
+      </div>
+      <div className="bg-gray-800 rounded-xl p-6">
+        <h2 className="text-white font-semibold mb-4">Course Progress</h2>
+        {enrollments.length === 0 && <p className="text-gray-400 text-sm">Not enrolled in any courses yet.</p>}
+        <div className="space-y-4">
+          {enrollments.map((e: any) => (
+            <div key={e.course_id}>
+              <div className="flex justify-between mb-1">
+                <span className="text-gray-200 text-sm">{(e.courses as any)?.title || "Course"}</span>
+                <span className="text-gray-400 text-sm">{e.progress || 0}%</span>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-2">
+                <div className="bg-blue-500 h-2 rounded-full transition-all" style={{ width: `${e.progress || 0}%` }} />
+              </div>
+              <div className="flex justify-between mt-1 text-xs text-gray-500">
+                <span>{e.lessons_done || 0} lessons done</span>
+                <span>Score: {e.score || 0}%</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
+
+export default ProgressPage;
