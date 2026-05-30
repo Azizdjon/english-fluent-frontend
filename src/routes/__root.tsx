@@ -1,18 +1,21 @@
-import { Outlet, useNavigate } from '@tanstack/react-router';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createRootRoute } from '@tanstack/react-router';
-import { Meta, Scripts } from '@tanstack/react-start';
-import { Toaster } from '@/components/ui/sonner';
-import { useEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  Outlet,
+  createRootRouteWithContext,
+  HeadContent,
+  Scripts,
+} from "@tanstack/react-router";
+import appCss from "../styles.css?url";
+import { Toaster } from "@/components/ui/sonner";
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 const queryClient = new QueryClient();
-const PUBLIC_PATHS = ['/login', '/'];
+const PUBLIC_PATHS = ["/login", "/"];
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const [checking, setChecking] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const currentPath = window.location.pathname;
@@ -22,7 +25,8 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
       .then(({ data: { session } }) => {
         clearTimeout(timeout);
         if (!session && !PUBLIC_PATHS.includes(currentPath)) {
-          navigate({ to: '/login' });
+          window.location.replace("/login");
+          return;
         }
         setChecking(false);
       })
@@ -32,7 +36,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
       });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_OUT') navigate({ to: '/login' });
+      if (event === "SIGNED_OUT") window.location.replace("/login");
     });
 
     return () => { clearTimeout(timeout); subscription.unsubscribe(); };
@@ -55,7 +59,7 @@ function RootComponent() {
   return (
     <html lang="en">
       <head>
-        <Meta />
+        <HeadContent />
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
@@ -70,4 +74,9 @@ function RootComponent() {
   );
 }
 
-export const Route = createRootRoute({ component: RootComponent });
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  component: RootComponent,
+  head: () => ({
+    links: [{ rel: "stylesheet", href: appCss }],
+  }),
+});
