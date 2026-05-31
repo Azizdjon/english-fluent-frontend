@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/lib/supabase";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -14,7 +14,6 @@ export const Route = createFileRoute("/student/")({
   component: StudentDashboard,
 });
 
-// ── Skeleton helpers ──────────────────────────────────────────────────────────
 function SkeletonLine({ w = "w-full", h = "h-4" }: { w?: string; h?: string }) {
   return <div className={`${w} ${h} bg-slate-700 rounded animate-pulse`} />;
 }
@@ -29,24 +28,10 @@ function SkeletonCard({ rows = 3 }: { rows?: number }) {
     </Card>
   );
 }
-// ─────────────────────────────────────────────────────────────────────────────
 
-interface Profile {
-  full_name: string;
-  level: string;
-  avatar_initials: string;
-}
-interface Lesson {
-  id: string;
-  title: string;
-  modules: { title: string } | null;
-}
-interface Homework {
-  id: string;
-  title: string;
-  due_date: string;
-  status: string;
-}
+interface Profile { full_name: string; level: string; avatar_initials: string; }
+interface Lesson { id: string; title: string; modules: { title: string } | null; }
+interface Homework { id: string; title: string; due_date: string; status: string; }
 
 function StudentDashboard() {
   const navigate = useNavigate();
@@ -63,7 +48,6 @@ function StudentDashboard() {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
-
         const [
           { data: prof },
           { data: recentLessons },
@@ -79,13 +63,11 @@ function StudentDashboard() {
           supabase.from("lesson_progress").select("id", { count: "exact" }).eq("student_id", user.id).eq("completed", true),
           supabase.from("lessons").select("*", { count: "exact", head: true }),
         ]);
-
         setProfile(prof ?? { full_name: "Student", level: "Beginner", avatar_initials: "ST" });
-        setLessons((recentLessons ?? []).map((l: any) => ({
-          id: l.id,
-          title: l.title,
+        setLessons(((recentLessons ?? []).map((l: any) => ({
+          id: l.id, title: l.title,
           modules: Array.isArray(l.modules) ? (l.modules[0] ?? null) : l.modules,
-        })) as Lesson[]);
+        }))) as Lesson[]);
         setHomework((hw ?? []) as Homework[]);
         setCertCount(certs?.length ?? 0);
         setCompletedLessons((progress as any)?.count ?? 0);
@@ -100,6 +82,7 @@ function StudentDashboard() {
   }, []);
 
   const progressPct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+  const initials = (profile?.avatar_initials ?? "ST").replace(/[^A-Z]/gi, "").substring(0, 2).toUpperCase() || "ST";
 
   const stats = [
     { label: "Completed Lessons", value: completedLessons, icon: CheckCircle2, color: "text-green-400", bg: "bg-green-400/10" },
@@ -123,8 +106,8 @@ function StudentDashboard() {
           </div>
         ) : (
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-              {profile?.avatar_initials ?? "ST"}
+            <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0 overflow-hidden">
+              {initials}
             </div>
             <div>
               <h1 className="text-xl md:text-2xl font-bold text-white">
@@ -150,9 +133,7 @@ function StudentDashboard() {
               <span className="text-blue-400 font-bold">{progressPct}%</span>
             </div>
             <Progress value={progressPct} className="h-2.5 bg-slate-700" />
-            <p className="text-slate-500 text-xs mt-2">
-              {completedLessons} of {totalLessons} lessons completed
-            </p>
+            <p className="text-slate-500 text-xs mt-2">{completedLessons} of {totalLessons} lessons completed</p>
           </div>
         )}
 
@@ -160,23 +141,23 @@ function StudentDashboard() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {loading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="bg-slate-800 rounded-xl p-4 space-y-2">
-                  <div className="w-8 h-8 rounded-lg bg-slate-700 animate-pulse" />
-                  <SkeletonLine w="w-12" h="h-6" />
-                  <SkeletonLine w="w-full" h="h-3" />
-                </div>
-              ))
+              <div key={i} className="bg-slate-800 rounded-xl p-4 space-y-2">
+                <div className="w-8 h-8 rounded-lg bg-slate-700 animate-pulse" />
+                <SkeletonLine w="w-12" h="h-6" />
+                <SkeletonLine w="w-full" h="h-3" />
+              </div>
+            ))
             : stats.map((s) => (
-                <Card key={s.label} className="bg-slate-800 border-slate-700">
-                  <CardContent className="p-4">
-                    <div className={`w-8 h-8 rounded-lg ${s.bg} flex items-center justify-center mb-3`}>
-                      <s.icon className={`w-4 h-4 ${s.color}`} />
-                    </div>
-                    <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
-                    <p className="text-slate-400 text-xs mt-1">{s.label}</p>
-                  </CardContent>
-                </Card>
-              ))}
+              <Card key={s.label} className="bg-slate-800 border-slate-700">
+                <CardContent className="p-4">
+                  <div className={`w-8 h-8 rounded-lg ${s.bg} flex items-center justify-center mb-3`}>
+                    <s.icon className={`w-4 h-4 ${s.color}`} />
+                  </div>
+                  <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
+                  <p className="text-slate-400 text-xs mt-1">{s.label}</p>
+                </CardContent>
+              </Card>
+            ))}
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -184,13 +165,9 @@ function StudentDashboard() {
           <div>
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-base font-semibold text-white flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-blue-400" />
-                Recent Lessons
+                <BookOpen className="w-4 h-4 text-blue-400" /> Recent Lessons
               </h2>
-              <button
-                onClick={() => navigate({ to: "/student/lessons" })}
-                className="text-blue-400 text-xs hover:underline flex items-center gap-1"
-              >
+              <button onClick={() => navigate({ to: "/student/lessons" })} className="text-blue-400 text-xs hover:underline flex items-center gap-1">
                 See all <ChevronRight className="w-3 h-3" />
               </button>
             </div>
@@ -207,21 +184,14 @@ function StudentDashboard() {
                   </Card>
                 )
                 : lessons.map((lesson) => (
-                  <button
-                    key={lesson.id}
-                    onClick={() => navigate({ to: "/student/lessons/$id", params: { id: lesson.id } })}
-                    className="w-full text-left bg-slate-800 hover:bg-slate-750 border border-slate-700 hover:border-blue-500/40 rounded-xl p-3 flex items-center gap-3 transition-all group"
-                  >
+                  <button key={lesson.id} onClick={() => navigate({ to: "/student/lessons/$id", params: { id: lesson.id } })}
+                    className="w-full text-left bg-slate-800 border border-slate-700 hover:border-blue-500/40 rounded-xl p-3 flex items-center gap-3 transition-all group">
                     <div className="w-8 h-8 rounded-lg bg-blue-600/20 flex items-center justify-center flex-shrink-0">
                       <Star className="w-4 h-4 text-blue-400" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-white text-sm font-medium truncate group-hover:text-blue-300 transition-colors">
-                        {lesson.title}
-                      </p>
-                      {lesson.modules && (
-                        <p className="text-slate-500 text-xs truncate">{lesson.modules.title}</p>
-                      )}
+                      <p className="text-white text-sm font-medium truncate group-hover:text-blue-300 transition-colors">{lesson.title}</p>
+                      {lesson.modules && <p className="text-slate-500 text-xs truncate">{lesson.modules.title}</p>}
                     </div>
                     <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-blue-400 transition-colors flex-shrink-0" />
                   </button>
@@ -229,17 +199,13 @@ function StudentDashboard() {
             </div>
           </div>
 
-          {/* Upcoming Homework */}
+          {/* Homework */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-base font-semibold text-white flex items-center gap-2">
-                <ClipboardList className="w-4 h-4 text-orange-400" />
-                Homework
+                <ClipboardList className="w-4 h-4 text-orange-400" /> Homework
               </h2>
-              <button
-                onClick={() => navigate({ to: "/student/homework" })}
-                className="text-blue-400 text-xs hover:underline flex items-center gap-1"
-              >
+              <button onClick={() => navigate({ to: "/student/homework" })} className="text-blue-400 text-xs hover:underline flex items-center gap-1">
                 See all <ChevronRight className="w-3 h-3" />
               </button>
             </div>
@@ -259,18 +225,14 @@ function StudentDashboard() {
                   const due = new Date(hw.due_date);
                   const isOverdue = due < new Date() && hw.status !== "completed";
                   return (
-                    <div
-                      key={hw.id}
-                      className="bg-slate-800 border border-slate-700 rounded-xl p-3 flex items-start gap-3"
-                    >
+                    <div key={hw.id} className="bg-slate-800 border border-slate-700 rounded-xl p-3 flex items-start gap-3">
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${hw.status === "completed" ? "bg-green-600/20" : isOverdue ? "bg-red-600/20" : "bg-orange-600/20"}`}>
                         <Clock className={`w-4 h-4 ${hw.status === "completed" ? "text-green-400" : isOverdue ? "text-red-400" : "text-orange-400"}`} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-white text-sm font-medium truncate">{hw.title}</p>
                         <p className={`text-xs mt-0.5 ${isOverdue ? "text-red-400" : "text-slate-500"}`}>
-                          {isOverdue ? "Overdue — " : "Due: "}
-                          {due.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                          {isOverdue ? "Overdue — " : "Due: "}{due.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                         </p>
                       </div>
                       <Badge className={`text-xs flex-shrink-0 ${hw.status === "completed" ? "bg-green-600" : isOverdue ? "bg-red-600" : "bg-orange-600"} text-white`}>
@@ -280,24 +242,12 @@ function StudentDashboard() {
                   );
                 })}
             </div>
-
-            {/* Quick actions */}
             <div className="mt-4 grid grid-cols-2 gap-2">
-              <Button
-                onClick={() => navigate({ to: "/student/progress" })}
-                variant="outline"
-                className="border-slate-600 text-slate-300 hover:bg-slate-700 text-xs h-9"
-              >
-                <TrendingUp className="w-3 h-3 mr-1.5" />
-                My Progress
+              <Button onClick={() => navigate({ to: "/student/progress" })} variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 text-xs h-9">
+                <TrendingUp className="w-3 h-3 mr-1.5" /> My Progress
               </Button>
-              <Button
-                onClick={() => navigate({ to: "/student/certificates" })}
-                variant="outline"
-                className="border-slate-600 text-slate-300 hover:bg-slate-700 text-xs h-9"
-              >
-                <Award className="w-3 h-3 mr-1.5" />
-                Certificates
+              <Button onClick={() => navigate({ to: "/student/certificates" })} variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 text-xs h-9">
+                <Award className="w-3 h-3 mr-1.5" /> Certificates
               </Button>
             </div>
           </div>
@@ -305,4 +255,4 @@ function StudentDashboard() {
       </div>
     </div>
   );
-}
+        }
