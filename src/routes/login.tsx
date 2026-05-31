@@ -29,7 +29,7 @@ export function LoginPage() {
           options: { data: { full_name: form.full_name, role: form.role } },
         });
         if (error) throw error;
-        toast.success('Ro\'yxatdan o\'tdingiz!', { description: 'Endi tizimga kirishingiz mumkin.' });
+        toast.success('Registered successfully!', { description: 'You can now sign in.' });
         setMode('login');
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -39,13 +39,13 @@ export function LoginPage() {
         if (error) throw error;
         const profile = data.user?.user_metadata;
         const role = profile?.role || 'student';
-        toast.success('Xush kelibsiz!');
+        toast.success('Welcome!');
         if (role === 'admin') navigate({ to: '/admin' });
         else if (role === 'teacher') navigate({ to: '/teacher' });
         else navigate({ to: '/student' });
       }
     } catch (err: any) {
-      toast.error(err.message || 'Xatolik yuz berdi');
+      toast.error(err.message || 'An error occurred');
     } finally {
       setLoading(false);
     }
@@ -68,10 +68,10 @@ export function LoginPage() {
         <Card className="bg-slate-800 border-slate-700">
           <CardHeader>
             <CardTitle className="text-white text-center">
-              {mode === 'login' ? 'Tizimga kirish' : 'Ro\'yxatdan o\'tish'}
+              {mode === 'login' ? 'Sign in' : 'Create account'}
             </CardTitle>
             <CardDescription className="text-center text-slate-400">
-              {mode === 'login' ? 'Email va parolingizni kiriting' : 'Yangi akkaunt yarating'}
+              {mode === 'login' ? 'Enter your email and password' : 'Create a new account'}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -79,7 +79,7 @@ export function LoginPage() {
               {mode === 'register' && (
                 <>
                   <div className="space-y-1">
-                    <Label className="text-slate-300">To\'liq ism</Label>
+                    <Label className="text-slate-300">Full name</Label>
                     <Input
                       placeholder="Alex Johnson"
                       value={form.full_name}
@@ -89,14 +89,14 @@ export function LoginPage() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-slate-300">Rol</Label>
+                    <Label className="text-slate-300">Role</Label>
                     <select
                       value={form.role}
                       onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
                       className="w-full rounded-md bg-slate-700 border border-slate-600 text-white px-3 py-2 text-sm"
                     >
-                      <option value="student">O\'quvchi (Student)</option>
-                      <option value="teacher">O\'qituvchi (Teacher)</option>
+                      <option value="student">Student</option>
+                      <option value="teacher">Teacher</option>
                       <option value="admin">Administrator</option>
                     </select>
                   </div>
@@ -114,7 +114,7 @@ export function LoginPage() {
                 />
               </div>
               <div className="space-y-1">
-                <Label className="text-slate-300">Parol</Label>
+                <Label className="text-slate-300">Password</Label>
                 <Input
                   type="password"
                   placeholder="••••••••"
@@ -127,20 +127,20 @@ export function LoginPage() {
               </div>
               <Button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-600 text-white" disabled={loading}>
                 {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                {mode === 'login' ? 'Kirish' : 'Ro\'yxatdan o\'tish'}
+                {mode === 'login' ? 'Sign in' : 'Create account'}
               </Button>
             </form>
             <div className="mt-4 text-center text-sm text-slate-400">
               {mode === 'login' ? (
-                <span>Akkauntingiz yo\'qmi?{' '}
+                <span>Don't have an account?{' '}
                   <button onClick={() => setMode('register')} className="text-emerald-400 hover:underline">
-                    Ro\'yxatdan o\'ting
+                    Register
                   </button>
                 </span>
               ) : (
-                <span>Akkauntingiz bormi?{' '}
+                <span>Already have an account?{' '}
                   <button onClick={() => setMode('login')} className="text-emerald-400 hover:underline">
-                    Kiring
+                    Sign in
                   </button>
                 </span>
               )}
