@@ -11,7 +11,7 @@ interface Lesson { id: string; title: string; order_index: number; duration_minu
 interface Module { id: string; title: string; order_index: number; lessons: Lesson[]; }
 interface Course { id: string; title: string; level: string; modules: Module[]; }
 
-function SkeletonLine() { return <div className="h-4 bg-gray-200 rounded animate-pulse w-full" />; }
+function SkeletonLine() { return <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded animate-pulse w-full" />; }
 
 function LessonsPage() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -60,7 +60,7 @@ function LessonsPage() {
   if (loading) return (
     <div className="p-4 md:p-6 space-y-6">
       {[1, 2].map(i => (
-        <div key={i} className="bg-white rounded-xl p-4 space-y-3 border border-gray-100">
+        <div key={i} className="bg-white dark:bg-slate-800 rounded-xl p-4 space-y-3 border border-gray-100 dark:border-slate-700">
           <SkeletonLine /><SkeletonLine /><SkeletonLine />
         </div>
       ))}
@@ -69,41 +69,45 @@ function LessonsPage() {
 
   return (
     <div className="p-4 md:p-6 max-w-3xl space-y-8">
-      <h1 className="text-2xl font-bold text-gray-900">My Lessons</h1>
-      {courses.length === 0 && <p className="text-gray-500">No courses available yet.</p>}
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">My Lessons</h1>
+      {courses.length === 0 && <p className="text-gray-500 dark:text-slate-400">No courses available yet.</p>}
       {courses.map(course => (
-        <div key={course.id} className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm">
-          <div className="bg-gray-50 px-4 py-3 flex items-center justify-between border-b border-gray-100">
+        <div key={course.id} className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden border border-gray-100 dark:border-slate-700 shadow-sm">
+          <div className="bg-gray-50 dark:bg-slate-700/50 px-4 py-3 flex items-center justify-between border-b border-gray-100 dark:border-slate-700">
             <div>
-              <h2 className="text-gray-900 font-semibold text-lg">{course.title}</h2>
-              <span className="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded font-medium">{course.level}</span>
+              <h2 className="text-gray-900 dark:text-white font-semibold text-lg">{course.title}</h2>
+              <span className="text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded font-medium">{course.level}</span>
             </div>
-            <span className="text-gray-500 text-sm hidden sm:inline">{course.modules.reduce((acc, m) => acc + m.lessons.length, 0)} lessons</span>
+            <span className="text-gray-500 dark:text-slate-400 text-sm hidden sm:inline">
+              {course.modules.reduce((acc, m) => acc + m.lessons.length, 0)} lessons
+            </span>
           </div>
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-gray-100 dark:divide-slate-700">
             {course.modules.map(mod => {
               const isExpanded = expandedModules.has(mod.id);
               const completed = mod.lessons.filter(l => completedIds.has(l.id)).length;
               return (
                 <div key={mod.id}>
-                  <button onClick={() => toggleModule(mod.id)} className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors text-left">
+                  <button onClick={() => toggleModule(mod.id)}
+                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors text-left">
                     <div className="flex items-center gap-2">
-                      {isExpanded ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
-                      <span className="text-gray-800 font-medium text-sm md:text-base">{mod.title}</span>
+                      {isExpanded
+                        ? <ChevronDown className="w-4 h-4 text-gray-400 dark:text-slate-500" />
+                        : <ChevronRight className="w-4 h-4 text-gray-400 dark:text-slate-500" />}
+                      <span className="text-gray-800 dark:text-slate-200 font-medium text-sm md:text-base">{mod.title}</span>
                     </div>
-                    <span className="text-sm text-gray-500">{completed}/{mod.lessons.length}</span>
+                    <span className="text-sm text-gray-500 dark:text-slate-400">{completed}/{mod.lessons.length}</span>
                   </button>
                   {isExpanded && (
-                    <div className="bg-gray-50/50">
+                    <div className="bg-gray-50/50 dark:bg-slate-900/30">
                       {mod.lessons.map(lesson => (
                         <Link key={lesson.id} to="/student/lessons/$id" params={{ id: lesson.id }}
-                          className="flex items-center gap-3 px-6 py-3 hover:bg-blue-50/50 transition-colors border-b border-gray-100 last:border-0">
+                          className="flex items-center gap-3 px-6 py-3 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-colors border-b border-gray-100 dark:border-slate-700/50 last:border-0">
                           {completedIds.has(lesson.id)
                             ? <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                            : <Circle className="w-5 h-5 text-gray-300 flex-shrink-0" />
-                          }
-                          <p className="flex-1 text-gray-700 text-sm truncate">{lesson.title}</p>
-                          <span className="text-xs text-gray-400 flex-shrink-0">{lesson.duration_minutes}m</span>
+                            : <Circle className="w-5 h-5 text-gray-300 dark:text-slate-600 flex-shrink-0" />}
+                          <p className="flex-1 text-gray-700 dark:text-slate-300 text-sm truncate">{lesson.title}</p>
+                          <span className="text-xs text-gray-400 dark:text-slate-500 flex-shrink-0">{lesson.duration_minutes}m</span>
                         </Link>
                       ))}
                     </div>
