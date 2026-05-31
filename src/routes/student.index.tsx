@@ -10,14 +10,13 @@ import {
   ChevronRight, ChevronLeft, X, Star, Clock, CheckCircle2,
 } from "lucide-react";
 
-// ─── Onboarding Modal ───────────────────────────────────────────────────────
 const ONBOARDING_KEY = "pragmalearn_onboarding_done";
 
 const onboardingSteps = [
   { emoji: "👋", color: "from-blue-500 to-indigo-600", title: "Welcome to PragmaLearn!", description: "You're about to start your English learning journey. This quick tour will show you everything you need to know." },
-  { emoji: "📚", color: "from-emerald-500 to-teal-600", title: "Lessons", description: "Browse interactive lessons organized by level — from A1 to C2. Complete them to earn points and track your progress." },
+  { emoji: "📚", color: "from-emerald-500 to-teal-600", title: "Lessons", description: "Browse interactive lessons organized by level from A1 to C2. Complete them to earn points and track your progress." },
   { emoji: "🎤", color: "from-violet-500 to-purple-600", title: "Speaking Lab", description: "Practice speaking with real-time AI feedback on pronunciation, fluency, and rhythm. The more you speak, the better you get." },
-  { emoji: "📈", color: "from-orange-500 to-amber-600", title: "Progress & Homework", description: "Track your learning with charts and statistics. Submit homework and get feedback from your teacher." },
+  { emoji: "📈", color: "from-orange-500 to-amber-600", title: "Progress and Homework", description: "Track your learning with charts and statistics. Submit homework and get feedback from your teacher." },
   { emoji: "🏆", color: "from-yellow-500 to-orange-500", title: "Earn Certificates", description: "Complete a level and earn a CEFR certificate verified by your teacher. Share it on your LinkedIn or resume!" },
 ];
 
@@ -39,19 +38,17 @@ function OnboardingModal() {
   const isLast = step === onboardingSteps.length - 1;
 
   return (
-    <>
-    <OnboardingModal />
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={done} />
-      <div className="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+      <div className="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden">
         <button onClick={done} className="absolute top-4 right-4 z-10 text-white/70 hover:text-white transition">
           <X className="w-5 h-5" />
         </button>
-        <div className={`bg-gradient-to-br ${cur.color} py-10 flex flex-col items-center justify-center gap-2`}>
+        <div className={"bg-gradient-to-br " + cur.color + " py-10 flex flex-col items-center justify-center gap-2"}>
           <span className="text-5xl">{cur.emoji}</span>
           <div className="flex gap-1.5 mt-3">
             {onboardingSteps.map((_, i) => (
-              <div key={i} className={`rounded-full transition-all ${i === step ? "w-6 h-2 bg-white" : "w-2 h-2 bg-white/40"}`} />
+              <div key={i} className={i === step ? "rounded-full w-6 h-2 bg-white" : "rounded-full w-2 h-2 bg-white/40"} />
             ))}
           </div>
         </div>
@@ -68,8 +65,11 @@ function OnboardingModal() {
                 Skip tour
               </button>
             )}
-            <button onClick={isLast ? done : () => setStep(s => s + 1)} className={`flex-1 flex items-center justify-center gap-1 px-4 py-2.5 rounded-lg bg-gradient-to-r ${cur.color} text-white font-semibold text-sm hover:opacity-90 transition`}>
-              {isLast ? "Get started! 🚀" : <><span>Next</span><ChevronRight className="w-4 h-4" /></>}
+            <button
+              onClick={isLast ? done : () => setStep(s => s + 1)}
+              className={"flex-1 flex items-center justify-center gap-1 px-4 py-2.5 rounded-lg bg-gradient-to-r " + cur.color + " text-white font-semibold text-sm hover:opacity-90 transition"}
+            >
+              {isLast ? "Get started!" : <><span>Next</span><ChevronRight className="w-4 h-4" /></>}
             </button>
           </div>
         </div>
@@ -78,13 +78,12 @@ function OnboardingModal() {
   );
 }
 
-// ────────────────────────────────────────────────────────────────────────────
 export const Route = createFileRoute("/student/")({
   component: StudentDashboard,
 });
 
 function SkeletonLine({ w = "w-full", h = "h-4" }: { w?: string; h?: string }) {
-  return <div className={`${w} ${h} bg-slate-700 rounded animate-pulse`} />;
+  return <div className={w + " " + h + " bg-slate-700 rounded animate-pulse"} />;
 }
 function SkeletonCard({ rows = 3 }: { rows?: number }) {
   return (
@@ -161,168 +160,160 @@ function StudentDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-900 p-4 md:p-6">
-      <div className="max-w-5xl mx-auto space-y-6">
-
-        {/* Welcome header */}
-        {loading ? (
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-slate-700 animate-pulse" />
-            <div className="space-y-2 flex-1">
-              <SkeletonLine w="w-48" h="h-6" />
-              <SkeletonLine w="w-32" h="h-4" />
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0 overflow-hidden">
-              {initials}
-            </div>
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold text-white">
-                Xush kelibsiz, {profile?.full_name?.split(" ")[0] ?? "Student"}!
-              </h1>
-              <Badge className="bg-blue-600/20 text-blue-400 border-blue-600/30 mt-1">
-                {profile?.level ?? "Beginner"}
-              </Badge>
-            </div>
-          </div>
-        )}
-
-        {/* Overall progress bar */}
-        {loading ? (
-          <div className="bg-slate-800 rounded-xl p-4 space-y-2">
-            <SkeletonLine w="w-40" h="h-4" />
-            <SkeletonLine w="w-full" h="h-3" />
-          </div>
-        ) : (
-          <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-slate-300 font-medium">Overall Progress</span>
-              <span className="text-blue-400 font-bold">{progressPct}%</span>
-            </div>
-            <Progress value={progressPct} className="h-2.5 bg-slate-700" />
-            <p className="text-slate-500 text-xs mt-2">{completedLessons} of {totalLessons} lessons completed</p>
-          </div>
-        )}
-
-        {/* Stats grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {loading
-            ? Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-slate-800 rounded-xl p-4 space-y-2">
-                <div className="w-8 h-8 rounded-lg bg-slate-700 animate-pulse" />
-                <SkeletonLine w="w-12" h="h-6" />
-                <SkeletonLine w="w-full" h="h-3" />
+    <>
+      <OnboardingModal />
+      <div className="min-h-screen bg-slate-900 p-4 md:p-6">
+        <div className="max-w-5xl mx-auto space-y-6">
+          {loading ? (
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-slate-700 animate-pulse" />
+              <div className="space-y-2 flex-1">
+                <SkeletonLine w="w-48" h="h-6" />
+                <SkeletonLine w="w-32" h="h-4" />
               </div>
-            ))
-            : stats.map((s) => (
-              <Card key={s.label} className="bg-slate-800 border-slate-700">
-                <CardContent className="p-4">
-                  <div className={`w-8 h-8 rounded-lg ${s.bg} flex items-center justify-center mb-3`}>
-                    <s.icon className={`w-4 h-4 ${s.color}`} />
-                  </div>
-                  <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
-                  <p className="text-slate-400 text-xs mt-1">{s.label}</p>
-                </CardContent>
-              </Card>
-            ))}
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Recent Lessons */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-base font-semibold text-white flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-blue-400" /> Recent Lessons
-              </h2>
-              <button onClick={() => navigate({ to: "/student/lessons" })} className="text-blue-400 text-xs hover:underline flex items-center gap-1">
-                See all <ChevronRight className="w-3 h-3" />
-              </button>
             </div>
-            <div className="space-y-2">
-              {loading
-                ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} rows={2} />)
-                : lessons.length === 0
-                ? (
-                  <Card className="bg-slate-800 border-slate-700">
-                    <CardContent className="p-6 text-center">
-                      <BookOpen className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-                      <p className="text-slate-500 text-sm">No lessons yet</p>
-                    </CardContent>
-                  </Card>
-                )
-                : lessons.map((lesson) => (
-                  <button key={lesson.id} onClick={() => navigate({ to: "/student/lessons/$id", params: { id: lesson.id } })}
-                    className="w-full text-left bg-slate-800 border border-slate-700 hover:border-blue-500/40 rounded-xl p-3 flex items-center gap-3 transition-all group">
-                    <div className="w-8 h-8 rounded-lg bg-blue-600/20 flex items-center justify-center flex-shrink-0">
-                      <Star className="w-4 h-4 text-blue-400" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-white text-sm font-medium truncate group-hover:text-blue-300 transition-colors">{lesson.title}</p>
-                      {lesson.modules && <p className="text-slate-500 text-xs truncate">{lesson.modules.title}</p>}
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-blue-400 transition-colors flex-shrink-0" />
-                  </button>
-                ))}
+          ) : (
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0 overflow-hidden">
+                {initials}
+              </div>
+              <div>
+                <h1 className="text-xl md:text-2xl font-bold text-white">
+                  Welcome, {profile?.full_name?.split(" ")[0] ?? "Student"}!
+                </h1>
+                <Badge className="bg-blue-600/20 text-blue-400 border-blue-600/30 mt-1">
+                  {profile?.level ?? "Beginner"}
+                </Badge>
+              </div>
             </div>
+          )}
+          {loading ? (
+            <div className="bg-slate-800 rounded-xl p-4 space-y-2">
+              <SkeletonLine w="w-40" h="h-4" />
+              <SkeletonLine w="w-full" h="h-3" />
+            </div>
+          ) : (
+            <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-slate-300 font-medium">Overall Progress</span>
+                <span className="text-blue-400 font-bold">{progressPct}%</span>
+              </div>
+              <Progress value={progressPct} className="h-2.5 bg-slate-700" />
+              <p className="text-slate-500 text-xs mt-2">{completedLessons} of {totalLessons} lessons completed</p>
+            </div>
+          )}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {loading
+              ? Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="bg-slate-800 rounded-xl p-4 space-y-2">
+                  <div className="w-8 h-8 rounded-lg bg-slate-700 animate-pulse" />
+                  <SkeletonLine w="w-12" h="h-6" />
+                  <SkeletonLine w="w-full" h="h-3" />
+                </div>
+              ))
+              : stats.map((s) => (
+                <Card key={s.label} className="bg-slate-800 border-slate-700">
+                  <CardContent className="p-4">
+                    <div className={"w-8 h-8 rounded-lg " + s.bg + " flex items-center justify-center mb-3"}>
+                      <s.icon className={"w-4 h-4 " + s.color} />
+                    </div>
+                    <p className={"text-2xl font-bold " + s.color}>{s.value}</p>
+                    <p className="text-slate-400 text-xs mt-1">{s.label}</p>
+                  </CardContent>
+                </Card>
+              ))}
           </div>
-
-          {/* Homework */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-base font-semibold text-white flex items-center gap-2">
-                <ClipboardList className="w-4 h-4 text-orange-400" /> Homework
-              </h2>
-              <button onClick={() => navigate({ to: "/student/homework" })} className="text-blue-400 text-xs hover:underline flex items-center gap-1">
-                See all <ChevronRight className="w-3 h-3" />
-              </button>
-            </div>
-            <div className="space-y-2">
-              {loading
-                ? Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} rows={2} />)
-                : homework.length === 0
-                ? (
-                  <Card className="bg-slate-800 border-slate-700">
-                    <CardContent className="p-6 text-center">
-                      <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-2" />
-                      <p className="text-slate-500 text-sm">All caught up!</p>
-                    </CardContent>
-                  </Card>
-                )
-                : homework.map((hw) => {
-                  const due = new Date(hw.due_date);
-                  const isOverdue = due < new Date() && hw.status !== "completed";
-                  return (
-                    <div key={hw.id} className="bg-slate-800 border border-slate-700 rounded-xl p-3 flex items-start gap-3">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${hw.status === "completed" ? "bg-green-600/20" : isOverdue ? "bg-red-600/20" : "bg-orange-600/20"}`}>
-                        <Clock className={`w-4 h-4 ${hw.status === "completed" ? "text-green-400" : isOverdue ? "text-red-400" : "text-orange-400"}`} />
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-base font-semibold text-white flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-blue-400" /> Recent Lessons
+                </h2>
+                <button onClick={() => navigate({ to: "/student/lessons" })} className="text-blue-400 text-xs hover:underline flex items-center gap-1">
+                  See all <ChevronRight className="w-3 h-3" />
+                </button>
+              </div>
+              <div className="space-y-2">
+                {loading
+                  ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} rows={2} />)
+                  : lessons.length === 0
+                  ? (
+                    <Card className="bg-slate-800 border-slate-700">
+                      <CardContent className="p-6 text-center">
+                        <BookOpen className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+                        <p className="text-slate-500 text-sm">No lessons yet</p>
+                      </CardContent>
+                    </Card>
+                  )
+                  : lessons.map((lesson) => (
+                    <button key={lesson.id} onClick={() => navigate({ to: "/student/lessons/$id", params: { id: lesson.id } })}
+                      className="w-full text-left bg-slate-800 border border-slate-700 hover:border-blue-500/40 rounded-xl p-3 flex items-center gap-3 transition-all group">
+                      <div className="w-8 h-8 rounded-lg bg-blue-600/20 flex items-center justify-center flex-shrink-0">
+                        <Star className="w-4 h-4 text-blue-400" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-white text-sm font-medium truncate">{hw.title}</p>
-                        <p className={`text-xs mt-0.5 ${isOverdue ? "text-red-400" : "text-slate-500"}`}>
-                          {isOverdue ? "Overdue — " : "Due: "}{due.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                        </p>
+                        <p className="text-white text-sm font-medium truncate group-hover:text-blue-300 transition-colors">{lesson.title}</p>
+                        {lesson.modules && <p className="text-slate-500 text-xs truncate">{lesson.modules.title}</p>}
                       </div>
-                      <Badge className={`text-xs flex-shrink-0 ${hw.status === "completed" ? "bg-green-600" : isOverdue ? "bg-red-600" : "bg-orange-600"} text-white`}>
-                        {hw.status === "completed" ? "Done" : isOverdue ? "Late" : "Pending"}
-                      </Badge>
-                    </div>
-                  );
-                })}
+                      <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-blue-400 transition-colors flex-shrink-0" />
+                    </button>
+                  ))}
+              </div>
             </div>
-            <div className="mt-4 grid grid-cols-2 gap-2">
-              <Button onClick={() => navigate({ to: "/student/progress" })} variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 text-xs h-9">
-                <TrendingUp className="w-3 h-3 mr-1.5" /> My Progress
-              </Button>
-              <Button onClick={() => navigate({ to: "/student/certificates" })} variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 text-xs h-9">
-                <Award className="w-3 h-3 mr-1.5" /> Certificates
-              </Button>
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-base font-semibold text-white flex items-center gap-2">
+                  <ClipboardList className="w-4 h-4 text-orange-400" /> Homework
+                </h2>
+                <button onClick={() => navigate({ to: "/student/homework" })} className="text-blue-400 text-xs hover:underline flex items-center gap-1">
+                  See all <ChevronRight className="w-3 h-3" />
+                </button>
+              </div>
+              <div className="space-y-2">
+                {loading
+                  ? Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} rows={2} />)
+                  : homework.length === 0
+                  ? (
+                    <Card className="bg-slate-800 border-slate-700">
+                      <CardContent className="p-6 text-center">
+                        <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-2" />
+                        <p className="text-slate-500 text-sm">All caught up!</p>
+                      </CardContent>
+                    </Card>
+                  )
+                  : homework.map((hw) => {
+                    const due = new Date(hw.due_date);
+                    const isOverdue = due < new Date() && hw.status !== "completed";
+                    return (
+                      <div key={hw.id} className="bg-slate-800 border border-slate-700 rounded-xl p-3 flex items-start gap-3">
+                        <div className={"w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 " + (hw.status === "completed" ? "bg-green-600/20" : isOverdue ? "bg-red-600/20" : "bg-orange-600/20")}>
+                          <Clock className={"w-4 h-4 " + (hw.status === "completed" ? "text-green-400" : isOverdue ? "text-red-400" : "text-orange-400")} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-white text-sm font-medium truncate">{hw.title}</p>
+                          <p className={"text-xs mt-0.5 " + (isOverdue ? "text-red-400" : "text-slate-500")}>
+                            {isOverdue ? "Overdue: " : "Due: "}{due.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                          </p>
+                        </div>
+                        <Badge className={"text-xs flex-shrink-0 " + (hw.status === "completed" ? "bg-green-600" : isOverdue ? "bg-red-600" : "bg-orange-600") + " text-white"}>
+                          {hw.status === "completed" ? "Done" : isOverdue ? "Late" : "Pending"}
+                        </Badge>
+                      </div>
+                    );
+                  })}
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <Button onClick={() => navigate({ to: "/student/progress" })} variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 text-xs h-9">
+                  <TrendingUp className="w-3 h-3 mr-1.5" /> My Progress
+                </Button>
+                <Button onClick={() => navigate({ to: "/student/certificates" })} variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 text-xs h-9">
+                  <Award className="w-3 h-3 mr-1.5" /> Certificates
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </>
-    );
+  );
 }
