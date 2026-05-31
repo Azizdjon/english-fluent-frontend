@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
   BookOpen, Award, ClipboardList, TrendingUp,
-  ChevronRight, Star, Clock, CheckCircle2,
+  ChevronRight, ChevronLeft, X, Star, Clock, CheckCircle2,
 } from "lucide-react";
 
 // ─── Onboarding Modal ───────────────────────────────────────────────────────
@@ -22,10 +22,10 @@ const onboardingSteps = [
 ];
 
 function OnboardingModal() {
-  const [open, setOpen] = React.useState(false);
-  const [step, setStep] = React.useState(0);
+  const [open, setOpen] = useState(false);
+  const [step, setStep] = useState(0);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (typeof window === "undefined") return;
     if (!localStorage.getItem(ONBOARDING_KEY)) {
       setTimeout(() => setOpen(true), 800);
