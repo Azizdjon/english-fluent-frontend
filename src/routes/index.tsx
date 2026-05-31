@@ -473,7 +473,7 @@ function Landing() {
                   Continue as
                 </div>
                 {roles.map((r) => (
-                  <Link key={r.name} to={r.to}>
+                  <Link key={r.name} to="/login">
                     <button className="w-full group flex items-center gap-4 p-4 rounded-xl border border-white/10 hover:border-white/30 bg-white/[0.02] hover:bg-white/[0.06] transition-all text-left">
                       <div
                         className={`w-11 h-11 rounded-lg bg-gradient-to-br ${r.color} flex items-center justify-center text-white shadow-lg`}
