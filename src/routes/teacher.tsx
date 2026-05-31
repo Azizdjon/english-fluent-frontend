@@ -11,8 +11,7 @@ function TeacherLayout() {
     <AppShell
       role="Teacher"
       userName="Emma Wilson"
-      userMeta="3 active classes"
-      nav={[
+      navItems={[
         { to: "/teacher", label: "Dashboard", icon: LayoutDashboard },
         { to: "/teacher/students", label: "Students", icon: Users },
         { to: "/teacher/homework", label: "Homework", icon: ClipboardList },
