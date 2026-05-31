@@ -57,7 +57,7 @@ export function AppShell({ role, navItems, children, userName }: Props) {
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-        {navItems.map((item) => {
+        {(navItems ?? []).map((item) => {
           const active = router.location.pathname.startsWith(item.to);
           return (
             <Link
@@ -134,4 +134,4 @@ export function AppShell({ role, navItems, children, userName }: Props) {
       </div>
     </div>
   );
-}
+                  }
