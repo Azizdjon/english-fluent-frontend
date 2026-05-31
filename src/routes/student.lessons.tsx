@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { ChevronDown, ChevronRight, CheckCircle, Circle } from "lucide-react";
 
 export const Route = createFileRoute("/student/lessons")({
   component: LessonsPage,
@@ -10,7 +11,7 @@ interface Lesson { id: string; title: string; order_index: number; duration_minu
 interface Module { id: string; title: string; order_index: number; lessons: Lesson[]; }
 interface Course { id: string; title: string; level: string; modules: Module[]; }
 
-function SkeletonLine() { return <div className="h-4 bg-gray-700 rounded animate-pulse w-full" />; }
+function SkeletonLine() { return <div className="h-4 bg-gray-200 rounded animate-pulse w-full" />; }
 
 function LessonsPage() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -49,13 +50,17 @@ function LessonsPage() {
   }
 
   function toggleModule(id: string) {
-    setExpandedModules(prev => { const next = new Set(prev); if (next.has(id)) next.delete(id); else next.add(id); return next; });
+    setExpandedModules(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
   }
 
   if (loading) return (
     <div className="p-4 md:p-6 space-y-6">
-      {[1,2].map(i => (
-        <div key={i} className="bg-gray-800 rounded-xl p-4 space-y-3">
+      {[1, 2].map(i => (
+        <div key={i} className="bg-white rounded-xl p-4 space-y-3 border border-gray-100">
           <SkeletonLine /><SkeletonLine /><SkeletonLine />
         </div>
       ))}
@@ -64,43 +69,48 @@ function LessonsPage() {
 
   return (
     <div className="p-4 md:p-6 max-w-3xl space-y-8">
-      <h1 className="text-2xl font-bold text-white">My Lessons</h1>
-      {courses.length === 0 && <p className="text-gray-400">No courses available yet.</p>}
+      <h1 className="text-2xl font-bold text-gray-900">My Lessons</h1>
+      {courses.length === 0 && <p className="text-gray-500">No courses available yet.</p>}
       {courses.map(course => (
-        <div key={course.id} className="bg-gray-800 rounded-xl overflow-hidden">
-          <div className="bg-gray-700 px-4 py-3 flex items-center justify-between">
+        <div key={course.id} className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+          <div className="bg-gray-50 px-4 py-3 flex items-center justify-between border-b border-gray-100">
             <div>
-              <h2 className="text-white font-semibold text-lg">{course.title}</h2>
-              <span className="text-xs text-blue-400 bg-blue-900/30 px-2 py-0.5 rounded">{course.level}</span>
+              <h2 className="text-gray-900 font-semibold text-lg">{course.title}</h2>
+              <span className="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded font-medium">{course.level}</span>
             </div>
-            <span className="text-gray-400 text-sm hidden sm:inline">{course.modules.reduce((acc, m) => acc + m.lessons.length, 0)} lessons</span>
+            <span className="text-gray-500 text-sm hidden sm:inline">{course.modules.reduce((acc, m) => acc + m.lessons.length, 0)} lessons</span>
           </div>
-          <div className="divide-y divide-gray-700">
-            {course.modules.map(mod => (
-              <div key={mod.id}>
-                <button onClick={() => toggleModule(mod.id)} className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-700/50 transition-colors">
-                  <span className="text-white font-medium text-sm md:text-base">{mod.title}</span>
-                  <div className="flex items-center gap-2 text-sm text-gray-400">
-                    <span>{mod.lessons.filter(l => completedIds.has(l.id)).length}/{mod.lessons.length}</span>
-                    <span>{expandedModules.has(mod.id) ? "â²" : "â¼"}</span>
-                  </div>
-                </button>
-                {expandedModules.has(mod.id) && (
-                  <div className="bg-gray-900/30">
-                    {mod.lessons.map(lesson => (
-                      <Link key={lesson.id} to="/student/lessons/$id" params={{ id: lesson.id }}
-                        className="flex items-center gap-3 px-6 py-3 hover:bg-gray-700/30 transition-colors border-b border-gray-700/50 last:border-0">
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0 ${completedIds.has(lesson.id) ? "bg-green-500 text-white" : "bg-gray-600 text-gray-300"}`}>
-                          {completedIds.has(lesson.id) ? "â" : lesson.order_index}
-                        </div>
-                        <p className="flex-1 text-gray-200 text-sm truncate">{lesson.title}</p>
-                        <span className="text-xs text-gray-500 flex-shrink-0">{lesson.duration_minutes}m</span>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+          <div className="divide-y divide-gray-100">
+            {course.modules.map(mod => {
+              const isExpanded = expandedModules.has(mod.id);
+              const completed = mod.lessons.filter(l => completedIds.has(l.id)).length;
+              return (
+                <div key={mod.id}>
+                  <button onClick={() => toggleModule(mod.id)} className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors text-left">
+                    <div className="flex items-center gap-2">
+                      {isExpanded ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
+                      <span className="text-gray-800 font-medium text-sm md:text-base">{mod.title}</span>
+                    </div>
+                    <span className="text-sm text-gray-500">{completed}/{mod.lessons.length}</span>
+                  </button>
+                  {isExpanded && (
+                    <div className="bg-gray-50/50">
+                      {mod.lessons.map(lesson => (
+                        <Link key={lesson.id} to="/student/lessons/$id" params={{ id: lesson.id }}
+                          className="flex items-center gap-3 px-6 py-3 hover:bg-blue-50/50 transition-colors border-b border-gray-100 last:border-0">
+                          {completedIds.has(lesson.id)
+                            ? <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                            : <Circle className="w-5 h-5 text-gray-300 flex-shrink-0" />
+                          }
+                          <p className="flex-1 text-gray-700 text-sm truncate">{lesson.title}</p>
+                          <span className="text-xs text-gray-400 flex-shrink-0">{lesson.duration_minutes}m</span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       ))}
