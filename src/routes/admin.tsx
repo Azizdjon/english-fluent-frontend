@@ -11,8 +11,7 @@ function AdminLayout() {
     <AppShell
       role="Admin"
       userName="Admin User"
-      userMeta="Super admin"
-      nav={[
+      navItems={[
         { to: "/admin", label: "Overview", icon: LayoutDashboard },
         { to: "/admin/users", label: "User Management", icon: Users },
         { to: "/admin/courses", label: "Courses", icon: BookOpen },
