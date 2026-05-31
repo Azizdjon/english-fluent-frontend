@@ -10,6 +10,75 @@ import {
   ChevronRight, Star, Clock, CheckCircle2,
 } from "lucide-react";
 
+// ─── Onboarding Modal ───────────────────────────────────────────────────────
+const ONBOARDING_KEY = "pragmalearn_onboarding_done";
+
+const onboardingSteps = [
+  { emoji: "👋", color: "from-blue-500 to-indigo-600", title: "Welcome to PragmaLearn!", description: "You're about to start your English learning journey. This quick tour will show you everything you need to know." },
+  { emoji: "📚", color: "from-emerald-500 to-teal-600", title: "Lessons", description: "Browse interactive lessons organized by level — from A1 to C2. Complete them to earn points and track your progress." },
+  { emoji: "🎤", color: "from-violet-500 to-purple-600", title: "Speaking Lab", description: "Practice speaking with real-time AI feedback on pronunciation, fluency, and rhythm. The more you speak, the better you get." },
+  { emoji: "📈", color: "from-orange-500 to-amber-600", title: "Progress & Homework", description: "Track your learning with charts and statistics. Submit homework and get feedback from your teacher." },
+  { emoji: "🏆", color: "from-yellow-500 to-orange-500", title: "Earn Certificates", description: "Complete a level and earn a CEFR certificate verified by your teacher. Share it on your LinkedIn or resume!" },
+];
+
+function OnboardingModal() {
+  const [open, setOpen] = React.useState(false);
+  const [step, setStep] = React.useState(0);
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!localStorage.getItem(ONBOARDING_KEY)) {
+      setTimeout(() => setOpen(true), 800);
+    }
+  }, []);
+
+  const done = () => { localStorage.setItem(ONBOARDING_KEY, "true"); setOpen(false); };
+  if (!open) return null;
+
+  const cur = onboardingSteps[step];
+  const isLast = step === onboardingSteps.length - 1;
+
+  return (
+    <>
+    <OnboardingModal />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={done} />
+      <div className="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+        <button onClick={done} className="absolute top-4 right-4 z-10 text-white/70 hover:text-white transition">
+          <X className="w-5 h-5" />
+        </button>
+        <div className={`bg-gradient-to-br ${cur.color} py-10 flex flex-col items-center justify-center gap-2`}>
+          <span className="text-5xl">{cur.emoji}</span>
+          <div className="flex gap-1.5 mt-3">
+            {onboardingSteps.map((_, i) => (
+              <div key={i} className={`rounded-full transition-all ${i === step ? "w-6 h-2 bg-white" : "w-2 h-2 bg-white/40"}`} />
+            ))}
+          </div>
+        </div>
+        <div className="p-6">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{cur.title}</h2>
+          <p className="text-gray-600 dark:text-slate-300 leading-relaxed mb-6">{cur.description}</p>
+          <div className="flex gap-3">
+            {step > 0 ? (
+              <button onClick={() => setStep(s => s - 1)} className="flex-1 flex items-center justify-center gap-1 px-4 py-2.5 rounded-lg border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition text-sm font-medium">
+                <ChevronLeft className="w-4 h-4" /> Back
+              </button>
+            ) : (
+              <button onClick={done} className="flex-1 px-4 py-2.5 rounded-lg text-gray-400 hover:text-gray-600 transition text-sm">
+                Skip tour
+              </button>
+            )}
+            <button onClick={isLast ? done : () => setStep(s => s + 1)} className={`flex-1 flex items-center justify-center gap-1 px-4 py-2.5 rounded-lg bg-gradient-to-r ${cur.color} text-white font-semibold text-sm hover:opacity-90 transition`}>
+              {isLast ? "Get started! 🚀" : <><span>Next</span><ChevronRight className="w-4 h-4" /></>}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ────────────────────────────────────────────────────────────────────────────
 export const Route = createFileRoute("/student/")({
   component: StudentDashboard,
 });
@@ -254,5 +323,6 @@ function StudentDashboard() {
         </div>
       </div>
     </div>
-  );
-        }
+    </>
+    );
+}
