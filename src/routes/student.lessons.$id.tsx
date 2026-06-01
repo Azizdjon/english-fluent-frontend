@@ -1,181 +1,359 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { ChevronLeft, ChevronRight, CheckCircle, BookOpen, Play } from "lucide-react";
+import {
+  ChevronLeft, ChevronRight, CheckCircle2, Clock, BookOpen,
+  Volume2, Star, Play, List, X
+} from "lucide-react";
+
+export const Route = createFileRoute("/student/lessons/$id")({
+  component: LessonPlayerPage,
+});
 
 interface Lesson {
-  id: string; title: string; content: string; video_url: string;
+  id: string; title: string; content: string; video_url: string | null;
   order_index: number; duration_minutes: number; module_id: string;
+  wordwall_url?: string | null;
 }
-interface Module {
-  id: string; title: string; order_index: number; lessons: Lesson[];
+interface SideLesson { id: string; title: string; order_index: number; module_title: string; }
+
+// Built-in rich content keyed by lesson title keywords
+const LESSON_CONTENT: Record<string, { vocab: [string, string][]; grammar: string; examples: string[]; tip: string }> = {
+  "Hello & Goodbye": {
+    vocab: [["Hello", "A warm greeting used any time of day"], ["Hi", "Informal and friendly greeting"], ["Good morning", "Used before noon"], ["Good afternoon", "Used from noon to 6pm"], ["Good evening", "Used after 6pm"], ["Goodbye", "Said when leaving"], ["See you later", "Informal farewell"], ["Take care", "A warm goodbye"]],
+    grammar: "Use \"Hello\" or \"Hi\" when meeting someone. Use \"Goodbye\" or \"Bye\" when leaving. \"Good morning/afternoon/evening\" are formal greetings based on time of day.",
+    examples: ["Hello! How are you?", "Hi there! Nice to meet you.", "Good morning, everyone!", "Goodbye, see you tomorrow!", "Bye! Take care!"],
+    tip: "In English, it is very common to smile when you greet someone. Always make eye contact!"
+  },
+  "My Name Is": {
+    vocab: [["My name is", "Used to introduce yourself"], ["I am / I'm", "Contraction of I am"], ["What's your name?", "Asking someone's name"], ["Nice to meet you", "Polite phrase when introduced"], ["Pleased to meet you", "Formal version"], ["How do you do?", "Very formal British greeting"]],
+    grammar: "To introduce yourself: \"My name is [Name]\" or \"I'm [Name]\". To ask: \"What's your name?\" or \"What is your name?\"",
+    examples: ["My name is John. What's your name?", "I'm Sarah. Nice to meet you!", "Hello, I'm Mr. Brown. Pleased to meet you.", "Hi! My name is Alex. And you?"],
+    tip: "When someone says 'Nice to meet you,' always reply 'Nice to meet you too!'"
+  },
+  "How Are You": {
+    vocab: [["How are you?", "Asking about someone's wellbeing"], ["I'm fine", "A neutral positive response"], ["I'm great", "Very positive response"], ["Not bad", "An okay response"], ["Pretty good", "Informal positive response"], ["Could be better", "Politely saying not great"], ["I'm doing well", "Formal positive response"]],
+    grammar: "Question: \"How are you?\" / \"How are you doing?\" Responses: \"I'm [adjective].\" + \"And you?\" or \"How about you?\"",
+    examples: ["A: How are you? B: I'm fine, thanks! And you?", "A: How are you doing? B: Pretty good, thank you!", "A: How are you today? B: Not bad, could be better."],
+    tip: "In English culture, 'How are you?' is often just a greeting — people usually expect a short positive answer!"
+  },
+  "Numbers": {
+    vocab: [["One, Two, Three", "Basic counting numbers"], ["Ten, Twenty, Thirty", "Tens"], ["Hundred, Thousand", "Large numbers"], ["First, Second, Third", "Ordinal numbers"], ["Zero / Nought", "The number 0"]],
+    grammar: "Cardinal numbers (1, 2, 3) are used for counting. Ordinal numbers (1st, 2nd, 3rd) are used for order and dates.",
+    examples: ["I have two cats and three dogs.", "She lives on the 5th floor.", "The price is twenty-five dollars.", "Call me at 0-800-123-456."],
+    tip: "Remember: 'teen' (13-19) vs 'ty' (30, 40...). Thirteen vs Thirty — listen carefully!"
+  },
+  "Email Structure": {
+    vocab: [["Subject line", "The topic of the email"], ["Salutation", "The greeting (Dear Mr...)"], ["Body", "The main content"], ["Closing", "How you end (Regards, Sincerely)"], ["Attachment", "A file sent with the email"], ["CC / BCC", "Carbon copy / blind carbon copy"]],
+    grammar: "Formal emails: Dear Mr./Ms. [Last Name] → Body → Yours sincerely / Kind regards. Informal: Hi [Name] → Body → Best / Thanks.",
+    examples: ["Dear Mr. Smith, I am writing regarding...", "Hi Sarah, Just wanted to check in...", "Please find the report attached.", "Kind regards, John"],
+    tip: "Always proofread before sending! Check the subject line — it's the first thing people read."
+  },
+  "default": {
+    vocab: [["Practice", "To do something repeatedly to improve"], ["Vocabulary", "The words you know in a language"], ["Fluency", "Speaking smoothly and naturally"], ["Grammar", "Rules of a language"], ["Pronunciation", "How words sound when spoken"]],
+    grammar: "Keep practicing every day. Consistency is the key to learning English fluently!",
+    examples: ["I practice English every morning.", "My vocabulary is growing every day.", "She speaks with great fluency.", "Good grammar helps you communicate clearly."],
+    tip: "The best way to learn English is to use it every day — read, write, speak, and listen!"
+  }
+};
+
+function getLessonContent(title: string) {
+  for (const key of Object.keys(LESSON_CONTENT)) {
+    if (key !== "default" && title.toLowerCase().includes(key.toLowerCase().split(" ")[0].toLowerCase())) {
+      return LESSON_CONTENT[key];
+    }
+  }
+  return LESSON_CONTENT["default"];
 }
 
-export const Route = createFileRoute("/student/lessons/$id")({ component: LessonPlayerPage });
-
-function getYouTubeEmbed(url: string): string | null {
+function getYouTubeEmbed(url: string | null): string | null {
   if (!url) return null;
-  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
-  return m ? `https://www.youtube.com/embed/${m[1]}?rel=0&modestbranding=1` : null;
+  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (m) return "https://www.youtube.com/embed/" + m[1] + "?rel=0&modestbranding=1";
+  if (url.includes("youtube.com/embed/")) return url;
+  return null;
 }
-const isWordwall = (url: string) => url?.includes("wordwall.net");
 
-function LessonPlayerPage() {
+function isWordwall(url: string | null): boolean {
+  return !!url && url.includes("wordwall.net");
+}
+
+export default function LessonPlayerPage() {
   const { id } = Route.useParams();
+  const navigate = useNavigate();
   const [lesson, setLesson] = useState<Lesson | null>(null);
-  const [modules, setModules] = useState<Module[]>([]);
+  const [sideList, setSideList] = useState<SideLesson[]>([]);
   const [completed, setCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState("");
-  const [allLessons, setAllLessons] = useState<Lesson[]>([]);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [marking, setMarking] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
 
   useEffect(() => {
-    async function load() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) setUserId(user.id);
-      const { data: l } = await supabase.from("lessons").select("*").eq("id", id).single();
-      if (!l) { setLoading(false); return; }
-      setLesson(l);
-      const { data: mods } = await supabase
-        .from("modules")
-        .select("id,title,order_index,lessons(id,title,order_index,duration_minutes,video_url,module_id,content)")
-        .order("order_index");
-      if (mods) {
-        const sorted = mods.map((m: any) => ({
-          ...m, lessons: (m.lessons || []).sort((a: any, b: any) => a.order_index - b.order_index)
-        })).sort((a: any, b: any) => a.order_index - b.order_index);
-        setModules(sorted);
-        setAllLessons(sorted.flatMap((m: any) => m.lessons));
-      }
-      if (user) {
-        const { data: p } = await supabase.from("lesson_progress").select("completed").eq("student_id", user.id).eq("lesson_id", id).single();
-        if (p?.completed) setCompleted(true);
-      }
-      setLoading(false);
-    }
-    load();
+    loadLesson();
   }, [id]);
 
-  async function markComplete() {
-    if (!userId || completed) return;
-    await supabase.from("lesson_progress").upsert({ student_id: userId, lesson_id: id, completed: true, completed_at: new Date().toISOString() }, { onConflict: "student_id,lesson_id" });
-    setCompleted(true);
+  async function loadLesson() {
+    setLoading(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { navigate({ to: "/login" }); return; }
+
+    const { data: l } = await supabase
+      .from("lessons")
+      .select("id,title,content,video_url,order_index,duration_minutes,module_id,wordwall_url")
+      .eq("id", id)
+      .single();
+
+    if (!l) { setLoading(false); return; }
+    setLesson(l);
+
+    const { data: prog } = await supabase
+      .from("lesson_progress")
+      .select("id")
+      .eq("student_id", user.id)
+      .eq("lesson_id", id)
+      .eq("completed", true)
+      .single();
+    setCompleted(!!prog);
+
+    const { data: modLessons } = await supabase
+      .from("lessons")
+      .select("id,title,order_index,module_id")
+      .eq("module_id", l.module_id)
+      .order("order_index");
+
+    const { data: mod } = await supabase.from("modules").select("title").eq("id", l.module_id).single();
+    setSideList((modLessons || []).map((ml: any) => ({ ...ml, module_title: mod?.title || "" })));
+    setLoading(false);
   }
 
-  const idx = allLessons.findIndex(l => l.id === id);
-  const prev = idx > 0 ? allLessons[idx - 1] : null;
-  const next = idx < allLessons.length - 1 ? allLessons[idx + 1] : null;
+  async function markComplete() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user || completed) return;
+    setMarking(true);
+    await supabase.from("lesson_progress").upsert({
+      student_id: user.id, lesson_id: id, completed: true, completed_at: new Date().toISOString()
+    });
+    setCompleted(true);
+    setMarking(false);
+  }
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" /></div>;
-  if (!lesson) return <div className="p-8 text-center text-gray-400">Dars topilmadi</div>;
+  const currentIdx = sideList.findIndex(l => l.id === id);
+  const prevLesson = currentIdx > 0 ? sideList[currentIdx - 1] : null;
+  const nextLesson = currentIdx < sideList.length - 1 ? sideList[currentIdx + 1] : null;
 
-  const ytEmbed = getYouTubeEmbed(lesson.video_url || "");
-  const isWW = isWordwall(lesson.video_url || "");
+  if (loading) return (
+    <div className="flex items-center justify-center min-h-screen bg-slate-950">
+      <div className="text-center space-y-3">
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
+        <p className="text-slate-400 text-sm">Loading lesson...</p>
+      </div>
+    </div>
+  );
+
+  if (!lesson) return (
+    <div className="flex items-center justify-center min-h-screen bg-slate-950">
+      <div className="text-center space-y-4">
+        <BookOpen className="w-16 h-16 text-slate-600 mx-auto" />
+        <p className="text-slate-400 text-lg">Lesson not found</p>
+        <button onClick={() => navigate({ to: "/student/lessons" })}
+          className="text-blue-400 hover:text-blue-300 underline text-sm">Back to lessons</button>
+      </div>
+    </div>
+  );
+
+  const rc = getLessonContent(lesson.title);
+  const embedUrl = getYouTubeEmbed(lesson.video_url);
+  const wordwallUrl = isWordwall(lesson.video_url) ? lesson.video_url : null;
 
   return (
-    <div className="flex h-full">
-      {/* Mobile sidebar overlay */}
-      {sidebarOpen && <div className="fixed inset-0 bg-black/40 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />}
+    <div className="min-h-screen bg-slate-950 flex flex-col">
 
-      {/* Main */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Header */}
-        <div className="bg-white border-b border-gray-100 px-4 md:px-6 py-3.5 flex items-center gap-3">
-          <Link to="/student/lessons" className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
-            <ChevronLeft className="w-5 h-5" />
-          </Link>
-          <div className="flex-1 min-w-0">
-            <h1 className="font-semibold text-gray-900 text-[15px] truncate">{lesson.title}</h1>
-            {lesson.duration_minutes > 0 && <p className="text-xs text-gray-400">{lesson.duration_minutes} daqiqa</p>}
-          </div>
-          {completed && <span className="flex items-center gap-1.5 text-green-600 text-xs font-medium bg-green-50 px-3 py-1.5 rounded-full"><CheckCircle className="w-3.5 h-3.5" /> Tugallandi</span>}
-          <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-1.5 rounded-lg text-gray-400 hover:bg-gray-100">
-            <BookOpen className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-5">
-          {/* YouTube */}
-          {ytEmbed && (
-            <div className="video-wrapper shadow-sm">
-              <iframe src={ytEmbed} title={lesson.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
-            </div>
-          )}
-
-          {/* Wordwall */}
-          {isWW && (
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-purple-700 text-sm font-medium">
-                <BookOpen className="w-4 h-4" /> Interaktiv mashq
-              </div>
-              <div style={{ position: "relative", width: "100%", paddingBottom: "0", minHeight: "460px" }} className="rounded-xl border-2 border-purple-100 overflow-hidden bg-white">
-                <iframe src={lesson.video_url} title={lesson.title} style={{ width: "100%", height: "460px", border: "none" }} allow="fullscreen" />
-              </div>
-            </div>
-          )}
-
-          {/* Text content */}
-          {lesson.content && (
-            <div className="card">
-              <div className="card-body prose max-w-none text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">{lesson.content}</div>
-            </div>
-          )}
-
-          {/* No media */}
-          {!ytEmbed && !isWW && !lesson.content && (
-            <div className="card">
-              <div className="empty-state"><Play className="empty-state-icon" /><p className="empty-state-title">Kontent yuklanmoqda...</p></div>
-            </div>
-          )}
-
-          {/* Navigation */}
-          <div className="flex items-center justify-between gap-3 pt-2 pb-6">
-            {prev ? (
-              <Link to="/student/lessons/$id" params={{ id: prev.id }} className="btn-secondary flex-1 sm:flex-none justify-center">
-                <ChevronLeft className="w-4 h-4" /> Oldingi
-              </Link>
-            ) : <div />}
-
-            <button onClick={markComplete} disabled={completed} className={completed ? "flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium bg-green-50 text-green-700 cursor-default" : "btn-primary px-5"}>
-              <CheckCircle className="w-4 h-4" />
-              {completed ? "Tugallandi ✓" : "Tugalladim"}
-            </button>
-
-            {next ? (
-              <Link to="/student/lessons/$id" params={{ id: next.id }} className="btn-primary flex-1 sm:flex-none justify-center">
-                Keyingi <ChevronRight className="w-4 h-4" />
-              </Link>
-            ) : <div className="px-5 py-2 bg-green-50 text-green-700 rounded-lg text-sm text-center">🎉 Kurs tugadi!</div>}
+      {/* Top nav bar */}
+      <div className="sticky top-0 z-30 bg-slate-900/95 backdrop-blur border-b border-slate-800 px-4 py-3 flex items-center gap-3">
+        <button onClick={() => navigate({ to: "/student/lessons" })}
+          className="flex items-center gap-1.5 text-slate-400 hover:text-white transition text-sm font-medium">
+          <ChevronLeft className="w-4 h-4" /> Back
+        </button>
+        <div className="w-px h-5 bg-slate-700" />
+        <div className="flex-1 min-w-0">
+          <h1 className="text-white font-semibold text-sm md:text-base truncate">{lesson.title}</h1>
+          <div className="flex items-center gap-2 mt-0.5">
+            <Clock className="w-3 h-3 text-slate-500" />
+            <span className="text-slate-500 text-xs">{lesson.duration_minutes} min</span>
+            {completed && (
+              <span className="flex items-center gap-1 text-green-400 text-xs font-medium">
+                <CheckCircle2 className="w-3 h-3" /> Completed
+              </span>
+            )}
           </div>
         </div>
+        <button onClick={() => setShowSidebar(!showSidebar)}
+          className="md:hidden text-slate-400 hover:text-white transition p-1.5 rounded-lg hover:bg-slate-800">
+          <List className="w-5 h-5" />
+        </button>
       </div>
 
-      {/* Sidebar */}
-      <aside className={`fixed top-0 right-0 h-full w-72 bg-white border-l border-gray-100 z-50 lg:relative lg:flex flex-col transform transition-transform duration-200 ${sidebarOpen ? "translate-x-0" : "translate-x-full"} lg:translate-x-0`}>
-        <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100">
-          <span className="text-sm font-semibold text-gray-700">Darslar ro'yxati</span>
-          <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-1 rounded text-gray-400 hover:text-gray-600"><ChevronRight className="w-4 h-4" /></button>
-        </div>
+      <div className="flex flex-1 overflow-hidden">
+        {/* Main content */}
         <div className="flex-1 overflow-y-auto">
-          {modules.map(mod => (
-            <div key={mod.id}>
-              <div className="px-4 py-2.5 bg-gray-50 text-xs font-semibold text-gray-400 uppercase tracking-wide sticky top-0">{mod.title}</div>
-              {mod.lessons.map(l => (
-                <Link key={l.id} to="/student/lessons/$id" params={{ id: l.id }}
-                  className={`flex items-center gap-3 px-4 py-3 text-xs border-b border-gray-50 transition-colors ${l.id === id ? "bg-blue-50 text-blue-700 font-medium" : "text-gray-600 hover:bg-gray-50"}`}
-                >
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-medium ${l.id === id ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-400"}`}>
-                    {isWordwall(l.video_url || "") ? "W" : <Play className="w-2.5 h-2.5" />}
-                  </div>
-                  <span className="truncate">{l.title}</span>
-                </Link>
-              ))}
+          <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+
+            {/* Video / Wordwall section */}
+            {(embedUrl || wordwallUrl) && (
+              <div className="rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 shadow-xl">
+                <div className="relative" style={{paddingTop: "56.25%"}}>
+                  <iframe
+                    src={embedUrl || wordwallUrl || ""}
+                    className="absolute inset-0 w-full h-full"
+                    allowFullScreen
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    title={lesson.title}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Lesson intro card */}
+            <div className="bg-gradient-to-br from-blue-600/20 to-indigo-600/10 border border-blue-500/20 rounded-2xl p-5">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-600/30 flex items-center justify-center flex-shrink-0">
+                  <BookOpen className="w-5 h-5 text-blue-400" />
+                </div>
+                <div>
+                  <h2 className="text-white font-bold text-lg mb-1">{lesson.title}</h2>
+                  <p className="text-slate-300 text-sm leading-relaxed">
+                    {lesson.content || "In this lesson you will learn essential English expressions used in everyday communication."}
+                  </p>
+                </div>
+              </div>
             </div>
-          ))}
+
+            {/* Vocabulary section */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+              <div className="px-5 py-4 border-b border-slate-800 flex items-center gap-2">
+                <Volume2 className="w-4 h-4 text-purple-400" />
+                <h3 className="text-white font-semibold">Key Vocabulary</h3>
+                <span className="ml-auto text-xs text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full">{rc.vocab.length} words</span>
+              </div>
+              <div className="divide-y divide-slate-800">
+                {rc.vocab.map(([word, def], i) => (
+                  <div key={i} className="flex items-start gap-4 px-5 py-3.5 hover:bg-slate-800/50 transition-colors">
+                    <span className="text-blue-300 font-semibold text-sm min-w-[140px] flex-shrink-0">{word}</span>
+                    <span className="text-slate-400 text-sm">{def}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Grammar section */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Star className="w-4 h-4 text-yellow-400" />
+                <h3 className="text-white font-semibold">Grammar Note</h3>
+              </div>
+              <p className="text-slate-300 text-sm leading-relaxed bg-slate-800/60 rounded-xl p-4 border-l-4 border-yellow-500/50">
+                {rc.grammar}
+              </p>
+            </div>
+
+            {/* Examples section */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+              <div className="px-5 py-4 border-b border-slate-800 flex items-center gap-2">
+                <Play className="w-4 h-4 text-green-400" />
+                <h3 className="text-white font-semibold">Example Sentences</h3>
+              </div>
+              <div className="p-5 space-y-3">
+                {rc.examples.map((ex, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <span className="w-6 h-6 rounded-full bg-green-600/20 text-green-400 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">{i + 1}</span>
+                    <p className="text-slate-200 text-sm italic">&ldquo;{ex}&rdquo;</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Pro tip */}
+            <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-5 flex items-start gap-3">
+              <span className="text-2xl flex-shrink-0">💡</span>
+              <div>
+                <p className="text-amber-300 font-semibold text-sm mb-1">Pro Tip</p>
+                <p className="text-amber-100/80 text-sm leading-relaxed">{rc.tip}</p>
+              </div>
+            </div>
+
+            {/* Navigation + Complete */}
+            <div className="grid grid-cols-3 gap-3 pb-8">
+              <button
+                onClick={() => prevLesson && navigate({ to: "/student/lessons/$id", params: { id: prevLesson.id } })}
+                disabled={!prevLesson}
+                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-slate-700 text-slate-400 hover:border-slate-500 hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed text-sm font-medium"
+              >
+                <ChevronLeft className="w-4 h-4" /> Previous
+              </button>
+
+              <button
+                onClick={markComplete}
+                disabled={completed || marking}
+                className={"flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition " +
+                  (completed
+                    ? "bg-green-600/20 text-green-400 border border-green-600/30 cursor-default"
+                    : "bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/25")}
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                {completed ? "Completed!" : marking ? "Saving..." : "Mark Complete"}
+              </button>
+
+              <button
+                onClick={() => nextLesson && navigate({ to: "/student/lessons/$id", params: { id: nextLesson.id } })}
+                disabled={!nextLesson}
+                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed text-sm font-medium"
+              >
+                Next <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         </div>
-      </aside>
+
+        {/* Sidebar — desktop always visible, mobile overlay */}
+        <>
+          {showSidebar && (
+            <div className="fixed inset-0 z-40 md:hidden bg-black/60" onClick={() => setShowSidebar(false)} />
+          )}
+          <aside className={"md:w-72 md:flex-shrink-0 md:border-l md:border-slate-800 md:overflow-y-auto md:bg-slate-900 md:static " +
+            "fixed inset-y-0 right-0 z-50 w-72 bg-slate-900 border-l border-slate-800 overflow-y-auto transition-transform duration-300 " +
+            (showSidebar ? "translate-x-0" : "translate-x-full md:translate-x-0")}>
+            <div className="flex items-center justify-between px-4 py-4 border-b border-slate-800 sticky top-0 bg-slate-900 z-10">
+              <span className="text-white font-semibold text-sm">Lesson List</span>
+              <button onClick={() => setShowSidebar(false)} className="md:hidden text-slate-400 hover:text-white transition">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            {sideList.length === 0
+              ? <p className="text-slate-500 text-xs text-center py-8">No lessons found</p>
+              : (
+                <div className="py-2">
+                  {sideList[0].module_title && (
+                    <div className="px-4 py-2">
+                      <span className="text-xs text-slate-500 uppercase tracking-wider font-medium">{sideList[0].module_title}</span>
+                    </div>
+                  )}
+                  {sideList.map((sl, i) => (
+                    <button key={sl.id}
+                      onClick={() => { navigate({ to: "/student/lessons/$id", params: { id: sl.id } }); setShowSidebar(false); }}
+                      className={"w-full flex items-center gap-3 px-4 py-2.5 text-left transition " +
+                        (sl.id === id ? "bg-blue-600/20 text-blue-300" : "text-slate-400 hover:bg-slate-800 hover:text-slate-200")}>
+                      <span className={"w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center flex-shrink-0 " +
+                        (sl.id === id ? "bg-blue-600 text-white" : "bg-slate-700 text-slate-400")}>
+                        {i + 1}
+                      </span>
+                      <span className="text-sm truncate">{sl.title}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+          </aside>
+        </>
+      </div>
     </div>
   );
 }
