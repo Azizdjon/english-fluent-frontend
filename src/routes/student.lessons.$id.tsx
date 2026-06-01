@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/student/lessons/$id")({
-  component: LessonPlayerPage,h
+  component: LessonPlayerPage,
 });
 
 interface Lesson {
