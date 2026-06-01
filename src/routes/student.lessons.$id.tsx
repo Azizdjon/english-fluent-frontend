@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/student/lessons/$id")({
-  component: LessonPlayerPage,
+  component: LessonPlayerPage,h
 });
 
 interface Lesson {
@@ -99,7 +99,7 @@ export default function LessonPlayerPage() {
 
     const { data: l } = await supabase
       .from("lessons")
-      .select("id,title,content,video_url,order_index,duration_minutes,module_id,wordwall_url")
+      .select("*")
       .eq("id", id)
       .single();
 
