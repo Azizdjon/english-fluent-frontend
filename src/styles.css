@@ -119,3 +119,15 @@
     @apply bg-background text-foreground;
   }
   }
+
+
+/* Hide scrollbar visually but keep scroll functionality */
+nav::-webkit-scrollbar,
+aside::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar {
+  display: none;
+}
+nav, aside, .sidebar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
