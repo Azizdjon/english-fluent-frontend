@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { LogOut, Menu, X, Sun, Moon, type LucideIcon } from "lucide-react";
+import { LogOut, Menu, X, type LucideIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -16,32 +16,10 @@ interface Props {
   userName?: string;
 }
 
-function useDarkMode() {
-  const [dark, setDark] = useState<boolean>(() => {
-    if (typeof window === "undefined") return true;
-    const saved = localStorage.getItem("theme");
-    return saved ? saved === "dark" : true; // default: dark
-  });
-
-  useEffect(() => {
-    const root = document.documentElement;
-    if (dark) {
-      root.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      root.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  }, [dark]);
-
-  return [dark, setDark] as const;
-}
-
 export function AppShell({ role, navItems, children, userName }: Props) {
   const router = useRouterState();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [dark, setDark] = useDarkMode();
 
   const roleColors: Record<string, string> = {
     Student: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
@@ -67,13 +45,6 @@ export function AppShell({ role, navItems, children, userName }: Props) {
             </div>
             <span className="font-semibold text-gray-900 dark:text-white text-[15px]">PragmaLearn</span>
           </div>
-          <button
-            onClick={() => setDark(d => !d)}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
-            title={dark ? "Light mode" : "Dark mode"}
-          >
-            {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
         </div>
       </div>
 
@@ -149,9 +120,6 @@ export function AppShell({ role, navItems, children, userName }: Props) {
             <Menu className="w-5 h-5" />
           </button>
           <span className="font-semibold text-gray-900 dark:text-white text-sm">PragmaLearn</span>
-          <button onClick={() => setDark(d => !d)} className="p-1.5 rounded-lg text-gray-400 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors">
-            {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
         </div>
 
         {/* Page content */}
