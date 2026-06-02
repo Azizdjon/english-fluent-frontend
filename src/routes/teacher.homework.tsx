@@ -198,7 +198,7 @@ function TeacherHomework() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <p className="text-center text-gray-400 py-8">Yuklanmoqda...</p>
+            <p className="text-center text-gray-400 py-8">Loading...</p>
           ) : homeworks.length === 0 ? (
             <p className="text-center text-gray-400 py-8">Hali vazifalar yo'q. Birinchi vazifani yarating!</p>
           ) : (
