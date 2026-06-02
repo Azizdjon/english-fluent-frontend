@@ -57,7 +57,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen flex items-center justify-center bg-slate-900">
         <div className="flex items-center gap-3 text-white">
           <Loader2 className="animate-spin w-6 h-6" />
-          <span>Yuklanmoqda...</span>
+          <span>Loading...</span>
         </div>
       </div>
     );
