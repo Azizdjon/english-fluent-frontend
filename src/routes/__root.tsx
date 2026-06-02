@@ -15,14 +15,7 @@ const queryClient = new QueryClient();
 const PUBLIC_PATHS = ["/login", "/"];
 
 // Inline script to apply dark class before first paint (prevents FOUC)
-const darkModeScript = `
-  (function() {
-    var theme = localStorage.getItem('theme');
-    if (theme !== 'light') {
-      document.documentElement.classList.add('dark');
-    }
-  })();
-`;
+const darkModeScript = `document.documentElement.classList.add('dark');`;
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const [checking, setChecking] = useState(true);
