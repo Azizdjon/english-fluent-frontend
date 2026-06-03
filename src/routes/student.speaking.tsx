@@ -84,21 +84,21 @@ function SpeakingLab() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {prompts.map(p => (
           <button key={p.id} onClick={() => { setSelected(p); reset(); }}
-            className={"text-left p-4 rounded-xl border-2 transition-all " + (selected.id === p.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300')}>
+            className={"text-left p-4 rounded-xl border-2 transition-all " + (selected.id === p.id ? 'border-blue-500 bg-blue-900/40' : 'border-gray-600 hover:border-gray-500')}>
             <div className="flex justify-between items-start mb-1">
               <span className="font-semibold text-sm">{p.topic}</span>
-              <span className="text-xs bg-gray-100 px-2 py-0.5 rounded-full ml-1">{p.level}</span>
+              <span className="text-xs bg-gray-700 px-2 py-0.5 rounded-full ml-1">{p.level}</span>
             </div>
-            <p className="text-xs text-gray-500 line-clamp-2">{p.text}</p>
+            <p className="text-xs text-gray-400 line-clamp-2">{p.text}</p>
           </button>
         ))}
       </div>
-      <div className="bg-white rounded-2xl border shadow-sm p-6">
+      <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6">
         <div className="mb-4">
           <h2 className="font-semibold text-lg mb-1">{selected.topic}</h2>
-          <p className="text-gray-600 text-sm">{selected.text}</p>
+          <p className="text-gray-400 text-sm">{selected.text}</p>
         </div>
-        <div className="flex items-center justify-center gap-4 py-8 mb-4 bg-gray-50 rounded-xl">
+        <div className="flex items-center justify-center gap-4 py-8 mb-4 bg-gray-700/40 rounded-xl">
           {isRecording ? (
             <div className="flex items-center gap-4">
               <div className="flex gap-1 items-end">
