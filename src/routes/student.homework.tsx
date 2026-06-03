@@ -384,9 +384,9 @@ function SpeakingRecorder({
   const ss = String(elapsed % 60).padStart(2, "0");
 
   return (
-    <div className="mt-5 rounded-lg border border-violet-200 bg-violet-50/50 p-4 space-y-3">
+    <div className="mt-5 rounded-lg border border-violet-700 bg-violet-900/20 p-4 space-y-3">
       <div>
-        <div className="text-xs font-semibold uppercase tracking-wide text-violet-700 mb-1">
+        <div className="text-xs font-semibold uppercase tracking-wide text-violet-400 mb-1">
           Teacher's prompt
         </div>
         <p className="text-sm text-foreground/80">{prompt}</p>
