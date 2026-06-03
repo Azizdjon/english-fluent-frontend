@@ -3,8 +3,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MessageSquare, Play } from "lucide-react";
-import { toast } from "sonner";
+import { MessageSquare, Play, CheckCircle, XCircle, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/student/pragmatic")({
   component: PragmaticDialogues,
@@ -141,13 +140,327 @@ const scenarios: Scenario[] = [
   },
 ];
 
+function similarity(a: string, b: string): number {
+  const normalize = (s: string) =>
+    s.toLowerCase().replace(/[^a-z0-9\s]/g, "").trim();
+  const na = normalize(a);
+  const nb = normalize(b);
+  if (na === nb) return 1;
+  const wa = new Set(na.split(/\s+/).filter(Boolean));
+  const wb = new Set(nb.split(/\s+/).filter(Boolean));
+  let common = 0;
+  wa.forEach((w) => { if (wb.has(w)) common++; });
+  return common / Math.max(wa.size, wb.size, 1);
+}
+
+type PracticeAnswer = {
+  userAnswer: string;
+  correct: string;
+  isCorrect: boolean | null;
+};
+
+type PracticeState = {
+  scenarioId: string;
+  step: number;
+  answers: PracticeAnswer[];
+  finished: boolean;
+};
+
+function PracticeMode({
+  scenario,
+  onExit,
+}: {
+  scenario: Scenario;
+  onExit: () => void;
+}) {
+  const bLines = scenario.lines.filter((l) => l.speaker === "B");
+
+  const [state, setState] = useState<PracticeState>({
+    scenarioId: scenario.id,
+    step: 0,
+    answers: bLines.map((l) => ({ userAnswer: "", correct: l.text, isCorrect: null })),
+    finished: false,
+  });
+  const [inputValue, setInputValue] = useState("");
+  const [checked, setChecked] = useState(false);
+
+  const checkAnswer = () => {
+    if (checked) return;
+    const score = similarity(inputValue, state.answers[state.step].correct);
+    const isCorrect = score >= 0.55;
+    const newAnswers = [...state.answers];
+    newAnswers[state.step] = { ...newAnswers[state.step], userAnswer: inputValue, isCorrect };
+    setState({ ...state, answers: newAnswers });
+    setChecked(true);
+  };
+
+  const nextStep = () => {
+    if (state.step + 1 >= bLines.length) {
+      setState({ ...state, finished: true });
+    } else {
+      setState({ ...state, step: state.step + 1 });
+      setInputValue("");
+      setChecked(false);
+    }
+  };
+
+  if (state.finished) {
+    const correct = state.answers.filter((a) => a.isCorrect).length;
+    const total = state.answers.length;
+    const pct = Math.round((correct / total) * 100);
+    return (
+      <div className="p-8 max-w-2xl mx-auto">
+        <div className="text-center mb-8">
+          <div
+            className={`text-6xl font-bold mb-2 ${
+              pct >= 70 ? "text-green-400" : pct >= 40 ? "text-yellow-400" : "text-red-400"
+            }`}
+          >
+            {pct}%
+          </div>
+          <div className="text-xl font-semibold mb-1">
+            {correct}/{total} to'g'ri
+          </div>
+          <p className="text-muted-foreground">
+            {scenario.title} — {scenario.level}
+          </p>
+        </div>
+
+        <div className="space-y-4 mb-8">
+          {state.answers.map((a, i) => (
+            <div
+              key={i}
+              className={`p-4 rounded-lg border ${
+                a.isCorrect
+                  ? "border-green-600 bg-green-900/20"
+                  : "border-red-600 bg-red-900/20"
+              }`}
+            >
+              <div className="flex items-center gap-2 mb-1">
+                {a.isCorrect ? (
+                  <CheckCircle className="w-4 h-4 text-green-400 shrink-0" />
+                ) : (
+                  <XCircle className="w-4 h-4 text-red-400 shrink-0" />
+                )}
+                <span className="text-sm text-gray-300">
+                  {a.userAnswer || <em className="text-gray-500">bo'sh qoldirildi</em>}
+                </span>
+              </div>
+              {!a.isCorrect && (
+                <p className="text-sm text-green-400 mt-1 pl-6">
+                  ✓ {a.correct}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div className="flex gap-3">
+          <Button
+            variant="outline"
+            className="flex-1"
+            onClick={() => {
+              setState({
+                scenarioId: scenario.id,
+                step: 0,
+                answers: bLines.map((l) => ({ userAnswer: "", correct: l.text, isCorrect: null })),
+                finished: false,
+              });
+              setInputValue("");
+              setChecked(false);
+            }}
+          >
+            Qayta urinish
+          </Button>
+          <Button className="flex-1" onClick={onExit}>
+            Boshqa dialog
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  let bCount = 0;
+  const displayLines: {
+    speaker: "A" | "B";
+    text: string;
+    type: "show" | "done" | "current";
+    index?: number;
+  }[] = [];
+
+  for (const line of scenario.lines) {
+    if (line.speaker === "A") {
+      displayLines.push({ ...line, type: "show" });
+    } else {
+      if (bCount < state.step) {
+        displayLines.push({ ...line, type: "done", index: bCount });
+      } else if (bCount === state.step) {
+        displayLines.push({ ...line, type: "current" });
+        break;
+      }
+      bCount++;
+    }
+  }
+
+  const currentAnswer = state.answers[state.step];
+
+  return (
+    <div className="p-8 max-w-2xl mx-auto">
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <Badge variant={scenario.level === "C1" ? "default" : "secondary"}>
+              {scenario.level}
+            </Badge>
+            <span className="text-sm text-muted-foreground">
+              {state.step + 1} / {bLines.length}
+            </span>
+          </div>
+          <h2 className="text-2xl font-bold">{scenario.title}</h2>
+          <p className="text-muted-foreground text-sm">{scenario.context}</p>
+        </div>
+        <Button variant="ghost" size="sm" onClick={onExit}>
+          ✕ Chiqish
+        </Button>
+      </div>
+
+      <div className="space-y-3 mb-6 p-4 rounded-lg bg-muted/30 border border-border">
+        {displayLines.map((line, i) => {
+          const isB = line.speaker === "B";
+
+          if (line.type === "show") {
+            return (
+              <div key={i} className={`flex gap-2 text-sm ${isB ? "flex-row-reverse" : ""}`}>
+                <span
+                  className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
+                    isB
+                      ? "bg-secondary text-secondary-foreground"
+                      : "bg-primary text-primary-foreground"
+                  }`}
+                >
+                  {line.speaker}
+                </span>
+                <span className="flex-1 leading-relaxed">{line.text}</span>
+              </div>
+            );
+          }
+
+          if (line.type === "done" && line.index !== undefined) {
+            const ans = state.answers[line.index];
+            return (
+              <div key={i} className="flex gap-2 text-sm flex-row-reverse">
+                <span className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-secondary text-secondary-foreground">
+                  B
+                </span>
+                <span
+                  className={`flex-1 leading-relaxed text-right ${
+                    ans.isCorrect ? "text-green-400" : "text-red-400"
+                  }`}
+                >
+                  {ans.userAnswer || <em className="opacity-50">bo'sh</em>}
+                </span>
+              </div>
+            );
+          }
+
+          if (line.type === "current") {
+            return (
+              <div key={i} className="flex gap-2 text-sm flex-row-reverse">
+                <span className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-secondary text-secondary-foreground">
+                  B
+                </span>
+                <div className="flex-1">
+                  {checked ? (
+                    <div
+                      className={`p-3 rounded-lg border ${
+                        currentAnswer.isCorrect
+                          ? "border-green-600 bg-green-900/20"
+                          : "border-red-600 bg-red-900/20"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        {currentAnswer.isCorrect ? (
+                          <CheckCircle className="w-4 h-4 text-green-400 shrink-0" />
+                        ) : (
+                          <XCircle className="w-4 h-4 text-red-400 shrink-0" />
+                        )}
+                        <span className="text-sm">{currentAnswer.userAnswer}</span>
+                      </div>
+                      {!currentAnswer.isCorrect && (
+                        <p className="text-xs text-green-400 mt-1 pl-6">
+                          ✓ {currentAnswer.correct}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="border-2 border-dashed border-primary/50 rounded-lg p-3 bg-primary/5">
+                      <p className="text-xs text-muted-foreground mb-2">
+                        Sizning javobingiz (B):
+                      </p>
+                      <textarea
+                        className="w-full bg-transparent outline-none resize-none text-sm placeholder-gray-500"
+                        rows={2}
+                        placeholder="Bu yerga javobingizni yozing..."
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            if (inputValue.trim()) checkAnswer();
+                          }
+                        }}
+                        autoFocus
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          }
+
+          return null;
+        })}
+      </div>
+
+      <div className="flex gap-3">
+        {!checked ? (
+          <Button
+            className="w-full"
+            onClick={checkAnswer}
+            disabled={!inputValue.trim()}
+          >
+            Tekshirish
+          </Button>
+        ) : (
+          <Button className="w-full" onClick={nextStep}>
+            {state.step + 1 >= bLines.length ? "Natijani ko'rish" : "Keyingisi"}
+            <ChevronRight className="w-4 h-4 ml-1" />
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function PragmaticDialogues() {
   const [active, setActive] = useState<string | null>(null);
+  const [practiceScenario, setPracticeScenario] = useState<Scenario | null>(null);
+
+  if (practiceScenario) {
+    return (
+      <PracticeMode
+        scenario={practiceScenario}
+        onExit={() => setPracticeScenario(null)}
+      />
+    );
+  }
 
   return (
     <div className="p-8 max-w-6xl mx-auto">
       <div className="mb-6">
-        <Badge variant="secondary" className="mb-2">Pragmatic Dialogues</Badge>
+        <Badge variant="secondary" className="mb-2">
+          Pragmatic Dialogues
+        </Badge>
         <h1 className="text-3xl font-bold">Real-world conversation practice</h1>
         <p className="text-muted-foreground mt-1">
           Practice authentic dialogues from everyday and professional contexts.
@@ -169,7 +482,9 @@ function PragmaticDialogues() {
                     <p className="text-xs text-muted-foreground">{s.context}</p>
                   </div>
                 </div>
-                <Badge variant={s.level === "C1" ? "default" : "secondary"}>{s.level}</Badge>
+                <Badge variant={s.level === "C1" ? "default" : "secondary"}>
+                  {s.level}
+                </Badge>
               </div>
 
               {isActive && (
@@ -206,9 +521,9 @@ function PragmaticDialogues() {
                 </Button>
                 <Button
                   className="flex-1"
-                  onClick={() => { setActive(s.id); toast.success(`Practice started: ${s.title}`, { description: "Read Speaker A lines aloud, then check your pronunciation in Speaking Lab." }); }}
+                  onClick={() => setPracticeScenario(s)}
                 >
-                  <Play className="w-4 h-4" /> Practice
+                  <Play className="w-4 h-4 mr-1" /> Practice
                 </Button>
               </div>
             </Card>
