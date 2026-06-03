@@ -62,14 +62,14 @@ function DiagnosticTest() {
     const pct = Math.round((score / total) * 100);
     return (
       <div className="max-w-2xl mx-auto py-10 px-4">
-        <div className="bg-white rounded-2xl border shadow-sm p-8 text-center">
+        <div className="bg-gray-800 rounded-2xl border border-gray-700 shadow-sm p-8 text-center">
           <div className="flex justify-center mb-4">
             <Trophy className="w-16 h-16 text-yellow-500" />
           </div>
           <h1 className="text-2xl font-bold mb-1">Test Completed!</h1>
           <p className="text-gray-500 mb-6">Here are your diagnostic results</p>
 
-          <div className="bg-gray-50 rounded-xl p-6 mb-6">
+          <div className="bg-gray-700/40 rounded-xl p-6 mb-6">
             <div className={`text-5xl font-bold ${color} mb-1`}>{level}</div>
             <div className="text-lg font-semibold text-gray-700">{label}</div>
             <div className="mt-3 text-3xl font-bold">{score}/{total} <span className="text-base font-normal text-gray-500">correct ({pct}%)</span></div>
@@ -87,7 +87,7 @@ function DiagnosticTest() {
                 {answers[i] === q.answer
                   ? <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
                   : <XCircle className="w-4 h-4 text-red-500 flex-shrink-0" />}
-                <span className={`truncate ${answers[i] === q.answer ? 'text-green-700' : 'text-red-700'}`}>Q{i+1}: {answers[i] === q.answer ? 'Correct' : 'Wrong'}</span>
+                <span className={`truncate ${answers[i] === q.answer ? 'text-green-400' : 'text-red-400'}`}>Q{i+1}: {answers[i] === q.answer ? 'Correct' : 'Wrong'}</span>
               </div>
             ))}
           </div>
@@ -103,10 +103,10 @@ function DiagnosticTest() {
 
   return (
     <div className="max-w-2xl mx-auto py-10 px-4">
-      <div className="bg-white rounded-2xl border shadow-sm p-8">
+      <div className="bg-gray-800 rounded-2xl border border-gray-700 shadow-sm p-8">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-sm text-gray-500 font-medium">Diagnostic Test</span>
-          <span className="text-sm text-gray-500">{idx + 1} / {total}</span>
+          <span className="text-sm text-gray-400 font-medium">Diagnostic Test</span>
+          <span className="text-sm text-gray-400">{idx + 1} / {total}</span>
         </div>
         <Progress value={((idx + 1) / total) * 100} className="h-2 mb-6" />
 
@@ -119,8 +119,8 @@ function DiagnosticTest() {
               onClick={() => setSelected(i)}
               className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all font-medium ${
                 selected === i
-                  ? 'border-blue-500 bg-blue-50 text-blue-700'
-                  : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                  ? 'border-blue-500 bg-blue-900/40 text-blue-300'
+                  : 'border-gray-200 hover:border-gray-300 text-gray-300'
               }`}
             >
               <span className="mr-3 text-gray-400">{String.fromCharCode(65 + i)}.</span>
