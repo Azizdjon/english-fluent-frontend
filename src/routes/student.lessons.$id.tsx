@@ -201,20 +201,42 @@ export default function LessonPlayerPage() {
         <div className="flex-1 overflow-y-auto">
           <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
 
-            {/* Video / Wordwall section */}
-            {(embedUrl || wordwallUrl) && (
-              <div className="rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 shadow-xl">
-                <div className="relative" style={{paddingTop: "56.25%"}}>
-                  <iframe
-                    src={embedUrl || wordwallUrl || ""}
-                    className="absolute inset-0 w-full h-full"
-                    allowFullScreen
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    title={lesson.title}
-                  />
+            {/* Video section */}
+              {embedUrl && (
+                <div className="rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 shadow-xl">
+                  <div className="relative" style={{paddingTop: "56.25%"}}>
+                    <iframe
+                      src={embedUrl}
+                      className="absolute inset-0 w-full h-full"
+                      allowFullScreen
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      title={lesson.title}
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+
+              {/* Wordwall — yangi tabda ochiladi (iframe cookie muammosi) */}
+              {wordwallUrl && !embedUrl && (
+                <div className="rounded-2xl bg-slate-900 border border-slate-800 shadow-xl p-8 text-center space-y-5">
+                  <div className="w-16 h-16 rounded-2xl bg-indigo-600/20 flex items-center justify-center mx-auto">
+                    <BookOpen className="w-8 h-8 text-indigo-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-xl mb-2">Interaktiv mashq</h3>
+                    <p className="text-slate-400 text-sm">Wordwall mashqi yangi oynada ochiladi — cookie muammosi yo'q</p>
+                  </div>
+                  <a
+                    href={wordwallUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition shadow-lg shadow-indigo-600/25 text-base"
+                  >
+                    <Play className="w-5 h-5" />
+                    Mashqni boshlash
+                  </a>
+                </div>
+              )}
 
             {/* Lesson intro card */}
             <div className="bg-gradient-to-br from-blue-600/20 to-indigo-600/10 border border-blue-500/20 rounded-2xl p-5">
