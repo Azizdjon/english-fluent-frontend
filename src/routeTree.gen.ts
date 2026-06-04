@@ -33,6 +33,7 @@ import { Route as StudentCertificatesRouteImport } from './routes/student.certif
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminCoursesRouteImport } from './routes/admin.courses'
+import { Route as StudentLessonsIndexRouteImport } from './routes/student.lessons.index'
 import { Route as StudentLessonsIdRouteImport } from './routes/student.lessons.$id'
 
 const TeacherRoute = TeacherRouteImport.update({
@@ -155,6 +156,11 @@ const AdminCoursesRoute = AdminCoursesRouteImport.update({
   path: '/courses',
   getParentRoute: () => AdminRoute,
 } as any)
+const StudentLessonsIndexRoute = StudentLessonsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StudentLessonsRoute,
+} as any)
 const StudentLessonsIdRoute = StudentLessonsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -187,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/student/': typeof StudentIndexRoute
   '/teacher/': typeof TeacherIndexRoute
   '/student/lessons/$id': typeof StudentLessonsIdRoute
+  '/student/lessons/': typeof StudentLessonsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -198,7 +205,6 @@ export interface FileRoutesByTo {
   '/student/certificates': typeof StudentCertificatesRoute
   '/student/exercises': typeof StudentExercisesRoute
   '/student/homework': typeof StudentHomeworkRoute
-  '/student/lessons': typeof StudentLessonsRouteWithChildren
   '/student/pragmatic': typeof StudentPragmaticRoute
   '/student/profile': typeof StudentProfileRoute
   '/student/progress': typeof StudentProgressRoute
@@ -211,6 +217,7 @@ export interface FileRoutesByTo {
   '/student': typeof StudentIndexRoute
   '/teacher': typeof TeacherIndexRoute
   '/student/lessons/$id': typeof StudentLessonsIdRoute
+  '/student/lessons': typeof StudentLessonsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -239,6 +246,7 @@ export interface FileRoutesById {
   '/student/': typeof StudentIndexRoute
   '/teacher/': typeof TeacherIndexRoute
   '/student/lessons/$id': typeof StudentLessonsIdRoute
+  '/student/lessons/': typeof StudentLessonsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -268,6 +276,7 @@ export interface FileRouteTypes {
     | '/student/'
     | '/teacher/'
     | '/student/lessons/$id'
+    | '/student/lessons/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -279,7 +288,6 @@ export interface FileRouteTypes {
     | '/student/certificates'
     | '/student/exercises'
     | '/student/homework'
-    | '/student/lessons'
     | '/student/pragmatic'
     | '/student/profile'
     | '/student/progress'
@@ -292,6 +300,7 @@ export interface FileRouteTypes {
     | '/student'
     | '/teacher'
     | '/student/lessons/$id'
+    | '/student/lessons'
   id:
     | '__root__'
     | '/'
@@ -319,6 +328,7 @@ export interface FileRouteTypes {
     | '/student/'
     | '/teacher/'
     | '/student/lessons/$id'
+    | '/student/lessons/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -500,6 +510,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCoursesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/student/lessons/': {
+      id: '/student/lessons/'
+      path: '/'
+      fullPath: '/student/lessons/'
+      preLoaderRoute: typeof StudentLessonsIndexRouteImport
+      parentRoute: typeof StudentLessonsRoute
+    }
     '/student/lessons/$id': {
       id: '/student/lessons/$id'
       path: '/$id'
@@ -528,10 +545,12 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface StudentLessonsRouteChildren {
   StudentLessonsIdRoute: typeof StudentLessonsIdRoute
+  StudentLessonsIndexRoute: typeof StudentLessonsIndexRoute
 }
 
 const StudentLessonsRouteChildren: StudentLessonsRouteChildren = {
   StudentLessonsIdRoute: StudentLessonsIdRoute,
+  StudentLessonsIndexRoute: StudentLessonsIndexRoute,
 }
 
 const StudentLessonsRouteWithChildren = StudentLessonsRoute._addFileChildren(
