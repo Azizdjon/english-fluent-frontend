@@ -101,7 +101,7 @@ function LoginPage() {
           <div className="mb-6">
             <p className="text-slate-400 text-xs uppercase tracking-widest font-semibold mb-1">STEP INSIDE</p>
             <h2 className="text-2xl font-bold text-white">Pick your portal.</h2>
-            <p className="text-slate-400 text-sm mt-1">Demo mode — choose a role to explore instantly.</p>
+            
           </div>
           <div className="space-y-3">
             <p className="text-slate-500 text-xs uppercase tracking-wider font-semibold">CONTINUE AS</p>
