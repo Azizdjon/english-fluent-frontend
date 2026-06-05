@@ -148,6 +148,40 @@ const testimonials = [
 ];
 
 function Landing() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("alex@example.com");
+  const [password, setPassword] = useState("demo1234");
+  const [loading, setLoading] = useState(false);
+
+  const handleSignIn = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error || !data.user) {
+        toast.error(error?.message ?? "Sign-in failed");
+        return;
+      }
+      const { data: profile, error: pErr } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", data.user.id)
+        .single();
+      if (pErr || !profile) {
+        toast.error("Could not load profile");
+        return;
+      }
+      const role = profile.role as string;
+      if (role === "student") navigate({ to: "/student" });
+      else if (role === "teacher") navigate({ to: "/teacher" });
+      else if (role === "admin") navigate({ to: "/admin" });
+      else toast.error("Unknown role: " + role);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Sign-in failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* ============ NAV ============ */}
