@@ -483,7 +483,8 @@ function Landing() {
                     id="email"
                     type="email"
                     placeholder="you@example.com"
-                    defaultValue="alex@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="bg-white/5 border-white/15 text-white placeholder:text-white/40"
                   />
                 </div>
@@ -493,16 +494,19 @@ function Landing() {
                     id="password"
                     type="password"
                     placeholder="••••••••"
-                    defaultValue="demo1234"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") handleSignIn(); }}
                     className="bg-white/5 border-white/15 text-white placeholder:text-white/40"
                   />
                 </div>
-                <Button className="w-full bg-white text-slate-900 hover:bg-white/90 font-semibold" disabled>
-                  Sign in
+                <Button
+                  onClick={handleSignIn}
+                  disabled={loading}
+                  className="w-full bg-white text-slate-900 hover:bg-white/90 font-semibold"
+                >
+                  {loading ? "Signing in..." : "Sign in"}
                 </Button>
-                <p className="text-xs text-center text-white/50">
-                  Demo mode — pick a role on the right to enter
-                </p>
               </div>
 
               <div className="space-y-3">
