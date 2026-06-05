@@ -4,149 +4,131 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { GraduationCap, BookOpen, Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { BookOpen, Loader2 } from 'lucide-react';
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
 });
 
-export function LoginPage() {
+function LoginPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({ email: '', password: '', full_name: '', role: 'student' });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email || !password) { toast.error('Email va parol kiriting'); return; }
     setLoading(true);
     try {
-      if (mode === 'register') {
-        const { error } = await supabase.auth.signUp({
-          email: form.email,
-          password: form.password,
-          options: { data: { full_name: form.full_name, role: form.role } },
-        });
-        if (error) throw error;
-        toast.success('Registered successfully!', { description: 'You can now sign in.' });
-        setMode('login');
-      } else {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: form.email,
-          password: form.password,
-        });
-        if (error) throw error;
-        const profile = data.user?.user_metadata;
-        const role = profile?.role || 'student';
-        toast.success('Welcome!');
-        if (role === 'admin') navigate({ to: '/admin' });
-        else if (role === 'teacher') navigate({ to: '/teacher' });
-        else navigate({ to: '/student' });
-      }
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).single();
+      const role = profile?.role || 'student';
+      toast.success('Xush kelibsiz!');
+      if (role === 'teacher') navigate({ to: '/teacher' });
+      else if (role === 'admin') navigate({ to: '/admin' });
+      else navigate({ to: '/student' });
     } catch (err: any) {
-      toast.error(err.message || 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
+      toast.error(err.message || 'Email yoki parol xato');
+    } finally { setLoading(false); }
+  };
+
+  const handleDemoLogin = async (role: 'student' | 'teacher' | 'admin') => {
+    const creds = {
+      student: { email: 'student@pragmalearn.com', password: 'student123' },
+      teacher: { email: 'teacher@pragmalearn.com', password: 'teacher123' },
+      admin:   { email: 'admin@pragmalearn.com',   password: 'admin123' },
+    };
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword(creds[role]);
+      if (error) throw error;
+    } catch (_) {}
+    finally { setLoading(false); }
+    if (role === 'teacher') navigate({ to: '/teacher' });
+    else if (role === 'admin') navigate({ to: '/admin' });
+    else navigate({ to: '/student' });
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
-        {/* Logo */}
-        <div className="text-center space-y-2">
-          <div className="flex items-center justify-center gap-2">
-            <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center">
-              <BookOpen className="w-6 h-6 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex items-center justify-center p-4">
+      <div className="w-full max-w-4xl grid md:grid-cols-2 gap-6">
+
+        {/* LEFT - Login form */}
+        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-8 flex flex-col justify-center">
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">PL</div>
+              <span className="text-white font-semibold">PragmaLearn</span>
             </div>
-            <span className="text-2xl font-bold text-white">PragmaLearn</span>
+            <h1 className="text-2xl font-bold text-white">Kirish</h1>
+            <p className="text-slate-400 text-sm mt-1">Akkauntingizga kiring</p>
           </div>
-          <p className="text-slate-400 text-sm">Speak English with Confidence</p>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-slate-300 text-sm">Email</Label>
+              <Input id="email" type="email" placeholder="email@example.com" value={email}
+                onChange={e => setEmail(e.target.value)}
+                className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-indigo-500"
+                disabled={loading} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-slate-300 text-sm">Parol</Label>
+              <div className="relative">
+                <Input id="password" type={showPassword ? 'text' : 'password'} placeholder="••••••••"
+                  value={password} onChange={e => setPassword(e.target.value)}
+                  className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-indigo-500 pr-10"
+                  disabled={loading} />
+                <button type="button" onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+            <Button type="submit" disabled={loading}
+              className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5">
+              {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2 inline" /> : null}
+              {loading ? 'Kirilmoqda...' : 'Kirish'}
+            </Button>
+          </form>
         </div>
 
-        <Card className="bg-slate-800 border-slate-700">
-          <CardHeader>
-            <CardTitle className="text-white text-center">
-              {mode === 'login' ? 'Sign in' : 'Create account'}
-            </CardTitle>
-            <CardDescription className="text-center text-slate-400">
-              {mode === 'login' ? 'Enter your email and password' : 'Create a new account'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {mode === 'register' && (
-                <>
-                  <div className="space-y-1">
-                    <Label className="text-slate-300">Full name</Label>
-                    <Input
-                      placeholder="Alex Johnson"
-                      value={form.full_name}
-                      onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))}
-                      required
-                      className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-500"
-                    />
+        {/* RIGHT - Demo buttons */}
+        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-8 flex flex-col justify-center">
+          <div className="mb-6">
+            <p className="text-slate-400 text-xs uppercase tracking-widest font-semibold mb-1">STEP INSIDE</p>
+            <h2 className="text-2xl font-bold text-white">Pick your portal.</h2>
+            <p className="text-slate-400 text-sm mt-1">Demo mode — choose a role to explore instantly.</p>
+          </div>
+          <div className="space-y-3">
+            <p className="text-slate-500 text-xs uppercase tracking-wider font-semibold">CONTINUE AS</p>
+            {(['student','teacher','admin'] as const).map(role => {
+              const cfg = {
+                student: { icon: GraduationCap, color: 'bg-indigo-600', border: 'hover:border-indigo-500', arrow: 'group-hover:text-indigo-400', label: 'Login as Student', sub: 'Learn at your own pace' },
+                teacher: { icon: BookOpen,      color: 'bg-purple-600', border: 'hover:border-purple-500', arrow: 'group-hover:text-purple-400', label: 'Login as Teacher', sub: 'Manage classes & grade' },
+                admin:   { icon: Shield,        color: 'bg-green-600',  border: 'hover:border-green-500',  arrow: 'group-hover:text-green-400',  label: 'Login as Admin',   sub: 'Platform analytics' },
+              }[role];
+              const Icon = cfg.icon;
+              return (
+                <button key={role} onClick={() => handleDemoLogin(role)} disabled={loading}
+                  className={`w-full flex items-center gap-4 p-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 ${cfg.border} transition group text-left`}>
+                  <div className={`w-10 h-10 rounded-lg ${cfg.color} flex items-center justify-center flex-shrink-0`}>
+                    <Icon className="w-5 h-5 text-white" />
                   </div>
-                  <div className="space-y-1">
-                    <Label className="text-slate-300">Role</Label>
-                    <select
-                      value={form.role}
-                      onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
-                      className="w-full rounded-md bg-slate-700 border border-slate-600 text-white px-3 py-2 text-sm"
-                    >
-                      <option value="student">Student</option>
-                      <option value="teacher">Teacher</option>
-                      <option value="admin">Administrator</option>
-                    </select>
+                  <div>
+                    <div className="text-white font-semibold text-sm">{cfg.label}</div>
+                    <div className="text-slate-400 text-xs">{cfg.sub}</div>
                   </div>
-                </>
-              )}
-              <div className="space-y-1">
-                <Label className="text-slate-300">Email</Label>
-                <Input
-                  type="email"
-                  placeholder="email@example.com"
-                  value={form.email}
-                  onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                  required
-                  className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-500"
-                />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-slate-300">Password</Label>
-                <Input
-                  type="password"
-                  placeholder="••••••••"
-                  value={form.password}
-                  onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                  required
-                  minLength={6}
-                  className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-500"
-                />
-              </div>
-              <Button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-600 text-white" disabled={loading}>
-                {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                {mode === 'login' ? 'Sign in' : 'Create account'}
-              </Button>
-            </form>
-            <div className="mt-4 text-center text-sm text-slate-400">
-              {mode === 'login' ? (
-                <span>Don't have an account?{' '}
-                  <button onClick={() => setMode('register')} className="text-emerald-400 hover:underline">
-                    Register
-                  </button>
-                </span>
-              ) : (
-                <span>Already have an account?{' '}
-                  <button onClick={() => setMode('login')} className="text-emerald-400 hover:underline">
-                    Sign in
-                  </button>
-                </span>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+                  <span className={`ml-auto text-slate-500 ${cfg.arrow} transition`}>→</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
       </div>
     </div>
   );
