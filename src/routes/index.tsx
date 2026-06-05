@@ -1,4 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
 import {
   GraduationCap,
   Users,
@@ -145,6 +148,40 @@ const testimonials = [
 ];
 
 function Landing() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("alex@example.com");
+  const [password, setPassword] = useState("demo1234");
+  const [loading, setLoading] = useState(false);
+
+  const handleSignIn = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error || !data.user) {
+        toast.error(error?.message ?? "Sign-in failed");
+        return;
+      }
+      const { data: profile, error: pErr } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", data.user.id)
+        .single();
+      if (pErr || !profile) {
+        toast.error("Could not load profile");
+        return;
+      }
+      const role = profile.role as string;
+      if (role === "student") navigate({ to: "/student" });
+      else if (role === "teacher") navigate({ to: "/teacher" });
+      else if (role === "admin") navigate({ to: "/admin" });
+      else toast.error("Unknown role: " + role);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Sign-in failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* ============ NAV ============ */}
@@ -446,7 +483,8 @@ function Landing() {
                     id="email"
                     type="email"
                     placeholder="you@example.com"
-                    defaultValue="alex@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="bg-white/5 border-white/15 text-white placeholder:text-white/40"
                   />
                 </div>
@@ -456,16 +494,19 @@ function Landing() {
                     id="password"
                     type="password"
                     placeholder="••••••••"
-                    defaultValue="demo1234"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") handleSignIn(); }}
                     className="bg-white/5 border-white/15 text-white placeholder:text-white/40"
                   />
                 </div>
-                <Button className="w-full bg-white text-slate-900 hover:bg-white/90 font-semibold" disabled>
-                  Sign in
+                <Button
+                  onClick={handleSignIn}
+                  disabled={loading}
+                  className="w-full bg-white text-slate-900 hover:bg-white/90 font-semibold"
+                >
+                  {loading ? "Signing in..." : "Sign in"}
                 </Button>
-                <p className="text-xs text-center text-white/50">
-                  Demo mode — pick a role on the right to enter
-                </p>
               </div>
 
               <div className="space-y-3">
