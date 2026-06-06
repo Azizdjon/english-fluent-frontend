@@ -476,7 +476,10 @@ function Landing() {
 
           <Card className="p-8 md:p-10 bg-white/[0.04] border-white/10 backdrop-blur-xl text-white shadow-2xl">
             <div className="grid md:grid-cols-2 gap-8">
-              <div className="space-y-4">
+              <form
+                onSubmit={(e) => { e.preventDefault(); handleLogin(); }}
+                className="space-y-4"
+              >
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-white/80">Email</Label>
                   <Input
@@ -496,18 +499,17 @@ function Landing() {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") handleSignIn(); }}
                     className="bg-white/5 border-white/15 text-white placeholder:text-white/40"
                   />
                 </div>
                 <Button
-                  onClick={handleSignIn}
+                  type="submit"
                   disabled={loading}
                   className="w-full bg-white text-slate-900 hover:bg-white/90 font-semibold"
                 >
                   {loading ? "Signing in..." : "Sign in"}
                 </Button>
-              </div>
+              </form>
 
               <div className="space-y-3">
                 <div className="text-xs font-semibold uppercase tracking-wider text-white/60 mb-2">
