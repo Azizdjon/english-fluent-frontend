@@ -153,7 +153,7 @@ function Landing() {
   const [password, setPassword] = useState("demo1234");
   const [loading, setLoading] = useState(false);
 
-  const handleSignIn = async () => {
+  const handleLogin = async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
