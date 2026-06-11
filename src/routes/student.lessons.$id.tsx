@@ -273,110 +273,189 @@ export default function LessonPlayerPage() {
         <div className="flex-1 overflow-y-auto">
           <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
 
-            {/* Video section */}
-              {embedUrl && (
-                <div className="rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 shadow-xl">
-                  <div className="relative" style={{paddingTop: "56.25%"}}>
-                    <iframe
-                      src={embedUrl}
-                      className="absolute inset-0 w-full h-full"
-                      allowFullScreen
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      title={lesson.title}
-                    />
-                  </div>
-                </div>
-              )}
+            {lessonType === "wordwall" && lesson.video_url && (
+              <div className="rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 shadow-xl">
+                <iframe
+                  src={lesson.video_url}
+                  style={{ width: "100%", height: 500, border: 0 }}
+                  allowFullScreen
+                  title={lesson.title}
+                />
+              </div>
+            )}
 
-              {/* Wordwall — yangi tabda ochiladi (iframe cookie muammosi) */}
-              {wordwallUrl && !embedUrl && (
-                <div className="rounded-2xl bg-slate-900 border border-slate-800 shadow-xl p-8 text-center space-y-5">
-                  <div className="w-16 h-16 rounded-2xl bg-indigo-600/20 flex items-center justify-center mx-auto">
-                    <BookOpen className="w-8 h-8 text-indigo-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-bold text-xl mb-2">Interaktiv mashq</h3>
-                    <p className="text-slate-400 text-sm">Wordwall mashqi yangi oynada ochiladi — cookie muammosi yo'q</p>
-                  </div>
-                  <a
-                    href={wordwallUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition shadow-lg shadow-indigo-600/25 text-base"
-                  >
-                    <Play className="w-5 h-5" />
-                    Mashqni boshlash
-                  </a>
-                </div>
-              )}
-
-            {/* Lesson intro card */}
-            <div className="bg-gradient-to-br from-blue-600/20 to-indigo-600/10 border border-blue-500/20 rounded-2xl p-5">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-600/30 flex items-center justify-center flex-shrink-0">
-                  <BookOpen className="w-5 h-5 text-blue-400" />
-                </div>
-                <div>
+            {lessonType === "quiz" && (
+              <div className="space-y-4">
+                <div className="bg-gradient-to-br from-purple-600/20 to-pink-600/10 border border-purple-500/20 rounded-2xl p-5">
                   <h2 className="text-white font-bold text-lg mb-1">{lesson.title}</h2>
-                  <p className="text-slate-300 text-sm leading-relaxed">
-                    {lesson.content || "In this lesson you will learn essential English expressions used in everyday communication."}
+                  <p className="text-slate-300 text-sm">
+                    Answer all {quizQuestions.length} questions, then submit to see your score.
                   </p>
                 </div>
-              </div>
-            </div>
 
-            {/* Vocabulary section */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-slate-800 flex items-center gap-2">
-                <Volume2 className="w-4 h-4 text-purple-400" />
-                <h3 className="text-white font-semibold">Key Vocabulary</h3>
-                <span className="ml-auto text-xs text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full">{rc.vocab.length} words</span>
-              </div>
-              <div className="divide-y divide-slate-800">
-                {rc.vocab.map(([word, def], i) => (
-                  <div key={i} className="flex items-start gap-4 px-5 py-3.5 hover:bg-slate-800/50 transition-colors">
-                    <span className="text-blue-300 font-semibold text-sm min-w-[140px] flex-shrink-0">{word}</span>
-                    <span className="text-slate-400 text-sm">{def}</span>
+                {quizQuestions.map((q) => {
+                  const selected = quizAnswers[q.num];
+                  const correct = lesson.answers?.[String(q.num)];
+                  return (
+                    <div key={q.num} className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+                      <p className="text-white font-medium mb-4">
+                        <span className="text-purple-400 font-bold mr-2">{q.num}.</span>{q.text}
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {q.options.map((opt) => {
+                          const isSelected = selected === opt.letter;
+                          let cls = "border-slate-700 text-slate-300 hover:border-slate-500 hover:bg-slate-800";
+                          if (quizSubmitted && correct) {
+                            if (opt.letter === correct) cls = "border-green-500 bg-green-500/15 text-green-300";
+                            else if (isSelected) cls = "border-red-500 bg-red-500/15 text-red-300";
+                            else cls = "border-slate-800 text-slate-500";
+                          } else if (isSelected) {
+                            cls = "border-blue-500 bg-blue-500/15 text-blue-200";
+                          }
+                          return (
+                            <button
+                              key={opt.letter}
+                              type="button"
+                              disabled={quizSubmitted}
+                              onClick={() => setQuizAnswers((p) => ({ ...p, [q.num]: opt.letter }))}
+                              className={"text-left px-4 py-2.5 rounded-xl border transition text-sm flex gap-2 items-start " + cls}
+                            >
+                              <span className="font-bold">{opt.letter})</span>
+                              <span>{opt.text}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {!quizSubmitted ? (
+                  <button
+                    onClick={() => submitQuiz(quizQuestions)}
+                    disabled={submittingQuiz || Object.keys(quizAnswers).length !== quizQuestions.length}
+                    className="w-full px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition shadow-lg shadow-purple-600/25"
+                  >
+                    {submittingQuiz ? "Submitting..." : "Submit Quiz"}
+                  </button>
+                ) : (
+                  <div className="rounded-2xl bg-gradient-to-br from-green-600/20 to-emerald-600/10 border border-green-500/30 p-6 text-center">
+                    <p className="text-green-300 text-sm uppercase tracking-wider font-semibold">Your Score</p>
+                    <p className="text-white text-4xl font-bold mt-2">
+                      {quizScore?.score} / {quizScore?.total}
+                    </p>
+                    {quizScore && quizScore.total > 0 && (
+                      <p className="text-slate-300 text-sm mt-2">
+                        {Math.round((quizScore.score / quizScore.total) * 100)}% correct
+                      </p>
+                    )}
                   </div>
-                ))}
+                )}
               </div>
-            </div>
+            )}
 
-            {/* Grammar section */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <Star className="w-4 h-4 text-yellow-400" />
-                <h3 className="text-white font-semibold">Grammar Note</h3>
-              </div>
-              <p className="text-slate-300 text-sm leading-relaxed bg-slate-800/60 rounded-xl p-4 border-l-4 border-yellow-500/50">
-                {rc.grammar}
-              </p>
-            </div>
-
-            {/* Examples section */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-slate-800 flex items-center gap-2">
-                <Play className="w-4 h-4 text-green-400" />
-                <h3 className="text-white font-semibold">Example Sentences</h3>
-              </div>
-              <div className="p-5 space-y-3">
-                {rc.examples.map((ex, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <span className="w-6 h-6 rounded-full bg-green-600/20 text-green-400 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">{i + 1}</span>
-                    <p className="text-slate-200 text-sm italic">&ldquo;{ex}&rdquo;</p>
+            {lessonType === "lesson" && (
+              <>
+                {embedUrl && (
+                  <div className="rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 shadow-xl">
+                    <div className="relative" style={{paddingTop: "56.25%"}}>
+                      <iframe
+                        src={embedUrl}
+                        className="absolute inset-0 w-full h-full"
+                        allowFullScreen
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        title={lesson.title}
+                      />
+                    </div>
                   </div>
-                ))}
-              </div>
-            </div>
+                )}
 
-            {/* Pro tip */}
-            <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-5 flex items-start gap-3">
-              <span className="text-2xl flex-shrink-0">💡</span>
-              <div>
-                <p className="text-amber-300 font-semibold text-sm mb-1">Pro Tip</p>
-                <p className="text-amber-100/80 text-sm leading-relaxed">{rc.tip}</p>
-              </div>
-            </div>
+                {wordwallUrl && !embedUrl && (
+                  <div className="rounded-2xl bg-slate-900 border border-slate-800 shadow-xl p-8 text-center space-y-5">
+                    <div className="w-16 h-16 rounded-2xl bg-indigo-600/20 flex items-center justify-center mx-auto">
+                      <BookOpen className="w-8 h-8 text-indigo-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-white font-bold text-xl mb-2">Interaktiv mashq</h3>
+                      <p className="text-slate-400 text-sm">Wordwall mashqi yangi oynada ochiladi — cookie muammosi yo'q</p>
+                    </div>
+                    <a
+                      href={wordwallUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition shadow-lg shadow-indigo-600/25 text-base"
+                    >
+                      <Play className="w-5 h-5" />
+                      Mashqni boshlash
+                    </a>
+                  </div>
+                )}
+
+                <div className="bg-gradient-to-br from-blue-600/20 to-indigo-600/10 border border-blue-500/20 rounded-2xl p-5">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-blue-600/30 flex items-center justify-center flex-shrink-0">
+                      <BookOpen className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <div>
+                      <h2 className="text-white font-bold text-lg mb-1">{lesson.title}</h2>
+                      <p className="text-slate-300 text-sm leading-relaxed">
+                        {lesson.content || "In this lesson you will learn essential English expressions used in everyday communication."}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+                  <div className="px-5 py-4 border-b border-slate-800 flex items-center gap-2">
+                    <Volume2 className="w-4 h-4 text-purple-400" />
+                    <h3 className="text-white font-semibold">Key Vocabulary</h3>
+                    <span className="ml-auto text-xs text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full">{rc.vocab.length} words</span>
+                  </div>
+                  <div className="divide-y divide-slate-800">
+                    {rc.vocab.map(([word, def], i) => (
+                      <div key={i} className="flex items-start gap-4 px-5 py-3.5 hover:bg-slate-800/50 transition-colors">
+                        <span className="text-blue-300 font-semibold text-sm min-w-[140px] flex-shrink-0">{word}</span>
+                        <span className="text-slate-400 text-sm">{def}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Star className="w-4 h-4 text-yellow-400" />
+                    <h3 className="text-white font-semibold">Grammar Note</h3>
+                  </div>
+                  <p className="text-slate-300 text-sm leading-relaxed bg-slate-800/60 rounded-xl p-4 border-l-4 border-yellow-500/50">
+                    {rc.grammar}
+                  </p>
+                </div>
+
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+                  <div className="px-5 py-4 border-b border-slate-800 flex items-center gap-2">
+                    <Play className="w-4 h-4 text-green-400" />
+                    <h3 className="text-white font-semibold">Example Sentences</h3>
+                  </div>
+                  <div className="p-5 space-y-3">
+                    {rc.examples.map((ex, i) => (
+                      <div key={i} className="flex items-start gap-3">
+                        <span className="w-6 h-6 rounded-full bg-green-600/20 text-green-400 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">{i + 1}</span>
+                        <p className="text-slate-200 text-sm italic">&ldquo;{ex}&rdquo;</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-5 flex items-start gap-3">
+                  <span className="text-2xl flex-shrink-0">💡</span>
+                  <div>
+                    <p className="text-amber-300 font-semibold text-sm mb-1">Pro Tip</p>
+                    <p className="text-amber-100/80 text-sm leading-relaxed">{rc.tip}</p>
+                  </div>
+                </div>
+              </>
+            )}
+
 
             {/* Navigation + Complete */}
             <div className="grid grid-cols-3 gap-3 pb-8">
