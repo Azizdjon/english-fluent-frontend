@@ -14,7 +14,10 @@ interface Lesson {
   id: string; title: string; content: string; video_url: string | null;
   order_index: number; duration_minutes: number; module_id: string;
   wordwall_url?: string | null;
+  lesson_type?: "lesson" | "quiz" | "wordwall" | null;
+  answers?: Record<string, string> | null;
 }
+
 interface SideLesson { id: string; title: string; order_index: number; module_title: string; }
 
 // Built-in rich content keyed by lesson title keywords
