@@ -179,6 +179,37 @@ export default function LessonPlayerPage() {
     setMarking(false);
   }
 
+  async function submitQuiz(questions: QuizQuestion[]) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user || !lesson) return;
+    setSubmittingQuiz(true);
+    const answerKey = lesson.answers || {};
+    let score = 0;
+    const total = questions.length;
+    for (const q of questions) {
+      const correct = answerKey[String(q.num)];
+      if (correct && quizAnswers[q.num] && quizAnswers[q.num].toUpperCase() === String(correct).toUpperCase()) {
+        score++;
+      }
+    }
+    setQuizScore({ score, total });
+    setQuizSubmitted(true);
+    await supabase.from("test_attempts").insert({
+      student_id: user.id,
+      lesson_id: id,
+      answers: quizAnswers,
+      score,
+      total,
+    });
+    if (Object.keys(answerKey).length === 0 || score === total) {
+      await supabase.from("lesson_progress").upsert({
+        student_id: user.id, lesson_id: id, completed: true, completed_at: new Date().toISOString()
+      });
+      setCompleted(true);
+    }
+    setSubmittingQuiz(false);
+  }
+
   const currentIdx = sideList.findIndex(l => l.id === id);
   const prevLesson = currentIdx > 0 ? sideList[currentIdx - 1] : null;
   const nextLesson = currentIdx < sideList.length - 1 ? sideList[currentIdx + 1] : null;
