@@ -84,6 +84,38 @@ function isWordwall(url: string | null): boolean {
   return !!url && url.includes("wordwall.net");
 }
 
+interface QuizQuestion { num: number; text: string; options: { letter: string; text: string }[]; }
+
+function parseQuiz(content: string): QuizQuestion[] {
+  if (!content) return [];
+  const lines = content.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const questions: QuizQuestion[] = [];
+  let current: QuizQuestion | null = null;
+  const qStart = /^(\d+)[\.\)]?\s+(.+)$/;
+  const optRegex = /([A-E])\)\s*([^A-E)]+?)(?=\s+[A-E]\)|$)/g;
+  for (const line of lines) {
+    const m = line.match(qStart);
+    if (m && !/^[A-E]\)/.test(line)) {
+      if (current) questions.push(current);
+      current = { num: parseInt(m[1], 10), text: m[2].trim(), options: [] };
+      continue;
+    }
+    if (current) {
+      const opts: { letter: string; text: string }[] = [];
+      let om;
+      const re = new RegExp(optRegex.source, "g");
+      while ((om = re.exec(line)) !== null) {
+        opts.push({ letter: om[1], text: om[2].trim() });
+      }
+      if (opts.length) current.options.push(...opts);
+      else current.text += " " + line;
+    }
+  }
+  if (current) questions.push(current);
+  return questions;
+}
+
+
 export default function LessonPlayerPage() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
