@@ -237,6 +237,8 @@ export default function LessonPlayerPage() {
   const rc = getLessonContent(lesson.title);
   const _ov=VIDEO_OVERRIDES[lesson.id]; const embedUrl=_ov?"https://www.youtube.com/embed/"+_ov+"?rel=0&modestbranding=1":getYouTubeEmbed(lesson.video_url);
   const wordwallUrl = isWordwall(lesson.video_url) ? lesson.video_url : null;
+  const lessonType = lesson.lesson_type || "lesson";
+  const quizQuestions = lessonType === "quiz" ? parseQuiz(lesson.content || "") : [];
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col">
