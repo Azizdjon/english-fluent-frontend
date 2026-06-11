@@ -93,6 +93,10 @@ export default function LessonPlayerPage() {
   const [loading, setLoading] = useState(true);
   const [marking, setMarking] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [quizAnswers, setQuizAnswers] = useState<Record<number, string>>({});
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [quizScore, setQuizScore] = useState<{ score: number; total: number } | null>(null);
+  const [submittingQuiz, setSubmittingQuiz] = useState(false);
 
   useEffect(() => {
     loadLesson();
