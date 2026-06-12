@@ -93,7 +93,7 @@ function parseQuiz(content: string): QuizQuestion[] {
 
   // Find question boundaries: a digit run followed by a separator (- . ) :)
   // and a space. Use a global regex with lookahead to capture each chunk.
-  const questionRegex = /(\d+)\s*[-.\):]\s*([\s\S]*?)(?=\s\d+\s*[-.\):]\s|\s*$)/g;
+  const questionRegex = /(\d+)\s*[-.\):]\s*([\s\S]*?)(?=\s\d+\s*[-.\):]|\s*$)/g;
   const questions: QuizQuestion[] = [];
   let m: RegExpExecArray | null;
   while ((m = questionRegex.exec(text)) !== null) {
