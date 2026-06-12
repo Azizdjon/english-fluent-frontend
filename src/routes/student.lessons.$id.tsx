@@ -88,30 +88,36 @@ interface QuizQuestion { num: number; text: string; options: { letter: string; t
 
 function parseQuiz(content: string): QuizQuestion[] {
   if (!content) return [];
-  const lines = content.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  // Normalize all whitespace (tabs, newlines, multiple spaces) into single spaces.
+  const text = content.replace(/\s+/g, " ").trim();
+
+  // Find question boundaries: a digit run followed by a separator (- . ) :)
+  // and a space. Use a global regex with lookahead to capture each chunk.
+  const questionRegex = /(\d+)\s*[-.\):]\s*([\s\S]*?)(?=\s\d+\s*[-.\):]\s|\s*$)/g;
   const questions: QuizQuestion[] = [];
-  let current: QuizQuestion | null = null;
-  const qStart = /^(\d+)[\.\)]?\s+(.+)$/;
-  const optRegex = /([A-E])\)\s*([^A-E)]+?)(?=\s+[A-E]\)|$)/g;
-  for (const line of lines) {
-    const m = line.match(qStart);
-    if (m && !/^[A-E]\)/.test(line)) {
-      if (current) questions.push(current);
-      current = { num: parseInt(m[1], 10), text: m[2].trim(), options: [] };
-      continue;
-    }
-    if (current) {
-      const opts: { letter: string; text: string }[] = [];
-      let om;
-      const re = new RegExp(optRegex.source, "g");
-      while ((om = re.exec(line)) !== null) {
-        opts.push({ letter: om[1], text: om[2].trim() });
+  let m: RegExpExecArray | null;
+  while ((m = questionRegex.exec(text)) !== null) {
+    const num = parseInt(m[1], 10);
+    const body = m[2].trim();
+    if (!body) continue;
+
+    // Split question text from options at the first "A)" marker.
+    const firstOptIdx = body.search(/\b[A-E]\)/);
+    let qText = body;
+    const opts: { letter: string; text: string }[] = [];
+    if (firstOptIdx >= 0) {
+      qText = body.slice(0, firstOptIdx).trim().replace(/[\s:.-]+$/, "");
+      const optPart = body.slice(firstOptIdx);
+      // Each option: letter ) text, ending before the next letter ) or end.
+      const optRegex = /([A-E])\)\s*([\s\S]*?)(?=\s+[A-E]\)|$)/g;
+      let om: RegExpExecArray | null;
+      while ((om = optRegex.exec(optPart)) !== null) {
+        const t = om[2].trim();
+        if (t) opts.push({ letter: om[1], text: t });
       }
-      if (opts.length) current.options.push(...opts);
-      else current.text += " " + line;
     }
+    questions.push({ num, text: qText, options: opts });
   }
-  if (current) questions.push(current);
   return questions;
 }
 
