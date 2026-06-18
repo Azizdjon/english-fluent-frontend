@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { LayoutDashboard, Mic, ClipboardCheck, Puzzle, BookOpen, MessageSquare, ClipboardList, User, TrendingUp } from "lucide-react";
+import { LayoutDashboard, Mic, ClipboardCheck, Puzzle, BookOpen, MessageSquare, ClipboardList, User, TrendingUp, GraduationCap } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 
 export const Route = createFileRoute("/student")({
@@ -13,6 +13,14 @@ function StudentLayout() {
       navItems={[
         { to: "/student", label: "Dashboard", icon: LayoutDashboard },
         { to: "/student/lessons", label: "Lessons", icon: BookOpen },
+        {
+          to: "/student/grammar",
+          label: "Grammar",
+          icon: GraduationCap,
+          children: [
+            { to: "/student/grammar/conditional", label: "Conditional" },
+          ],
+        },
         { to: "/student/progress", label: "Progress", icon: TrendingUp },
         { to: "/student/homework", label: "Homework", icon: ClipboardList },
         { to: "/student/speaking", label: "Speaking Lab", icon: Mic },
