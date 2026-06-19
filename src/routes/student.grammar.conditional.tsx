@@ -34,6 +34,7 @@ function parseQuestions(content: string) {
 function ConditionalPage() {
   const [selected, setSelected] = useState<null | typeof LESSON_IDS[0]>(null);
   const [questions, setQuestions] = useState<{ question: string; options: string[] }[]>([]);
+  const [answerKey, setAnswerKey] = useState<Record<string, string>>({});
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [finished, setFinished] = useState(false);
@@ -41,9 +42,10 @@ function ConditionalPage() {
 
   const startLesson = async (lesson: typeof LESSON_IDS[0]) => {
     setLoading(true);
-    const { data } = await supabase.from('lessons').select('content').eq('id', lesson.id).single();
+    const { data } = await supabase.from('lessons').select('content, answers').eq('id', lesson.id).single();
     const parsed = parseQuestions(data?.content || '');
     setQuestions(parsed);
+    setAnswerKey((data?.answers as Record<string, string>) || {});
     setSelected(lesson);
     setCurrent(0);
     setAnswers([]);
@@ -91,12 +93,36 @@ function ConditionalPage() {
   if (loading) return <div className="flex items-center justify-center min-h-[50vh]"><p className="text-gray-500 dark:text-slate-400">Yuklanmoqda...</p></div>;
 
   if (finished) {
+    const hasKey = Object.keys(answerKey).length > 0;
+    let correctCount = 0;
+    if (hasKey) {
+      questions.forEach((_, i) => {
+        const userLetter = answers[i] !== undefined ? LABELS[answers[i]] : null;
+        const correct = answerKey[String(i + 1)];
+        if (userLetter && correct && userLetter.toUpperCase() === String(correct).toUpperCase()) correctCount++;
+      });
+    }
+    const pct = hasKey ? Math.round((correctCount / questions.length) * 100) : 0;
+    const stars = pct >= 90 ? 5 : pct >= 75 ? 4 : pct >= 60 ? 3 : pct >= 40 ? 2 : 1;
+
     return (
       <div className="flex items-center justify-center min-h-[50vh] px-4">
         <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 max-w-md w-full text-center shadow-lg border border-gray-200 dark:border-slate-700">
           <div className="text-5xl mb-4">🎉</div>
           <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">Bajarildi!</h2>
-          <p className="text-gray-500 dark:text-slate-400 mb-6">{selected.title} testini tugatdingiz.</p>
+          <p className="text-gray-500 dark:text-slate-400 mb-4">{selected.title} testini tugatdingiz.</p>
+          {hasKey ? (
+            <>
+              <p className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                Natija: {correctCount} / {questions.length} ({pct}%)
+              </p>
+              <p className="text-2xl mb-6">{'⭐'.repeat(stars)}</p>
+            </>
+          ) : (
+            <p className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+              {answers.filter(a => a !== undefined).length} ta savoldan o'tdingiz
+            </p>
+          )}
           <Button onClick={() => setSelected(null)} className="w-full">Boshqa testni tanlash</Button>
         </div>
       </div>
