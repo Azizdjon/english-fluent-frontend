@@ -36,6 +36,7 @@ import { Route as AdminCoursesRouteImport } from './routes/admin.courses'
 import { Route as StudentLessonsIndexRouteImport } from './routes/student.lessons.index'
 import { Route as StudentLessonsIdRouteImport } from './routes/student.lessons.$id'
 import { Route as StudentGrammarConditionalRouteImport } from './routes/student.grammar.conditional'
+import { Route as StudentGrammarTopicRouteImport } from './routes/student.grammar.$topic'
 
 const TeacherRoute = TeacherRouteImport.update({
   id: '/teacher',
@@ -173,6 +174,11 @@ const StudentGrammarConditionalRoute =
     path: '/grammar/conditional',
     getParentRoute: () => StudentRoute,
   } as any)
+const StudentGrammarTopicRoute = StudentGrammarTopicRouteImport.update({
+  id: '/grammar/$topic',
+  path: '/grammar/$topic',
+  getParentRoute: () => StudentRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -199,6 +205,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/student/': typeof StudentIndexRoute
   '/teacher/': typeof TeacherIndexRoute
+  '/student/grammar/$topic': typeof StudentGrammarTopicRoute
   '/student/grammar/conditional': typeof StudentGrammarConditionalRoute
   '/student/lessons/$id': typeof StudentLessonsIdRoute
   '/student/lessons/': typeof StudentLessonsIndexRoute
@@ -224,6 +231,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/student': typeof StudentIndexRoute
   '/teacher': typeof TeacherIndexRoute
+  '/student/grammar/$topic': typeof StudentGrammarTopicRoute
   '/student/grammar/conditional': typeof StudentGrammarConditionalRoute
   '/student/lessons/$id': typeof StudentLessonsIdRoute
   '/student/lessons': typeof StudentLessonsIndexRoute
@@ -254,6 +262,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/student/': typeof StudentIndexRoute
   '/teacher/': typeof TeacherIndexRoute
+  '/student/grammar/$topic': typeof StudentGrammarTopicRoute
   '/student/grammar/conditional': typeof StudentGrammarConditionalRoute
   '/student/lessons/$id': typeof StudentLessonsIdRoute
   '/student/lessons/': typeof StudentLessonsIndexRoute
@@ -285,6 +294,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/student/'
     | '/teacher/'
+    | '/student/grammar/$topic'
     | '/student/grammar/conditional'
     | '/student/lessons/$id'
     | '/student/lessons/'
@@ -310,6 +320,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/student'
     | '/teacher'
+    | '/student/grammar/$topic'
     | '/student/grammar/conditional'
     | '/student/lessons/$id'
     | '/student/lessons'
@@ -339,6 +350,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/student/'
     | '/teacher/'
+    | '/student/grammar/$topic'
     | '/student/grammar/conditional'
     | '/student/lessons/$id'
     | '/student/lessons/'
@@ -544,6 +556,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentGrammarConditionalRouteImport
       parentRoute: typeof StudentRoute
     }
+    '/student/grammar/$topic': {
+      id: '/student/grammar/$topic'
+      path: '/grammar/$topic'
+      fullPath: '/student/grammar/$topic'
+      preLoaderRoute: typeof StudentGrammarTopicRouteImport
+      parentRoute: typeof StudentRoute
+    }
   }
 }
 
@@ -588,6 +607,7 @@ interface StudentRouteChildren {
   StudentSpeakingRoute: typeof StudentSpeakingRoute
   StudentTestRoute: typeof StudentTestRoute
   StudentIndexRoute: typeof StudentIndexRoute
+  StudentGrammarTopicRoute: typeof StudentGrammarTopicRoute
   StudentGrammarConditionalRoute: typeof StudentGrammarConditionalRoute
 }
 
@@ -602,6 +622,7 @@ const StudentRouteChildren: StudentRouteChildren = {
   StudentSpeakingRoute: StudentSpeakingRoute,
   StudentTestRoute: StudentTestRoute,
   StudentIndexRoute: StudentIndexRoute,
+  StudentGrammarTopicRoute: StudentGrammarTopicRoute,
   StudentGrammarConditionalRoute: StudentGrammarConditionalRoute,
 }
 
