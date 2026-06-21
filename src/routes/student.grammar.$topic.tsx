@@ -118,8 +118,25 @@ function HistoryPanel({ attempts, lessonIds }: { attempts: Attempt[]; lessonIds:
   );
 }
 
-type Question = { question: string; options: string[]; answer: string; };
-type LessonItem = { id: string; title: string; questions: Question[]; };
+type Question = { question: string; options: string[]; answer?: string; };
+type LessonItem = { id: string; title: string; questions: Question[]; answerKey: Record<string, string>; };
+
+function parseQuestions(content: string): Question[] {
+  if (!content) return [];
+  const cleaned = content.replace(/\n/g, ' ').replace(/\s+/g, ' ');
+  const parts = cleaned.split(/(?=\d+\s+Choose|(?<=\w)\s+\d+\s+Choose)/);
+  const questions: Question[] = [];
+  for (const part of parts) {
+    const m = part.match(/^(\d+\s+.+?)\s+A\)(.+?)B\)(.+?)C\)(.+?)D\)(.+?)(?:E\)(.+?))?$/);
+    if (m) {
+      questions.push({
+        question: m[1].replace(/^\d+\s+/, '').trim(),
+        options: [m[2], m[3], m[4], m[5], m[6]].filter(Boolean).map(o => o.trim()),
+      });
+    }
+  }
+  return questions;
+}
 
 function GrammarTopicPage() {
   const { topic } = Route.useParams();
