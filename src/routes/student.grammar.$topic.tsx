@@ -169,7 +169,7 @@ function GrammarTopicPage() {
             const parsed = typeof l.content === 'string' ? JSON.parse(l.content) : l.content;
             questions = Array.isArray(parsed) ? parsed : (parsed?.questions ?? []);
           } catch {
-            // content isn't JSON — parse raw text format
+                      questions = parseQuestions(l.content || '');
           }
           if (!questions || questions.length === 0) {
             questions = typeof l.content === 'string' ? parseQuestions(l.content) : [];
