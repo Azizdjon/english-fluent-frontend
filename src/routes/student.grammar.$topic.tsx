@@ -193,7 +193,12 @@ function GrammarTopicPage() {
   const handleNext = useCallback(async () => {
     if (!activeLesson || selected === null) return;
     const q = activeLesson.questions[currentQ];
-    const correct = selected === q.answer;
+    const selectedIdx = q.options.indexOf(selected);
+    const selectedLetter = selectedIdx >= 0 ? LABELS[selectedIdx] : null;
+    const keyLetter = activeLesson.answerKey[String(currentQ + 1)];
+    let correct = false;
+    if (q.answer) correct = selected === q.answer;
+    else if (keyLetter && selectedLetter) correct = keyLetter.toUpperCase() === selectedLetter.toUpperCase();
     const newAnswers = [...answers, correct];
     if (currentQ + 1 >= activeLesson.questions.length) {
       setAnswers(newAnswers); setFinished(true);
