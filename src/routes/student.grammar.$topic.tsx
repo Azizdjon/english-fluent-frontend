@@ -118,8 +118,25 @@ function HistoryPanel({ attempts, lessonIds }: { attempts: Attempt[]; lessonIds:
   );
 }
 
-type Question = { question: string; options: string[]; answer: string; };
-type LessonItem = { id: string; title: string; questions: Question[]; };
+type Question = { question: string; options: string[]; answer?: string; };
+type LessonItem = { id: string; title: string; questions: Question[]; answerKey: Record<string, string>; };
+
+function parseQuestions(content: string): Question[] {
+  if (!content) return [];
+  const cleaned = content.replace(/\n/g, ' ').replace(/\s+/g, ' ');
+  const parts = cleaned.split(/(?=\d+\s+Choose|(?<=\w)\s+\d+\s+Choose)/);
+  const questions: Question[] = [];
+  for (const part of parts) {
+    const m = part.match(/^(\d+\s+.+?)\s+A\)(.+?)B\)(.+?)C\)(.+?)D\)(.+?)(?:E\)(.+?))?$/);
+    if (m) {
+      questions.push({
+        question: m[1].replace(/^\d+\s+/, '').trim(),
+        options: [m[2], m[3], m[4], m[5], m[6]].filter(Boolean).map(o => o.trim()),
+      });
+    }
+  }
+  return questions;
+}
 
 function GrammarTopicPage() {
   const { topic } = Route.useParams();
@@ -144,15 +161,21 @@ function GrammarTopicPage() {
     if (!config) return;
     const fetchLessons = async () => {
       setLoading(true);
-      const { data } = await supabase.from('lessons').select('id, title, content').in('id', config.lessonIds);
+      const { data } = await supabase.from('lessons').select('id, title, content, answers').in('id', config.lessonIds);
       if (data) {
         setLessons(data.map((l: any) => {
           let questions: Question[] = [];
           try {
             const parsed = typeof l.content === 'string' ? JSON.parse(l.content) : l.content;
             questions = Array.isArray(parsed) ? parsed : (parsed?.questions ?? []);
-          } catch {}
-          return { id: l.id, title: l.title, questions };
+          } catch {
+            // content isn't JSON — parse raw text format
+          }
+          if (!questions || questions.length === 0) {
+            questions = typeof l.content === 'string' ? parseQuestions(l.content) : [];
+          }
+          const answerKey = (l.answers as Record<string, string>) || {};
+          return { id: l.id, title: l.title, questions, answerKey };
         }));
       }
       setLoading(false);
@@ -170,7 +193,12 @@ function GrammarTopicPage() {
   const handleNext = useCallback(async () => {
     if (!activeLesson || selected === null) return;
     const q = activeLesson.questions[currentQ];
-    const correct = selected === q.answer;
+    const selectedIdx = q.options.indexOf(selected);
+    const selectedLetter = selectedIdx >= 0 ? LABELS[selectedIdx] : null;
+    const keyLetter = activeLesson.answerKey[String(currentQ + 1)];
+    let correct = false;
+    if (q.answer) correct = selected === q.answer;
+    else if (keyLetter && selectedLetter) correct = keyLetter.toUpperCase() === selectedLetter.toUpperCase();
     const newAnswers = [...answers, correct];
     if (currentQ + 1 >= activeLesson.questions.length) {
       setAnswers(newAnswers); setFinished(true);
