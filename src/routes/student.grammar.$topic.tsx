@@ -161,15 +161,21 @@ function GrammarTopicPage() {
     if (!config) return;
     const fetchLessons = async () => {
       setLoading(true);
-      const { data } = await supabase.from('lessons').select('id, title, content').in('id', config.lessonIds);
+      const { data } = await supabase.from('lessons').select('id, title, content, answers').in('id', config.lessonIds);
       if (data) {
         setLessons(data.map((l: any) => {
           let questions: Question[] = [];
           try {
             const parsed = typeof l.content === 'string' ? JSON.parse(l.content) : l.content;
             questions = Array.isArray(parsed) ? parsed : (parsed?.questions ?? []);
-          } catch {}
-          return { id: l.id, title: l.title, questions };
+          } catch {
+            // content isn't JSON — parse raw text format
+          }
+          if (!questions || questions.length === 0) {
+            questions = typeof l.content === 'string' ? parseQuestions(l.content) : [];
+          }
+          const answerKey = (l.answers as Record<string, string>) || {};
+          return { id: l.id, title: l.title, questions, answerKey };
         }));
       }
       setLoading(false);
