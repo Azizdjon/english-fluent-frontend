@@ -185,7 +185,7 @@ function GrammarTopicPage() {
 
   useEffect(() => {
     if (!config || !userId) return;
-    supabase.from('test_attempts').select('lesson_id, score, total, created_at').eq('user_id', userId).in('lesson_id', config.lessonIds).order('created_at', { ascending: false }).then(({ data }) => setAttempts((data as Attempt[]) ?? []));
+    supabase.from('test_attempts').select('lesson_id, score, total, created_at:completed_at').eq('student_id', userId).in('lesson_id', config.lessonIds).order('completed_at', { ascending: false }).then(({ data }) => setAttempts((data as Attempt[]) ?? []));
   }, [topic, userId, finished, config]);
 
   const startLesson = (lesson: LessonItem) => { setActiveLesson(lesson); setCurrentQ(0); setSelected(null); setAnswers([]); setFinished(false); };
@@ -203,7 +203,7 @@ function GrammarTopicPage() {
     if (currentQ + 1 >= activeLesson.questions.length) {
       setAnswers(newAnswers); setFinished(true);
       const score = newAnswers.filter(Boolean).length;
-      if (userId) await supabase.from('test_attempts').insert({ user_id: userId, lesson_id: activeLesson.id, score, total: activeLesson.questions.length, created_at: new Date().toISOString() });
+      if (userId) await supabase.from('test_attempts').insert({ student_id: userId, lesson_id: activeLesson.id, score, total: activeLesson.questions.length, completed_at: new Date().toISOString() });
     } else {
       setAnswers(newAnswers); setCurrentQ(prev => prev + 1); setSelected(null);
     }
