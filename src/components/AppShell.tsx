@@ -2,6 +2,8 @@ import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { LogOut, Menu, ChevronDown, ChevronRight, type LucideIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { useI18n } from "@/lib/i18n";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 export interface NavItem {
   to: string;
@@ -20,6 +22,7 @@ interface Props {
 export function AppShell({ role, navItems, children, userName }: Props) {
   const router = useRouterState();
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [expandedNavs, setExpandedNavs] = useState<Set<string>>(new Set());
 
@@ -70,12 +73,13 @@ export function AppShell({ role, navItems, children, userName }: Props) {
         </div>
       </div>
 
-      {/* Role badge */}
-      <div className="px-5 py-3 border-b border-gray-100 dark:border-slate-700">
+      {/* Role badge + language */}
+      <div className="px-5 py-3 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between gap-2">
         <span className={`inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full ${roleColors[role] || "bg-gray-100 text-gray-600"}`}>
-          {role}
+          {t(`roles.${role.toLowerCase()}`)}
           {userName && <span className="ml-1 opacity-70">· {userName.split(" ")[0]}</span>}
         </span>
+        <LanguageToggle variant="light" />
       </div>
 
       {/* Navigation */}
@@ -149,7 +153,7 @@ export function AppShell({ role, navItems, children, userName }: Props) {
           className="flex items-center gap-3 px-3 py-2.5 w-full text-left text-sm text-gray-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
         >
           <LogOut className="w-[18px] h-[18px]" />
-          Chiqish
+          {t("common.logout")}
         </button>
       </div>
     </div>
