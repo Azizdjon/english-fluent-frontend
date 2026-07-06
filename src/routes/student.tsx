@@ -1,21 +1,23 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { LayoutDashboard, Mic, ClipboardCheck, Puzzle, BookOpen, MessageSquare, ClipboardList, User, TrendingUp, GraduationCap } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/student")({
   component: StudentLayout,
 });
 
 function StudentLayout() {
+  const { t } = useI18n();
   return (
     <AppShell
       role="Student"
       navItems={[
-        { to: "/student", label: "Dashboard", icon: LayoutDashboard },
-        { to: "/student/lessons", label: "Lessons", icon: BookOpen },
+        { to: "/student", label: t("nav.dashboard"), icon: LayoutDashboard },
+        { to: "/student/lessons", label: t("nav.lessons"), icon: BookOpen },
         {
           to: "/student/grammar",
-          label: "Grammar",
+          label: t("nav.grammar"),
           icon: GraduationCap,
           children: [
             { to: "/student/grammar/simple-present-tense", label: "Simple Present Tense" },
@@ -87,13 +89,13 @@ function StudentLayout() {
             { to: "/student/grammar/to-be-there-is-there-are", label: "To be & There is/There are" },
           ],
         },
-        { to: "/student/progress", label: "Progress", icon: TrendingUp },
-        { to: "/student/homework", label: "Homework", icon: ClipboardList },
-        { to: "/student/speaking", label: "Speaking Lab", icon: Mic },
-        { to: "/student/exercises", label: "Exercises", icon: Puzzle },
-        { to: "/student/test", label: "Diagnostic Test", icon: ClipboardCheck },
-        { to: "/student/pragmatic", label: "Pragmatic", icon: MessageSquare },
-        { to: "/student/profile", label: "Profile", icon: User },
+        { to: "/student/progress", label: t("nav.progress"), icon: TrendingUp },
+        { to: "/student/homework", label: t("nav.homework"), icon: ClipboardList },
+        { to: "/student/speaking", label: t("nav.speakingLab"), icon: Mic },
+        { to: "/student/exercises", label: t("nav.exercises"), icon: Puzzle },
+        { to: "/student/test", label: t("nav.diagnosticTest"), icon: ClipboardCheck },
+        { to: "/student/pragmatic", label: t("nav.pragmatic"), icon: MessageSquare },
+        { to: "/student/profile", label: t("nav.profile"), icon: User },
       ]}
     >
       <Outlet />
