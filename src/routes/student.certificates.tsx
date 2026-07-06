@@ -117,14 +117,14 @@ function StudentCertificates() {
 
         const { data } = await supabase
           .from("certificates")
-          .select("id, grade, issued_at, courses(name)")
+          .select("id, grade, issued_at, courses(title)")
           .eq("student_id", user.id)
           .order("issued_at", { ascending: false });
 
         if (data && data.length > 0) {
           setCerts(data.map((c: any) => ({
             id: c.id,
-            course_name: c.courses?.name ?? "Course",
+            course_name: c.courses?.title ?? "Course",
             grade: c.grade,
             issued_at: c.issued_at,
             student_name: profile?.full_name ?? "Student",

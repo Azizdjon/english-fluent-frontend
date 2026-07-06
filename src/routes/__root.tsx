@@ -10,9 +10,10 @@ import { Toaster } from "@/components/ui/sonner";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { LanguageProvider } from "@/lib/i18n";
 
 const queryClient = new QueryClient();
-const PUBLIC_PATHS = ["/login", "/"];
+const PUBLIC_PATHS = ["/login", "/", "/research"];
 
 // Inline script to apply dark class before first paint (prevents FOUC)
 const darkModeScript = `document.documentElement.classList.add('dark');`;
@@ -67,10 +68,12 @@ function RootComponent() {
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
-          <AuthGuard>
-            <Outlet />
-          </AuthGuard>
-          <Toaster />
+          <LanguageProvider>
+            <AuthGuard>
+              <Outlet />
+            </AuthGuard>
+            <Toaster />
+          </LanguageProvider>
         </QueryClientProvider>
         <Scripts />
       </body>

@@ -2,12 +2,13 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
+import { useI18n } from "@/lib/i18n";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import {
   GraduationCap,
   Users,
   Shield,
   Sparkles,
-  BookOpen,
   Mic,
   Trophy,
   ArrowRight,
@@ -19,6 +20,7 @@ import {
   Star,
   CheckCircle2,
   Quote,
+  FlaskConical,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -39,126 +41,61 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-const roles = [
-  {
-    name: "Student",
-    to: "/student",
-    icon: GraduationCap,
-    desc: "Learn at your own pace",
-    color: "from-indigo-500 to-blue-500",
-  },
-  {
-    name: "Teacher",
-    to: "/teacher",
-    icon: Users,
-    desc: "Manage classes & grade",
-    color: "from-violet-500 to-purple-500",
-  },
-  {
-    name: "Admin",
-    to: "/admin",
-    icon: Shield,
-    desc: "Platform analytics",
-    color: "from-emerald-500 to-teal-500",
-  },
-] as const;
-
-const features = [
-  {
-    icon: Brain,
-    title: "Adaptive AI Path",
-    desc: "Your curriculum reshapes itself after every answer — never too easy, never too hard.",
-  },
-  {
-    icon: Mic,
-    title: "AI Speaking Lab",
-    desc: "Real-time pronunciation, fluency, and intonation feedback from your browser microphone.",
-  },
-  {
-    icon: MessageSquare,
-    title: "Pragmatic Dialogues",
-    desc: "Rehearse real B2/C1 scenarios — interviews, presentations, doctor visits, business meetings.",
-  },
-  {
-    icon: Headphones,
-    title: "Cinematic Lessons",
-    desc: "HD video lessons with native speakers, paired with interactive grammar drills.",
-  },
-  {
-    icon: Globe2,
-    title: "CEFR Aligned",
-    desc: "Every module maps to A1–C2 outcomes, with a diagnostic test that places you in minutes.",
-  },
-  {
-    icon: Trophy,
-    title: "Certificates",
-    desc: "Earn shareable proof of progress at the end of each level — verified by your teacher.",
-  },
-];
-
-const stats = [
-  { value: "60+", label: "Interactive modules" },
-  { value: "12k", label: "Active learners" },
-  { value: "4.9★", label: "Average rating" },
-  { value: "98%", label: "Pass rate" },
-];
-
-const journey = [
-  {
-    step: "01",
-    title: "Take the diagnostic",
-    desc: "A 10-minute adaptive test pinpoints your CEFR level across grammar, vocab, and listening.",
-  },
-  {
-    step: "02",
-    title: "Get your path",
-    desc: "An AI tutor assembles a weekly plan from 60+ modules, drills, and pragmatic scenarios.",
-  },
-  {
-    step: "03",
-    title: "Practice out loud",
-    desc: "Speak into the Speaking Lab — get instant feedback on rhythm, stress, and clarity.",
-  },
-  {
-    step: "04",
-    title: "Earn your certificate",
-    desc: "Complete the level, get verified by a teacher, and share your CEFR certificate.",
-  },
-];
-
-const testimonials = [
-  {
-    quote:
-      "The Speaking Lab finally fixed my pronunciation. I went from B1 to C1 in eight months.",
-    name: "Sofía R.",
-    role: "Medical student, Madrid",
-  },
-  {
-    quote:
-      "Pragmatic Dialogues nailed my job interview prep. I got hired by a London startup.",
-    name: "Kenji T.",
-    role: "Software engineer, Tokyo",
-  },
-  {
-    quote:
-      "As a teacher, the homework grader saves me six hours a week. My students love it too.",
-    name: "Emma W.",
-    role: "English teacher, Berlin",
-  },
-];
-
 function Landing() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [email, setEmail] = useState("alex@example.com");
   const [password, setPassword] = useState("demo1234");
   const [loading, setLoading] = useState(false);
+
+  const roles = [
+    { key: "student", to: "/student", icon: GraduationCap, color: "from-indigo-500 to-blue-500" },
+    { key: "teacher", to: "/teacher", icon: Users, color: "from-violet-500 to-purple-500" },
+    { key: "admin", to: "/admin", icon: Shield, color: "from-emerald-500 to-teal-500" },
+  ] as const;
+
+  const features = [
+    { icon: Brain, title: t("landing.features.items.adaptiveTitle"), desc: t("landing.features.items.adaptiveDesc") },
+    { icon: Mic, title: t("landing.features.items.speakingTitle"), desc: t("landing.features.items.speakingDesc") },
+    { icon: MessageSquare, title: t("landing.features.items.dialoguesTitle"), desc: t("landing.features.items.dialoguesDesc") },
+    { icon: Headphones, title: t("landing.features.items.lessonsTitle"), desc: t("landing.features.items.lessonsDesc") },
+    { icon: Globe2, title: t("landing.features.items.cefrTitle"), desc: t("landing.features.items.cefrDesc") },
+    { icon: Trophy, title: t("landing.features.items.certsTitle"), desc: t("landing.features.items.certsDesc") },
+  ];
+
+  const stats = [
+    { value: "60+", label: t("landing.stats.modules") },
+    { value: "12k", label: t("landing.stats.learners") },
+    { value: "4.9★", label: t("landing.stats.rating") },
+    { value: "98%", label: t("landing.stats.pass") },
+  ];
+
+  const journey = [
+    { step: "01", title: t("landing.journey.step1Title"), desc: t("landing.journey.step1Desc") },
+    { step: "02", title: t("landing.journey.step2Title"), desc: t("landing.journey.step2Desc") },
+    { step: "03", title: t("landing.journey.step3Title"), desc: t("landing.journey.step3Desc") },
+    { step: "04", title: t("landing.journey.step4Title"), desc: t("landing.journey.step4Desc") },
+  ];
+
+  const testimonials = [
+    { quote: t("landing.stories.t1Quote"), name: t("landing.stories.t1Name"), role: t("landing.stories.t1Role") },
+    { quote: t("landing.stories.t2Quote"), name: t("landing.stories.t2Name"), role: t("landing.stories.t2Role") },
+    { quote: t("landing.stories.t3Quote"), name: t("landing.stories.t3Name"), role: t("landing.stories.t3Role") },
+  ];
+
+  const labPoints = [
+    t("landing.speakingLab.point1"),
+    t("landing.speakingLab.point2"),
+    t("landing.speakingLab.point3"),
+    t("landing.speakingLab.point4"),
+  ];
 
   const handleLogin = async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error || !data.user) {
-        toast.error(error?.message ?? "Sign-in failed");
+        toast.error(error?.message ?? t("landing.login.signInFailed"));
         return;
       }
       const { data: profile, error: pErr } = await supabase
@@ -167,16 +104,16 @@ function Landing() {
         .eq("id", data.user.id)
         .single();
       if (pErr || !profile) {
-        toast.error("Could not load profile");
+        toast.error(t("landing.login.loadProfileFailed"));
         return;
       }
       const role = profile.role as string;
       if (role === "student") navigate({ to: "/student" });
       else if (role === "teacher") navigate({ to: "/teacher" });
       else if (role === "admin") navigate({ to: "/admin" });
-      else toast.error("Unknown role: " + role);
+      else toast.error(t("landing.login.unknownRole") + role);
     } catch (e: any) {
-      toast.error(e?.message ?? "Sign-in failed");
+      toast.error(e?.message ?? t("landing.login.signInFailed"));
     } finally {
       setLoading(false);
     }
@@ -194,17 +131,24 @@ function Landing() {
             <span className="font-bold text-lg tracking-tight">PragmaLearn</span>
           </a>
           <nav className="hidden md:flex items-center gap-8 text-sm text-white/70">
-            <a href="#features" className="hover:text-white transition">Features</a>
-            <a href="#journey" className="hover:text-white transition">How it works</a>
-            <a href="#stories" className="hover:text-white transition">Stories</a>
-            <a href="#login" className="hover:text-white transition">Sign in</a>
+            <a href="#features" className="hover:text-white transition">{t("nav.features")}</a>
+            <a href="#journey" className="hover:text-white transition">{t("nav.howItWorks")}</a>
+            <a href="#stories" className="hover:text-white transition">{t("nav.stories")}</a>
+            <Link to="/research" className="hover:text-white transition inline-flex items-center gap-1.5">
+              <FlaskConical className="w-4 h-4" />
+              {t("nav.research")}
+            </Link>
+            <a href="#login" className="hover:text-white transition">{t("nav.signIn")}</a>
           </nav>
-          <a href="#login">
-            <Button size="sm" className="bg-white text-slate-900 hover:bg-white/90 font-semibold">
-              Get started
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
-          </a>
+          <div className="flex items-center gap-3">
+            <LanguageToggle variant="dark" />
+            <a href="#login">
+              <Button size="sm" className="bg-white text-slate-900 hover:bg-white/90 font-semibold">
+                {t("common.getStarted")}
+                <ArrowRight className="w-4 h-4 ml-1" />
+              </Button>
+            </a>
+          </div>
         </div>
       </header>
 
@@ -231,24 +175,22 @@ function Landing() {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white/90 text-xs font-medium mb-6 animate-fade-in">
               <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
-              AI-powered English, designed like cinema
+              {t("landing.heroBadge")}
             </div>
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white leading-[1.05] mb-6 animate-fade-in">
-              Speak English
+              {t("landing.heroTitle1")}
               <br />
               <span className="bg-gradient-to-r from-indigo-300 via-violet-300 to-fuchsia-300 bg-clip-text text-transparent">
-                like the world is listening.
+                {t("landing.heroTitle2")}
               </span>
             </h1>
             <p className="text-lg md:text-xl text-white/75 max-w-2xl mb-10 leading-relaxed">
-              Adaptive lessons, a real-time AI Speaking Lab, and pragmatic
-              dialogues that drop you into the rooms you actually want to walk
-              into — interviews, presentations, classrooms, boardrooms.
+              {t("landing.heroSubtitle")}
             </p>
             <div className="flex flex-wrap gap-4">
               <a href="#login">
                 <Button size="lg" className="bg-white text-slate-900 hover:bg-white/90 font-semibold h-12 px-6">
-                  Start learning free
+                  {t("landing.startFree")}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </a>
@@ -259,7 +201,7 @@ function Landing() {
                   className="bg-white/5 border-white/30 text-white hover:bg-white/10 hover:text-white h-12 px-6 backdrop-blur"
                 >
                   <Play className="w-4 h-4 mr-2 fill-white" />
-                  See how it works
+                  {t("landing.seeHow")}
                 </Button>
               </a>
             </div>
@@ -276,7 +218,7 @@ function Landing() {
         </div>
 
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-white/60 text-xs flex flex-col items-center gap-2 animate-bounce">
-          <span className="uppercase tracking-widest">Scroll</span>
+          <span className="uppercase tracking-widest">{t("landing.scroll")}</span>
           <div className="w-px h-8 bg-white/40" />
         </div>
       </section>
@@ -285,13 +227,12 @@ function Landing() {
       <section id="features" className="py-28 bg-gradient-to-b from-slate-950 to-slate-900 text-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="max-w-2xl mb-16">
-            <div className="text-xs uppercase tracking-[0.2em] text-indigo-300 mb-3">What's inside</div>
+            <div className="text-xs uppercase tracking-[0.2em] text-indigo-300 mb-3">{t("landing.features.eyebrow")}</div>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              Six tools. One fluent you.
+              {t("landing.features.title")}
             </h2>
             <p className="text-white/60 text-lg">
-              Every feature is built around one promise: turn passive study
-              into active, confident speech.
+              {t("landing.features.subtitle")}
             </p>
           </div>
 
@@ -321,13 +262,12 @@ function Landing() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(139,92,246,0.15),transparent_60%)]" />
         <div className="relative max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
           <div>
-            <div className="text-xs uppercase tracking-[0.2em] text-violet-300 mb-3">The journey</div>
+            <div className="text-xs uppercase tracking-[0.2em] text-violet-300 mb-3">{t("landing.journey.eyebrow")}</div>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-              From hesitant to fluent, in four steps.
+              {t("landing.journey.title")}
             </h2>
             <p className="text-white/60 text-lg mb-10">
-              No more endless feeds of random tips. A clear path, measurable
-              progress, and a teacher who knows your name.
+              {t("landing.journey.subtitle")}
             </p>
 
             <div className="space-y-6">
@@ -359,7 +299,7 @@ function Landing() {
                   <Star key={i} className="w-4 h-4 fill-current" />
                 ))}
               </div>
-              <p className="text-sm font-medium">Loved by 12,000+ learners across 47 countries</p>
+              <p className="text-sm font-medium">{t("landing.journey.badge")}</p>
             </div>
           </div>
         </div>
@@ -385,8 +325,8 @@ function Landing() {
             <div className="absolute inset-0 bg-gradient-to-tr from-indigo-900/60 via-transparent to-fuchsia-900/40" />
             <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between">
               <div>
-                <div className="text-xs uppercase tracking-widest text-white/70 mb-1">Live demo</div>
-                <div className="font-semibold text-lg">AI Speaking Lab</div>
+                <div className="text-xs uppercase tracking-widest text-white/70 mb-1">{t("landing.speakingLab.liveDemo")}</div>
+                <div className="font-semibold text-lg">{t("landing.speakingLab.name")}</div>
               </div>
               <div className="flex items-end gap-1 h-10">
                 {[0.4, 0.7, 0.9, 0.5, 0.8, 0.6, 0.95, 0.45].map((h, i) => (
@@ -401,22 +341,15 @@ function Landing() {
           </div>
 
           <div className="order-1 lg:order-2">
-            <div className="text-xs uppercase tracking-[0.2em] text-fuchsia-300 mb-3">Speaking Lab</div>
+            <div className="text-xs uppercase tracking-[0.2em] text-fuchsia-300 mb-3">{t("landing.speakingLab.eyebrow")}</div>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-              Your mouth, finally trained.
+              {t("landing.speakingLab.title")}
             </h2>
             <p className="text-white/60 text-lg mb-8">
-              Most apps test what you can read. We train what you can say.
-              Tap record, speak a sentence, and watch waveforms turn into
-              actionable feedback — rhythm, stress, vowels, and confidence.
+              {t("landing.speakingLab.subtitle")}
             </p>
             <ul className="space-y-3 mb-10">
-              {[
-                "Phoneme-level pronunciation scoring",
-                "Pragmatic dialogue role-play (B2/C1)",
-                "Filler-word and pacing analysis",
-                "Shareable progress reports for teachers",
-              ].map((item) => (
+              {labPoints.map((item) => (
                 <li key={item} className="flex items-start gap-3 text-white/80">
                   <CheckCircle2 className="w-5 h-5 text-emerald-400 mt-0.5 shrink-0" />
                   <span>{item}</span>
@@ -425,7 +358,7 @@ function Landing() {
             </ul>
             <Link to="/student/speaking">
               <Button className="bg-white text-slate-900 hover:bg-white/90 font-semibold">
-                Try the Speaking Lab
+                {t("landing.speakingLab.cta")}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
@@ -437,19 +370,19 @@ function Landing() {
       <section id="stories" className="py-28 bg-gradient-to-b from-slate-950 to-slate-900 text-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="max-w-2xl mb-14">
-            <div className="text-xs uppercase tracking-[0.2em] text-emerald-300 mb-3">Stories</div>
+            <div className="text-xs uppercase tracking-[0.2em] text-emerald-300 mb-3">{t("landing.stories.eyebrow")}</div>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
-              Learners shipping their dreams in English.
+              {t("landing.stories.title")}
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((t) => (
-              <Card key={t.name} className="p-7 bg-white/[0.04] border-white/10 text-white">
+            {testimonials.map((tm) => (
+              <Card key={tm.name} className="p-7 bg-white/[0.04] border-white/10 text-white">
                 <Quote className="w-8 h-8 text-indigo-300 mb-4" />
-                <p className="text-white/85 leading-relaxed mb-6">"{t.quote}"</p>
+                <p className="text-white/85 leading-relaxed mb-6">"{tm.quote}"</p>
                 <div className="pt-4 border-t border-white/10">
-                  <div className="font-semibold">{t.name}</div>
-                  <div className="text-xs text-white/50">{t.role}</div>
+                  <div className="font-semibold">{tm.name}</div>
+                  <div className="text-xs text-white/50">{tm.role}</div>
                 </div>
               </Card>
             ))}
@@ -465,12 +398,12 @@ function Landing() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(99,102,241,0.35),transparent_60%)]" />
         <div className="relative max-w-5xl mx-auto px-6">
           <div className="text-center mb-12">
-            <div className="text-xs uppercase tracking-[0.2em] text-indigo-300 mb-3">Step inside</div>
+            <div className="text-xs uppercase tracking-[0.2em] text-indigo-300 mb-3">{t("landing.login.eyebrow")}</div>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              Pick your portal.
+              {t("landing.login.title")}
             </h2>
             <p className="text-white/60 text-lg max-w-xl mx-auto">
-              Demo mode — choose a role to explore the full experience instantly.
+              {t("landing.login.subtitle")}
             </p>
           </div>
 
@@ -481,7 +414,7 @@ function Landing() {
                 className="space-y-4"
               >
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-white/80">Email</Label>
+                  <Label htmlFor="email" className="text-white/80">{t("common.email")}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -492,7 +425,7 @@ function Landing() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-white/80">Password</Label>
+                  <Label htmlFor="password" className="text-white/80">{t("common.password")}</Label>
                   <Input
                     id="password"
                     type="password"
@@ -507,16 +440,16 @@ function Landing() {
                   disabled={loading}
                   className="w-full bg-white text-slate-900 hover:bg-white/90 font-semibold"
                 >
-                  {loading ? "Signing in..." : "Sign in"}
+                  {loading ? t("common.signingIn") : t("common.signIn")}
                 </Button>
               </form>
 
               <div className="space-y-3">
                 <div className="text-xs font-semibold uppercase tracking-wider text-white/60 mb-2">
-                  Continue as
+                  {t("landing.login.continueAs")}
                 </div>
                 {roles.map((r) => (
-                  <Link key={r.name} to="/login">
+                  <Link key={r.key} to="/login">
                     <button className="w-full group flex items-center gap-4 p-4 rounded-xl border border-white/10 hover:border-white/30 bg-white/[0.02] hover:bg-white/[0.06] transition-all text-left">
                       <div
                         className={`w-11 h-11 rounded-lg bg-gradient-to-br ${r.color} flex items-center justify-center text-white shadow-lg`}
@@ -524,8 +457,8 @@ function Landing() {
                         <r.icon className="w-5 h-5" />
                       </div>
                       <div className="flex-1">
-                        <div className="font-semibold">Login as {r.name}</div>
-                        <div className="text-xs text-white/50">{r.desc}</div>
+                        <div className="font-semibold">{t("landing.login.loginAs", { role: t("landing.login." + r.key) })}</div>
+                        <div className="text-xs text-white/50">{t("landing.login." + r.key + "Desc")}</div>
                       </div>
                       <ArrowRight className="w-4 h-4 text-white/40 group-hover:text-white group-hover:translate-x-1 transition" />
                     </button>
@@ -546,11 +479,12 @@ function Landing() {
             </div>
             <span className="font-semibold text-white">PragmaLearn</span>
           </div>
-          <p className="text-sm">© 2026 PragmaLearn. Crafted for learners, everywhere.</p>
+          <p className="text-sm">{t("landing.footer.copyright")}</p>
           <div className="flex gap-5 text-sm">
-            <a href="#features" className="hover:text-white">Features</a>
-            <a href="#journey" className="hover:text-white">How it works</a>
-            <a href="#login" className="hover:text-white">Sign in</a>
+            <a href="#features" className="hover:text-white">{t("nav.features")}</a>
+            <a href="#journey" className="hover:text-white">{t("nav.howItWorks")}</a>
+            <Link to="/research" className="hover:text-white">{t("nav.research")}</Link>
+            <a href="#login" className="hover:text-white">{t("nav.signIn")}</a>
           </div>
         </div>
       </footer>

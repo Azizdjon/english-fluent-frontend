@@ -99,7 +99,7 @@ function SkeletonCard({ rows = 3 }: { rows?: number }) {
 
 interface Profile { full_name: string; level: string; avatar_initials: string; }
 interface Lesson { id: string; title: string; modules: { title: string } | null; }
-interface Homework { id: string; title: string; due_date: string; status: string; }
+interface Homework { id: string; title: string; due_date: string; status?: string; }
 
 function StudentDashboard() {
   const navigate = useNavigate();
@@ -126,7 +126,7 @@ function StudentDashboard() {
         ] = await Promise.all([
           supabase.from("profiles").select("full_name, level, avatar_initials").eq("id", user.id).single(),
           supabase.from("lessons").select("id, title, modules(title)").limit(5).order("created_at", { ascending: false }),
-          supabase.from("homework").select("id, title, due_date, status").order("due_date", { ascending: true }).limit(4),
+          supabase.from("homework").select("id, title, due_date").order("due_date", { ascending: true }).limit(4),
           supabase.from("certificates").select("id", { count: "exact" }).eq("student_id", user.id),
           supabase.from("lesson_progress").select("id", { count: "exact" }).eq("student_id", user.id).eq("completed", true),
           supabase.from("lessons").select("*", { count: "exact", head: true }),
