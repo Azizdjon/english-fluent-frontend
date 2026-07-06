@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MessageSquare, Play, CheckCircle, XCircle, ChevronRight } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/student/pragmatic")({
   component: PragmaticDialogues,
@@ -173,6 +174,7 @@ function PracticeMode({
   scenario: Scenario;
   onExit: () => void;
 }) {
+  const { t } = useI18n();
   const bLines = scenario.lines.filter((l) => l.speaker === "B");
 
   const [state, setState] = useState<PracticeState>({
@@ -219,7 +221,7 @@ function PracticeMode({
             {pct}%
           </div>
           <div className="text-xl font-semibold mb-1">
-            {correct}/{total} to'g'ri
+            {correct}/{total} {t("dash.sPragmatic.correct")}
           </div>
           <p className="text-muted-foreground">
             {scenario.title} — {scenario.level}
@@ -243,7 +245,7 @@ function PracticeMode({
                   <XCircle className="w-4 h-4 text-red-400 shrink-0" />
                 )}
                 <span className="text-sm text-gray-300">
-                  {a.userAnswer || <em className="text-gray-500">bo'sh qoldirildi</em>}
+                  {a.userAnswer || <em className="text-gray-500">{t("dash.sPragmatic.leftBlank")}</em>}
                 </span>
               </div>
               {!a.isCorrect && (
@@ -270,10 +272,10 @@ function PracticeMode({
               setChecked(false);
             }}
           >
-            Qayta urinish
+            {t("dash.sPragmatic.retry")}
           </Button>
           <Button className="flex-1" onClick={onExit}>
-            Boshqa dialog
+            {t("dash.sPragmatic.anotherDialog")}
           </Button>
         </div>
       </div>
@@ -320,7 +322,7 @@ function PracticeMode({
           <p className="text-muted-foreground text-sm">{scenario.context}</p>
         </div>
         <Button variant="ghost" size="sm" onClick={onExit}>
-          ✕ Chiqish
+          ✕ {t("dash.sPragmatic.exit")}
         </Button>
       </div>
 
@@ -357,7 +359,7 @@ function PracticeMode({
                     ans.isCorrect ? "text-green-400" : "text-red-400"
                   }`}
                 >
-                  {ans.userAnswer || <em className="opacity-50">bo'sh</em>}
+                  {ans.userAnswer || <em className="opacity-50">{t("dash.sPragmatic.empty")}</em>}
                 </span>
               </div>
             );
@@ -395,12 +397,12 @@ function PracticeMode({
                   ) : (
                     <div className="border-2 border-dashed border-primary/50 rounded-lg p-3 bg-primary/5">
                       <p className="text-xs text-muted-foreground mb-2">
-                        Sizning javobingiz (B):
+                        {t("dash.sPragmatic.yourAnswer")}
                       </p>
                       <textarea
                         className="w-full bg-transparent outline-none resize-none text-sm placeholder-gray-500"
                         rows={2}
-                        placeholder="Bu yerga javobingizni yozing..."
+                        placeholder={t("dash.sPragmatic.answerPlaceholder")}
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={(e) => {
@@ -429,11 +431,11 @@ function PracticeMode({
             onClick={checkAnswer}
             disabled={!inputValue.trim()}
           >
-            Tekshirish
+            {t("dash.sPragmatic.check")}
           </Button>
         ) : (
           <Button className="w-full" onClick={nextStep}>
-            {state.step + 1 >= bLines.length ? "Natijani ko'rish" : "Keyingisi"}
+            {state.step + 1 >= bLines.length ? t("dash.sPragmatic.seeResult") : t("dash.sPragmatic.nextOne")}
             <ChevronRight className="w-4 h-4 ml-1" />
           </Button>
         )}
@@ -443,6 +445,7 @@ function PracticeMode({
 }
 
 function PragmaticDialogues() {
+  const { t } = useI18n();
   const [active, setActive] = useState<string | null>(null);
   const [practiceScenario, setPracticeScenario] = useState<Scenario | null>(null);
 
@@ -459,11 +462,11 @@ function PragmaticDialogues() {
     <div className="p-8 max-w-6xl mx-auto">
       <div className="mb-6">
         <Badge variant="secondary" className="mb-2">
-          Pragmatic Dialogues
+          {t("dash.sPragmatic.badge")}
         </Badge>
-        <h1 className="text-3xl font-bold">Real-world conversation practice</h1>
+        <h1 className="text-3xl font-bold">{t("dash.sPragmatic.title")}</h1>
         <p className="text-muted-foreground mt-1">
-          Practice authentic dialogues from everyday and professional contexts.
+          {t("dash.sPragmatic.subtitle")}
         </p>
       </div>
 
@@ -517,13 +520,13 @@ function PragmaticDialogues() {
                   className="flex-1"
                   onClick={() => setActive(isActive ? null : s.id)}
                 >
-                  {isActive ? "Hide dialogue" : "View dialogue"}
+                  {isActive ? t("dash.sPragmatic.hideDialogue") : t("dash.sPragmatic.viewDialogue")}
                 </Button>
                 <Button
                   className="flex-1"
                   onClick={() => setPracticeScenario(s)}
                 >
-                  <Play className="w-4 h-4 mr-1" /> Practice
+                  <Play className="w-4 h-4 mr-1" /> {t("dash.sPragmatic.practice")}
                 </Button>
               </div>
             </Card>

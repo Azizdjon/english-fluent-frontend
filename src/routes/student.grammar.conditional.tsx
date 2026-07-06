@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/student/grammar/conditional")({
   component: ConditionalPage,
@@ -50,11 +51,12 @@ function parseQuestions(content: string) {
 }
 
 function HistoryPanel({ attempts }: { attempts: Attempt[] }) {
+  const { t } = useI18n();
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-5 shadow-sm">
-      <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">📊 Natijalar Tarixi</h2>
+      <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">📊 {t("dash.gCond.resultsHistory")}</h2>
       {attempts.length === 0 ? (
-        <p className="text-sm text-gray-500 dark:text-slate-400">Hali test topshirilmagan</p>
+        <p className="text-sm text-gray-500 dark:text-slate-400">{t("dash.gCond.noTest")}</p>
       ) : (
         <ul className="space-y-3">
           {attempts.map((a, i) => {
@@ -77,6 +79,7 @@ function HistoryPanel({ attempts }: { attempts: Attempt[] }) {
 }
 
 function ConditionalPage() {
+  const { t } = useI18n();
   const [selected, setSelected] = useState<null | typeof LESSON_IDS[0]>(null);
   const [questions, setQuestions] = useState<{ question: string; options: string[] }[]>([]);
   const [answerKey, setAnswerKey] = useState<Record<string, string>>({});
@@ -176,7 +179,7 @@ function ConditionalPage() {
     saveAttempt(correct, questions.length, selected.id);
   }, [finished, savedThisRun, selected, answerKey, questions, answers, saveAttempt]);
 
-  if (loading) return <div className="flex items-center justify-center min-h-[50vh]"><p className="text-gray-500 dark:text-slate-400">Yuklanmoqda...</p></div>;
+  if (loading) return <div className="flex items-center justify-center min-h-[50vh]"><p className="text-gray-500 dark:text-slate-400">{t("dash.gCond.loading")}</p></div>;
 
   if (selected && finished) {
     const hasKey = Object.keys(answerKey).length > 0;
@@ -195,21 +198,21 @@ function ConditionalPage() {
       <div className="flex items-center justify-center min-h-[50vh] px-4">
         <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 max-w-md w-full text-center shadow-lg border border-gray-200 dark:border-slate-700">
           <div className="text-5xl mb-4">🎉</div>
-          <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">Bajarildi!</h2>
-          <p className="text-gray-500 dark:text-slate-400 mb-4">{selected.title} testini tugatdingiz.</p>
+          <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">{t("dash.gCond.done")}</h2>
+          <p className="text-gray-500 dark:text-slate-400 mb-4">{t("dash.gCond.finishedTest", { title: selected.title })}</p>
           {hasKey ? (
             <>
               <p className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                Natija: {correctCount} / {questions.length} ({pct}%)
+                {t("dash.gCond.resultLabel")}: {correctCount} / {questions.length} ({pct}%)
               </p>
               <p className="text-2xl mb-6">{'⭐'.repeat(stars)}</p>
             </>
           ) : (
             <p className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-              {answers.filter(a => a !== undefined).length} ta savoldan o'tdingiz
+              {t("dash.gCond.passedN", { n: answers.filter(a => a !== undefined).length })}
             </p>
           )}
-          <Button onClick={() => setSelected(null)} className="w-full">Boshqa testni tanlash</Button>
+          <Button onClick={() => setSelected(null)} className="w-full">{t("dash.gCond.chooseAnother")}</Button>
         </div>
       </div>
     );
@@ -217,7 +220,7 @@ function ConditionalPage() {
 
   if (selected) {
     const q = questions[current];
-    if (!q) return <div className="flex items-center justify-center min-h-[50vh]"><p className="text-gray-500 dark:text-slate-400">Savollar topilmadi.</p></div>;
+    if (!q) return <div className="flex items-center justify-center min-h-[50vh]"><p className="text-gray-500 dark:text-slate-400">{t("dash.gCond.noQuestions")}</p></div>;
     const progress = ((current + 1) / questions.length) * 100;
 
     return (
@@ -239,7 +242,7 @@ function ConditionalPage() {
             ))}
           </div>
           <Button onClick={next} disabled={answers[current] === undefined} className="w-full">
-            {current < questions.length - 1 ? 'Next Question →' : 'Finish →'}
+            {current < questions.length - 1 ? t("dash.gCond.nextQuestion") : t("dash.gCond.finishArrow")}
           </Button>
         </div>
       </div>
@@ -250,7 +253,7 @@ function ConditionalPage() {
     <div className="p-4 md:p-6 space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Conditional</h1>
-        <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">Conditional grammatikasi bo'yicha quizlar.</p>
+        <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">{t("dash.gCond.subtitle")}</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -261,7 +264,7 @@ function ConditionalPage() {
               <span className="text-2xl font-bold text-gray-400 dark:text-slate-500">{i + 1}</span>
               <div>
                 <div className="font-semibold text-gray-900 dark:text-white">{l.title}</div>
-                <div className="text-sm text-gray-500 dark:text-slate-400">Quiz · 5 min</div>
+                <div className="text-sm text-gray-500 dark:text-slate-400">{t("dash.gCond.quiz5min")}</div>
               </div>
             </button>
           ))}

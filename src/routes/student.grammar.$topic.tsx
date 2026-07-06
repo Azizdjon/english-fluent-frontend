@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/student/grammar/$topic")({
   component: GrammarTopicPage,
@@ -92,12 +93,13 @@ function starsFor(pct: number) {
 }
 
 function HistoryPanel({ attempts, lessonIds }: { attempts: Attempt[]; lessonIds: string[] }) {
+  const { t } = useI18n();
   const filtered = attempts.filter(a => lessonIds.includes(a.lesson_id));
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
-      <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">📊 Natijalar Tarixi</h2>
+      <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">📊 {t("dash.gTopic.resultsHistory")}</h2>
       {filtered.length === 0 ? (
-        <p className="text-sm text-gray-500 dark:text-slate-400">Hali test topshirilmagan</p>
+        <p className="text-sm text-gray-500 dark:text-slate-400">{t("dash.gTopic.noTest")}</p>
       ) : (
         <ul className="space-y-3">
           {filtered.map((a, i) => {
@@ -139,6 +141,7 @@ function parseQuestions(content: string): Question[] {
 }
 
 function GrammarTopicPage() {
+  const { t } = useI18n();
   const { topic } = Route.useParams();
   const navigate = useNavigate();
   const config = TOPIC_CONFIG[topic];
@@ -211,8 +214,8 @@ function GrammarTopicPage() {
 
   if (!config) return (
     <div className="p-8 text-center">
-      <h2 className="text-xl text-red-500">Topic topilmadi: {topic}</h2>
-      <Button onClick={() => navigate({ to: '/student' })} className="mt-4">Orqaga</Button>
+      <h2 className="text-xl text-red-500">{t("dash.gTopic.topicNotFound")}{topic}</h2>
+      <Button onClick={() => navigate({ to: '/student' })} className="mt-4">{t("dash.gTopic.back")}</Button>
     </div>
   );
 
@@ -228,11 +231,11 @@ function GrammarTopicPage() {
             <div className="text-6xl mb-4">🎉</div>
             <h2 className="text-2xl font-bold mb-2">{activeLesson.title}</h2>
             <p className="text-4xl font-extrabold text-green-400 mb-1">{pct}%</p>
-            <p className="text-gray-400 mb-3">{score} / {total} to'g'ri</p>
+            <p className="text-gray-400 mb-3">{score} / {total} {t("dash.gTopic.correct")}</p>
             <div className="text-3xl text-yellow-400 mb-6">{'★'.repeat(stars)}{'☆'.repeat(5 - stars)}</div>
             <div className="flex gap-3">
-              <Button variant="outline" className="flex-1" onClick={() => startLesson(activeLesson)}>🔄 Qayta</Button>
-              <Button className="flex-1 bg-blue-600 hover:bg-blue-700" onClick={() => setActiveLesson(null)}>📋 Ro'yxat</Button>
+              <Button variant="outline" className="flex-1" onClick={() => startLesson(activeLesson)}>🔄 {t("dash.gTopic.retry")}</Button>
+              <Button className="flex-1 bg-blue-600 hover:bg-blue-700" onClick={() => setActiveLesson(null)}>📋 {t("dash.gTopic.list")}</Button>
             </div>
           </div>
         </div>
@@ -243,8 +246,8 @@ function GrammarTopicPage() {
     if (!q) {
       return (
         <div className="p-8 text-center">
-          <p className="text-gray-500">Bu darsda savollar yo'q</p>
-          <Button onClick={() => setActiveLesson(null)} className="mt-4">Orqaga</Button>
+          <p className="text-gray-500">{t("dash.gTopic.noQuestions")}</p>
+          <Button onClick={() => setActiveLesson(null)} className="mt-4">{t("dash.gTopic.back")}</Button>
         </div>
       );
     }
@@ -267,7 +270,7 @@ function GrammarTopicPage() {
               ))}
             </div>
             <Button onClick={handleNext} disabled={selected === null} className="w-full mt-6 bg-blue-600 hover:bg-blue-700 disabled:opacity-50">
-              {currentQ + 1 >= activeLesson.questions.length ? 'Tugatish' : 'Keyingi'}
+              {currentQ + 1 >= activeLesson.questions.length ? t("dash.gTopic.finish") : t("dash.gTopic.next")}
             </Button>
           </div>
         </div>
@@ -278,16 +281,16 @@ function GrammarTopicPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{config.label}</h1>
-      <p className="text-gray-500 dark:text-slate-400 mb-6">{config.label} bo'yicha quizlar</p>
+      <p className="text-gray-500 dark:text-slate-400 mb-6">{t("dash.gTopic.quizzesFor", { label: config.label })}</p>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 grid gap-4">
-          {loading ? <p className="text-gray-500">Yuklanmoqda...</p> : lessons.length === 0 ? <p className="text-gray-500">Dars topilmadi</p> : (
+          {loading ? <p className="text-gray-500">{t("dash.gTopic.loading")}</p> : lessons.length === 0 ? <p className="text-gray-500">{t("dash.gTopic.noLesson")}</p> : (
             lessons.map((l, i) => (
               <button key={l.id} onClick={() => startLesson(l)} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 dark:border-slate-700 hover:border-blue-500 bg-white dark:bg-slate-800 transition-all text-left shadow-sm">
                 <span className="text-2xl font-bold text-gray-400 dark:text-slate-500">{i + 1}</span>
                 <div>
                   <div className="font-semibold text-gray-900 dark:text-white">{l.title}</div>
-                  <div className="text-sm text-gray-500 dark:text-slate-400">Quiz · {l.questions.length > 0 ? l.questions.length + ' ta savol' : '5 min'}</div>
+                  <div className="text-sm text-gray-500 dark:text-slate-400">{l.questions.length > 0 ? t("dash.gTopic.quizN", { n: l.questions.length }) : t("dash.gTopic.quiz5min")}</div>
                 </div>
               </button>
             ))

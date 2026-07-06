@@ -5,6 +5,7 @@ import {
   ChevronLeft, ChevronRight, CheckCircle2, Clock, BookOpen,
   Volume2, Star, Play, List, X
 } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/student/lessons/$id")({
   component: LessonPlayerPage,
@@ -117,6 +118,7 @@ function parseQuiz(content: string): QuizQuestion[] {
 
 
 export default function LessonPlayerPage() {
+  const { t } = useI18n();
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const [lesson, setLesson] = useState<Lesson | null>(null);
@@ -218,7 +220,7 @@ export default function LessonPlayerPage() {
     <div className="flex items-center justify-center min-h-screen bg-slate-950">
       <div className="text-center space-y-3">
         <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
-        <p className="text-slate-400 text-sm">Loading lesson...</p>
+        <p className="text-slate-400 text-sm">{t("dash.sLessonPlayer.loadingLesson")}</p>
       </div>
     </div>
   );
@@ -227,9 +229,9 @@ export default function LessonPlayerPage() {
     <div className="flex items-center justify-center min-h-screen bg-slate-950">
       <div className="text-center space-y-4">
         <BookOpen className="w-16 h-16 text-slate-600 mx-auto" />
-        <p className="text-slate-400 text-lg">Lesson not found</p>
+        <p className="text-slate-400 text-lg">{t("dash.sLessonPlayer.notFound")}</p>
         <button onClick={() => navigate({ to: "/student/lessons" })}
-          className="text-blue-400 hover:text-blue-300 underline text-sm">Back to lessons</button>
+          className="text-blue-400 hover:text-blue-300 underline text-sm">{t("dash.sLessonPlayer.backToLessons")}</button>
       </div>
     </div>
   );
@@ -247,17 +249,17 @@ export default function LessonPlayerPage() {
       <div className="sticky top-0 z-30 bg-slate-900/95 backdrop-blur border-b border-slate-800 px-4 py-3 flex items-center gap-3">
         <button onClick={() => navigate({ to: "/student/lessons" })}
           className="flex items-center gap-1.5 text-slate-400 hover:text-white transition text-sm font-medium">
-          <ChevronLeft className="w-4 h-4" /> Back
+          <ChevronLeft className="w-4 h-4" /> {t("dash.sLessonPlayer.back")}
         </button>
         <div className="w-px h-5 bg-slate-700" />
         <div className="flex-1 min-w-0">
           <h1 className="text-white font-semibold text-sm md:text-base truncate">{lesson.title}</h1>
           <div className="flex items-center gap-2 mt-0.5">
             <Clock className="w-3 h-3 text-slate-500" />
-            <span className="text-slate-500 text-xs">{lesson.duration_minutes} min</span>
+            <span className="text-slate-500 text-xs">{lesson.duration_minutes} {t("dash.sLessonPlayer.min")}</span>
             {completed && (
               <span className="flex items-center gap-1 text-green-400 text-xs font-medium">
-                <CheckCircle2 className="w-3 h-3" /> Completed
+                <CheckCircle2 className="w-3 h-3" /> {t("dash.sLessonPlayer.completed")}
               </span>
             )}
           </div>
@@ -289,7 +291,7 @@ export default function LessonPlayerPage() {
                 <div className="bg-gradient-to-br from-purple-600/20 to-pink-600/10 border border-purple-500/20 rounded-2xl p-5">
                   <h2 className="text-white font-bold text-lg mb-1">{lesson.title}</h2>
                   <p className="text-slate-300 text-sm">
-                    Answer all {quizQuestions.length} questions, then submit to see your score.
+                    {t("dash.sLessonPlayer.answerAll", { n: quizQuestions.length })}
                   </p>
                 </div>
 
@@ -336,17 +338,17 @@ export default function LessonPlayerPage() {
                     disabled={submittingQuiz || Object.keys(quizAnswers).length !== quizQuestions.length}
                     className="w-full px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition shadow-lg shadow-purple-600/25"
                   >
-                    {submittingQuiz ? "Submitting..." : "Submit Quiz"}
+                    {submittingQuiz ? t("dash.sLessonPlayer.submitting") : t("dash.sLessonPlayer.submitQuiz")}
                   </button>
                 ) : (
                   <div className="rounded-2xl bg-gradient-to-br from-green-600/20 to-emerald-600/10 border border-green-500/30 p-6 text-center">
-                    <p className="text-green-300 text-sm uppercase tracking-wider font-semibold">Your Score</p>
+                    <p className="text-green-300 text-sm uppercase tracking-wider font-semibold">{t("dash.sLessonPlayer.yourScore")}</p>
                     <p className="text-white text-4xl font-bold mt-2">
                       {quizScore?.score} / {quizScore?.total}
                     </p>
                     {quizScore && quizScore.total > 0 && (
                       <p className="text-slate-300 text-sm mt-2">
-                        {Math.round((quizScore.score / quizScore.total) * 100)}% correct
+                        {t("dash.sLessonPlayer.correctPct", { n: Math.round((quizScore.score / quizScore.total) * 100) })}
                       </p>
                     )}
                   </div>
@@ -376,8 +378,8 @@ export default function LessonPlayerPage() {
                       <BookOpen className="w-8 h-8 text-indigo-400" />
                     </div>
                     <div>
-                      <h3 className="text-white font-bold text-xl mb-2">Interaktiv mashq</h3>
-                      <p className="text-slate-400 text-sm">Wordwall mashqi yangi oynada ochiladi — cookie muammosi yo'q</p>
+                      <h3 className="text-white font-bold text-xl mb-2">{t("dash.sLessonPlayer.interactiveExercise")}</h3>
+                      <p className="text-slate-400 text-sm">{t("dash.sLessonPlayer.wordwallHint")}</p>
                     </div>
                     <a
                       href={wordwallUrl}
@@ -386,7 +388,7 @@ export default function LessonPlayerPage() {
                       className="inline-flex items-center gap-2 px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition shadow-lg shadow-indigo-600/25 text-base"
                     >
                       <Play className="w-5 h-5" />
-                      Mashqni boshlash
+                      {t("dash.sLessonPlayer.startExercise")}
                     </a>
                   </div>
                 )}
@@ -408,8 +410,8 @@ export default function LessonPlayerPage() {
                 <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
                   <div className="px-5 py-4 border-b border-slate-800 flex items-center gap-2">
                     <Volume2 className="w-4 h-4 text-purple-400" />
-                    <h3 className="text-white font-semibold">Key Vocabulary</h3>
-                    <span className="ml-auto text-xs text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full">{rc.vocab.length} words</span>
+                    <h3 className="text-white font-semibold">{t("dash.sLessonPlayer.keyVocab")}</h3>
+                    <span className="ml-auto text-xs text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full">{rc.vocab.length} {t("dash.sLessonPlayer.words")}</span>
                   </div>
                   <div className="divide-y divide-slate-800">
                     {rc.vocab.map(([word, def], i) => (
@@ -424,7 +426,7 @@ export default function LessonPlayerPage() {
                 <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
                   <div className="flex items-center gap-2 mb-3">
                     <Star className="w-4 h-4 text-yellow-400" />
-                    <h3 className="text-white font-semibold">Grammar Note</h3>
+                    <h3 className="text-white font-semibold">{t("dash.sLessonPlayer.grammarNote")}</h3>
                   </div>
                   <p className="text-slate-300 text-sm leading-relaxed bg-slate-800/60 rounded-xl p-4 border-l-4 border-yellow-500/50">
                     {rc.grammar}
@@ -434,7 +436,7 @@ export default function LessonPlayerPage() {
                 <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
                   <div className="px-5 py-4 border-b border-slate-800 flex items-center gap-2">
                     <Play className="w-4 h-4 text-green-400" />
-                    <h3 className="text-white font-semibold">Example Sentences</h3>
+                    <h3 className="text-white font-semibold">{t("dash.sLessonPlayer.exampleSentences")}</h3>
                   </div>
                   <div className="p-5 space-y-3">
                     {rc.examples.map((ex, i) => (
@@ -449,7 +451,7 @@ export default function LessonPlayerPage() {
                 <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-5 flex items-start gap-3">
                   <span className="text-2xl flex-shrink-0">💡</span>
                   <div>
-                    <p className="text-amber-300 font-semibold text-sm mb-1">Pro Tip</p>
+                    <p className="text-amber-300 font-semibold text-sm mb-1">{t("dash.sLessonPlayer.proTip")}</p>
                     <p className="text-amber-100/80 text-sm leading-relaxed">{rc.tip}</p>
                   </div>
                 </div>
@@ -464,7 +466,7 @@ export default function LessonPlayerPage() {
                 disabled={!prevLesson}
                 className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-slate-700 text-slate-400 hover:border-slate-500 hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed text-sm font-medium"
               >
-                <ChevronLeft className="w-4 h-4" /> Previous
+                <ChevronLeft className="w-4 h-4" /> {t("dash.sLessonPlayer.previous")}
               </button>
 
               <button
@@ -476,7 +478,7 @@ export default function LessonPlayerPage() {
                     : "bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/25")}
               >
                 <CheckCircle2 className="w-4 h-4" />
-                {completed ? "Completed!" : marking ? "Saving..." : "Mark Complete"}
+                {completed ? t("dash.sLessonPlayer.completedBtn") : marking ? t("dash.sLessonPlayer.saving") : t("dash.sLessonPlayer.markComplete")}
               </button>
 
               <button
@@ -484,7 +486,7 @@ export default function LessonPlayerPage() {
                 disabled={!nextLesson}
                 className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed text-sm font-medium"
               >
-                Next <ChevronRight className="w-4 h-4" />
+                {t("dash.sLessonPlayer.next")} <ChevronRight className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -499,13 +501,13 @@ export default function LessonPlayerPage() {
             "fixed inset-y-0 right-0 z-50 w-72 bg-slate-900 border-l border-slate-800 overflow-y-auto transition-transform duration-300 " +
             (showSidebar ? "translate-x-0" : "translate-x-full md:translate-x-0")}>
             <div className="flex items-center justify-between px-4 py-4 border-b border-slate-800 sticky top-0 bg-slate-900 z-10">
-              <span className="text-white font-semibold text-sm">Lesson List</span>
+              <span className="text-white font-semibold text-sm">{t("dash.sLessonPlayer.lessonList")}</span>
               <button onClick={() => setShowSidebar(false)} className="md:hidden text-slate-400 hover:text-white transition">
                 <X className="w-4 h-4" />
               </button>
             </div>
             {sideList.length === 0
-              ? <p className="text-slate-500 text-xs text-center py-8">No lessons found</p>
+              ? <p className="text-slate-500 text-xs text-center py-8">{t("dash.sLessonPlayer.noLessons")}</p>
               : (
                 <div className="py-2">
                   {sideList[0].module_title && (
