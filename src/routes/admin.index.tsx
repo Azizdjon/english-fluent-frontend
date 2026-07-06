@@ -5,24 +5,26 @@ import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
 } from "recharts";
 import { adminStats, signupChartData, usageData } from "@/lib/mock-data";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminOverview,
 });
 
 function AdminOverview() {
+  const { t } = useI18n();
   const stats = [
-    { icon: Users, label: "Total Users", value: adminStats.totalUsers.toLocaleString(), change: "+12.4%", up: true, tint: "bg-indigo-100 text-indigo-700" },
-    { icon: BookOpen, label: "Active Courses", value: adminStats.activeCourses.toString(), change: "+3", up: true, tint: "bg-emerald-100 text-emerald-700" },
-    { icon: DollarSign, label: "Revenue (MTD)", value: `$${adminStats.revenue.toLocaleString()}`, change: "+18.2%", up: true, tint: "bg-amber-100 text-amber-700" },
-    { icon: UserPlus, label: "Signups (mo)", value: adminStats.signups.toString(), change: "-2.1%", up: false, tint: "bg-violet-100 text-violet-700" },
+    { icon: Users, label: t("dash.admin.totalUsers"), value: adminStats.totalUsers.toLocaleString(), change: "+12.4%", up: true, tint: "bg-indigo-100 text-indigo-700" },
+    { icon: BookOpen, label: t("dash.admin.activeCourses"), value: adminStats.activeCourses.toString(), change: "+3", up: true, tint: "bg-emerald-100 text-emerald-700" },
+    { icon: DollarSign, label: t("dash.admin.revenue"), value: `$${adminStats.revenue.toLocaleString()}`, change: "+18.2%", up: true, tint: "bg-amber-100 text-amber-700" },
+    { icon: UserPlus, label: t("dash.admin.signups"), value: adminStats.signups.toString(), change: "-2.1%", up: false, tint: "bg-violet-100 text-violet-700" },
   ];
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Platform overview</h1>
-        <p className="text-muted-foreground mt-1">Real-time analytics across all users and courses.</p>
+        <h1 className="text-3xl font-bold">{t("dash.admin.title")}</h1>
+        <p className="text-muted-foreground mt-1">{t("dash.admin.subtitle")}</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -45,8 +47,8 @@ function AdminOverview() {
 
       <div className="grid lg:grid-cols-2 gap-6 mb-8">
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-1">Signups & revenue</h2>
-          <p className="text-xs text-muted-foreground mb-4">Last 6 months</p>
+          <h2 className="text-lg font-semibold mb-1">{t("dash.admin.signupsRevenue")}</h2>
+          <p className="text-xs text-muted-foreground mb-4">{t("dash.admin.last6")}</p>
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={signupChartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -60,8 +62,8 @@ function AdminOverview() {
         </Card>
 
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-1">Weekly active users</h2>
-          <p className="text-xs text-muted-foreground mb-4">Students vs. teachers</p>
+          <h2 className="text-lg font-semibold mb-1">{t("dash.admin.weeklyActive")}</h2>
+          <p className="text-xs text-muted-foreground mb-4">{t("dash.admin.studentsVsTeachers")}</p>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={usageData}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -76,7 +78,7 @@ function AdminOverview() {
       </div>
 
       <Card className="p-6">
-        <h2 className="text-lg font-semibold mb-4">Top performing courses</h2>
+        <h2 className="text-lg font-semibold mb-4">{t("dash.admin.topCourses")}</h2>
         <div className="space-y-3">
           {[
             { name: "Business English B2", students: 487, completion: 78 },
@@ -87,7 +89,7 @@ function AdminOverview() {
             <div key={c.name} className="flex items-center justify-between p-3 rounded-lg border">
               <div>
                 <div className="font-medium text-sm">{c.name}</div>
-                <div className="text-xs text-muted-foreground">{c.students} students enrolled</div>
+                <div className="text-xs text-muted-foreground">{t("dash.admin.studentsEnrolled", { n: c.students })}</div>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-32 h-1.5 rounded-full bg-muted">

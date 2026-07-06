@@ -9,18 +9,27 @@ import {
   BookOpen, Award, ClipboardList, TrendingUp,
   ChevronRight, ChevronLeft, X, Star, Clock, CheckCircle2,
 } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 const ONBOARDING_KEY = "pragmalearn_onboarding_done";
 
-const onboardingSteps = [
-  { emoji: "👋", color: "from-blue-500 to-indigo-600", title: "Welcome to PragmaLearn!", description: "You're about to start your English learning journey. This quick tour will show you everything you need to know." },
-  { emoji: "📚", color: "from-emerald-500 to-teal-600", title: "Lessons", description: "Browse interactive lessons organized by level from A1 to C2. Complete them to earn points and track your progress." },
-  { emoji: "🎤", color: "from-violet-500 to-purple-600", title: "Speaking Lab", description: "Practice speaking with real-time AI feedback on pronunciation, fluency, and rhythm. The more you speak, the better you get." },
-  { emoji: "📈", color: "from-orange-500 to-amber-600", title: "Progress and Homework", description: "Track your learning with charts and statistics. Submit homework and get feedback from your teacher." },
-  { emoji: "🏆", color: "from-yellow-500 to-orange-500", title: "Earn Certificates", description: "Complete a level and earn a CEFR certificate verified by your teacher. Share it on your LinkedIn or resume!" },
+const onboardingColors = [
+  "from-blue-500 to-indigo-600",
+  "from-emerald-500 to-teal-600",
+  "from-violet-500 to-purple-600",
+  "from-orange-500 to-amber-600",
+  "from-yellow-500 to-orange-500",
 ];
+const onboardingEmojis = ["👋", "📚", "🎤", "📈", "🏆"];
 
 function OnboardingModal() {
+  const { t } = useI18n();
+  const onboardingSteps = onboardingColors.map((color, i) => ({
+    emoji: onboardingEmojis[i],
+    color,
+    title: t(`dash.onboarding.s${i + 1}Title`),
+    description: t(`dash.onboarding.s${i + 1}Desc`),
+  }));
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
 
@@ -58,18 +67,18 @@ function OnboardingModal() {
           <div className="flex gap-3">
             {step > 0 ? (
               <button onClick={() => setStep(s => s - 1)} className="flex-1 flex items-center justify-center gap-1 px-4 py-2.5 rounded-lg border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition text-sm font-medium">
-                <ChevronLeft className="w-4 h-4" /> Back
+                <ChevronLeft className="w-4 h-4" /> {t("dash.onboarding.back")}
               </button>
             ) : (
               <button onClick={done} className="flex-1 px-4 py-2.5 rounded-lg text-gray-400 hover:text-gray-600 transition text-sm">
-                Skip tour
+                {t("dash.onboarding.skip")}
               </button>
             )}
             <button
               onClick={isLast ? done : () => setStep(s => s + 1)}
               className={"flex-1 flex items-center justify-center gap-1 px-4 py-2.5 rounded-lg bg-gradient-to-r " + cur.color + " text-white font-semibold text-sm hover:opacity-90 transition"}
             >
-              {isLast ? "Get started!" : <><span>Next</span><ChevronRight className="w-4 h-4" /></>}
+              {isLast ? t("dash.onboarding.getStarted") : <><span>{t("dash.onboarding.next")}</span><ChevronRight className="w-4 h-4" /></>}
             </button>
           </div>
         </div>
@@ -102,6 +111,7 @@ interface Lesson { id: string; title: string; modules: { title: string } | null;
 interface Homework { id: string; title: string; due_date: string; status?: string; }
 
 function StudentDashboard() {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [lessons, setLessons] = useState<Lesson[]>([]);
@@ -153,10 +163,10 @@ function StudentDashboard() {
   const initials = (profile?.avatar_initials ?? "ST").replace(/[^A-Z]/gi, "").substring(0, 2).toUpperCase() || "ST";
 
   const stats = [
-    { label: "Completed Lessons", value: completedLessons, icon: CheckCircle2, color: "text-green-400", bg: "bg-green-400/10" },
-    { label: "Certificates", value: certCount, icon: Award, color: "text-yellow-400", bg: "bg-yellow-400/10" },
-    { label: "Pending Homework", value: homework.filter(h => h.status !== "completed").length, icon: ClipboardList, color: "text-blue-400", bg: "bg-blue-400/10" },
-    { label: "Overall Progress", value: progressPct + "%", icon: TrendingUp, color: "text-purple-400", bg: "bg-purple-400/10" },
+    { label: t("dash.student.completedLessons"), value: completedLessons, icon: CheckCircle2, color: "text-green-400", bg: "bg-green-400/10" },
+    { label: t("dash.student.certificates"), value: certCount, icon: Award, color: "text-yellow-400", bg: "bg-yellow-400/10" },
+    { label: t("dash.student.pendingHomework"), value: homework.filter(h => h.status !== "completed").length, icon: ClipboardList, color: "text-blue-400", bg: "bg-blue-400/10" },
+    { label: t("dash.student.overallProgress"), value: progressPct + "%", icon: TrendingUp, color: "text-purple-400", bg: "bg-purple-400/10" },
   ];
 
   return (
@@ -179,7 +189,7 @@ function StudentDashboard() {
               </div>
               <div>
                 <h1 className="text-xl md:text-2xl font-bold text-white">
-                  Welcome, {profile?.full_name?.split(" ")[0] ?? "Student"}!
+                  {t("dash.student.welcome", { name: profile?.full_name?.split(" ")[0] ?? t("dash.student.defaultName") })}
                 </h1>
                 <Badge className="bg-blue-600/20 text-blue-400 border-blue-600/30 mt-1">
                   {profile?.level ?? "Beginner"}
@@ -195,11 +205,11 @@ function StudentDashboard() {
           ) : (
             <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-slate-300 font-medium">Overall Progress</span>
+                <span className="text-slate-300 font-medium">{t("dash.student.overallProgress")}</span>
                 <span className="text-blue-400 font-bold">{progressPct}%</span>
               </div>
               <Progress value={progressPct} className="h-2.5 bg-slate-700" />
-              <p className="text-slate-500 text-xs mt-2">{completedLessons} of {totalLessons} lessons completed</p>
+              <p className="text-slate-500 text-xs mt-2">{t("dash.student.lessonsCompleted", { done: completedLessons, total: totalLessons })}</p>
             </div>
           )}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -227,10 +237,10 @@ function StudentDashboard() {
             <div>
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-base font-semibold text-white flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-blue-400" /> Recent Lessons
+                  <BookOpen className="w-4 h-4 text-blue-400" /> {t("dash.student.recentLessons")}
                 </h2>
                 <button onClick={() => navigate({ to: "/student/lessons" })} className="text-blue-400 text-xs hover:underline flex items-center gap-1">
-                  See all <ChevronRight className="w-3 h-3" />
+                  {t("dash.seeAll")} <ChevronRight className="w-3 h-3" />
                 </button>
               </div>
               <div className="space-y-2">
@@ -241,7 +251,7 @@ function StudentDashboard() {
                     <Card className="bg-slate-800 border-slate-700">
                       <CardContent className="p-6 text-center">
                         <BookOpen className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-                        <p className="text-slate-500 text-sm">No lessons yet</p>
+                        <p className="text-slate-500 text-sm">{t("dash.student.noLessons")}</p>
                       </CardContent>
                     </Card>
                   )
@@ -263,10 +273,10 @@ function StudentDashboard() {
             <div>
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-base font-semibold text-white flex items-center gap-2">
-                  <ClipboardList className="w-4 h-4 text-orange-400" /> Homework
+                  <ClipboardList className="w-4 h-4 text-orange-400" /> {t("dash.student.homework")}
                 </h2>
                 <button onClick={() => navigate({ to: "/student/homework" })} className="text-blue-400 text-xs hover:underline flex items-center gap-1">
-                  See all <ChevronRight className="w-3 h-3" />
+                  {t("dash.seeAll")} <ChevronRight className="w-3 h-3" />
                 </button>
               </div>
               <div className="space-y-2">
@@ -277,7 +287,7 @@ function StudentDashboard() {
                     <Card className="bg-slate-800 border-slate-700">
                       <CardContent className="p-6 text-center">
                         <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-2" />
-                        <p className="text-slate-500 text-sm">All caught up!</p>
+                        <p className="text-slate-500 text-sm">{t("dash.student.allCaughtUp")}</p>
                       </CardContent>
                     </Card>
                   )
@@ -292,11 +302,11 @@ function StudentDashboard() {
                         <div className="flex-1 min-w-0">
                           <p className="text-white text-sm font-medium truncate">{hw.title}</p>
                           <p className={"text-xs mt-0.5 " + (isOverdue ? "text-red-400" : "text-slate-500")}>
-                            {isOverdue ? "Overdue: " : "Due: "}{due.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                            {isOverdue ? t("dash.student.overdue") : t("dash.student.due")}{due.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                           </p>
                         </div>
                         <Badge className={"text-xs flex-shrink-0 " + (hw.status === "completed" ? "bg-green-600" : isOverdue ? "bg-red-600" : "bg-orange-600") + " text-white"}>
-                          {hw.status === "completed" ? "Done" : isOverdue ? "Late" : "Pending"}
+                          {hw.status === "completed" ? t("dash.student.done") : isOverdue ? t("dash.student.late") : t("dash.student.pending")}
                         </Badge>
                       </div>
                     );
@@ -304,10 +314,10 @@ function StudentDashboard() {
               </div>
               <div className="mt-4 grid grid-cols-2 gap-2">
                 <Button onClick={() => navigate({ to: "/student/progress" })} variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 text-xs h-9">
-                  <TrendingUp className="w-3 h-3 mr-1.5" /> My Progress
+                  <TrendingUp className="w-3 h-3 mr-1.5" /> {t("dash.student.myProgress")}
                 </Button>
                 <Button onClick={() => navigate({ to: "/student/certificates" })} variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 text-xs h-9">
-                  <Award className="w-3 h-3 mr-1.5" /> Certificates
+                  <Award className="w-3 h-3 mr-1.5" /> {t("dash.student.certificates")}
                 </Button>
               </div>
             </div>

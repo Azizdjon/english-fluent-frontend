@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/student/progress")({ component: ProgressPage });
 
 function ProgressPage() {
+  const { t } = useI18n();
   const [stats, setStats] = useState({ completedLessons: 0, enrolledCourses: 0, submissions: 0, certificates: 0 });
   const [enrollments, setEnrollments] = useState<any[]>([]);
   const [weekActivity, setWeekActivity] = useState<number[]>(Array(7).fill(0));
@@ -39,20 +41,20 @@ function ProgressPage() {
     setLoading(false);
   }
 
-  const days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  const days = [t("dash.progress.mon"),t("dash.progress.tue"),t("dash.progress.wed"),t("dash.progress.thu"),t("dash.progress.fri"),t("dash.progress.sat"),t("dash.progress.sun")];
   const maxActivity = Math.max(...weekActivity, 1);
 
-  if (loading) return <div className="p-6 text-gray-400">Loading progress...</div>;
+  if (loading) return <div className="p-6 text-gray-400">{t("dash.progress.loading")}</div>;
 
   return (
     <div className="p-4 md:p-6 max-w-4xl space-y-6">
-      <h1 className="text-2xl font-bold text-white">My Progress</h1>
+      <h1 className="text-2xl font-bold text-white">{t("dash.progress.title")}</h1>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Lessons Done", value: stats.completedLessons, color: "text-blue-400" },
-          { label: "Courses", value: stats.enrolledCourses, color: "text-purple-400" },
-          { label: "Homework", value: stats.submissions, color: "text-orange-400" },
-          { label: "Certificates", value: stats.certificates, color: "text-green-400" },
+          { label: t("dash.progress.lessonsDone"), value: stats.completedLessons, color: "text-blue-400" },
+          { label: t("dash.progress.courses"), value: stats.enrolledCourses, color: "text-purple-400" },
+          { label: t("dash.progress.homework"), value: stats.submissions, color: "text-orange-400" },
+          { label: t("dash.progress.certificates"), value: stats.certificates, color: "text-green-400" },
         ].map(s => (
           <div key={s.label} className="bg-gray-800 rounded-xl p-4 text-center">
             <div className={`text-3xl font-bold ${s.color}`}>{s.value}</div>
@@ -61,7 +63,7 @@ function ProgressPage() {
         ))}
       </div>
       <div className="bg-gray-800 rounded-xl p-6">
-        <h2 className="text-white font-semibold mb-4">Weekly Activity (last 7 days)</h2>
+        <h2 className="text-white font-semibold mb-4">{t("dash.progress.weeklyActivity")}</h2>
         <div className="flex items-end gap-2 h-24">
           {weekActivity.map((count, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1">
@@ -72,21 +74,21 @@ function ProgressPage() {
         </div>
       </div>
       <div className="bg-gray-800 rounded-xl p-6">
-        <h2 className="text-white font-semibold mb-4">Course Progress</h2>
-        {enrollments.length === 0 && <p className="text-gray-400 text-sm">Not enrolled in any courses yet.</p>}
+        <h2 className="text-white font-semibold mb-4">{t("dash.progress.courseProgress")}</h2>
+        {enrollments.length === 0 && <p className="text-gray-400 text-sm">{t("dash.progress.notEnrolled")}</p>}
         <div className="space-y-4">
           {enrollments.map((e: any) => (
             <div key={e.course_id}>
               <div className="flex justify-between mb-1">
-                <span className="text-gray-200 text-sm">{(e.courses as any)?.title || "Course"}</span>
+                <span className="text-gray-200 text-sm">{(e.courses as any)?.title || t("dash.progress.course")}</span>
                 <span className="text-gray-400 text-sm">{e.progress || 0}%</span>
               </div>
               <div className="w-full bg-gray-700 rounded-full h-2">
                 <div className="bg-blue-500 h-2 rounded-full transition-all" style={{ width: `${e.progress || 0}%` }} />
               </div>
               <div className="flex justify-between mt-1 text-xs text-gray-500">
-                <span>{e.lessons_done || 0} lessons done</span>
-                <span>Score: {e.score || 0}%</span>
+                <span>{t("dash.progress.lessonsDoneCount", { n: e.lessons_done || 0 })}</span>
+                <span>{t("dash.progress.score", { n: e.score || 0 })}</span>
               </div>
             </div>
           ))}
