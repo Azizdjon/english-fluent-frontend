@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabase";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/teacher/messages")({ component: MessagesPage });
 
 function MessagesPage() {
+  const { t } = useI18n();
   const [messages, setMessages] = useState<any[]>([]);
   const [students, setStudents] = useState<any[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
@@ -44,11 +46,11 @@ function MessagesPage() {
   );
   const student = students.find(s => s.id === selectedStudent);
 
-  if (loading) return <div className="p-6 text-gray-400">Loading...</div>;
+  if (loading) return <div className="p-6 text-gray-400">{t("dash.teacherMessages.loading")}</div>;
 
   return (
     <div className="p-4 md:p-6 max-w-4xl">
-      <h1 className="text-2xl font-bold text-white mb-6">Messages</h1>
+      <h1 className="text-2xl font-bold text-white mb-6">{t("dash.teacherMessages.title")}</h1>
       <div className="bg-gray-800 rounded-xl flex h-[500px] overflow-hidden">
         <div className="w-48 md:w-64 border-r border-gray-700 overflow-y-auto flex-shrink-0">
           {students.map(s => {
@@ -63,11 +65,11 @@ function MessagesPage() {
               </button>
             );
           })}
-          {students.length === 0 && <p className="text-gray-400 text-sm p-4">No students</p>}
+          {students.length === 0 && <p className="text-gray-400 text-sm p-4">{t("dash.teacherMessages.noStudents")}</p>}
         </div>
         <div className="flex-1 flex flex-col min-w-0">
           <div className="px-4 py-3 border-b border-gray-700 flex-shrink-0">
-            <p className="text-white font-medium text-sm">{student?.full_name || student?.email || "Select a student"}</p>
+            <p className="text-white font-medium text-sm">{student?.full_name || student?.email || t("dash.teacherMessages.selectStudent")}</p>
           </div>
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {convoMessages.map(m => {
@@ -83,13 +85,13 @@ function MessagesPage() {
                 </div>
               );
             })}
-            {convoMessages.length === 0 && <p className="text-gray-400 text-center text-sm mt-8">No messages yet</p>}
+            {convoMessages.length === 0 && <p className="text-gray-400 text-center text-sm mt-8">{t("dash.teacherMessages.noMessages")}</p>}
             <div ref={bottomRef} />
           </div>
           <div className="p-3 border-t border-gray-700 flex gap-2 flex-shrink-0">
             <input value={newMessage} onChange={e => setNewMessage(e.target.value)} onKeyDown={e => e.key === "Enter" && sendMessage()}
-              placeholder="Type a message..." className="flex-1 bg-gray-700 text-white rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 min-w-0" />
-            <button onClick={sendMessage} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm flex-shrink-0">Send</button>
+              placeholder={t("dash.teacherMessages.typeMessage")} className="flex-1 bg-gray-700 text-white rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 min-w-0" />
+            <button onClick={sendMessage} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm flex-shrink-0">{t("dash.teacherMessages.send")}</button>
           </div>
         </div>
       </div>

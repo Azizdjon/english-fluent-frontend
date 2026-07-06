@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
+import { useI18n } from "@/lib/i18n";
 
 interface HomeworkTask {
   prompt?: string;
@@ -105,6 +106,7 @@ export const Route = createFileRoute("/student/homework")({
 });
 
 function HomeworkPage() {
+  const { t } = useI18n();
   const [tasks, setTasks] = useState<HomeworkTask[]>(initialTasks);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadedFile, setUploadedFile] = useState<string>('');
@@ -126,34 +128,34 @@ function HomeworkPage() {
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Homework</h1>
+        <h1 className="text-3xl font-bold">{t("dash.sHomework.title")}</h1>
         <p className="text-muted-foreground mt-1">
-          Track your assignments, meet deadlines, and review feedback.
+          {t("dash.sHomework.subtitle")}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
         <Card className="p-5">
-          <div className="text-sm text-muted-foreground mb-1">Total Tasks</div>
+          <div className="text-sm text-muted-foreground mb-1">{t("dash.sHomework.totalTasks")}</div>
           <div className="text-3xl font-bold">{tasks.length}</div>
         </Card>
         <Card className="p-5">
-          <div className="text-sm text-muted-foreground mb-1">Pending</div>
+          <div className="text-sm text-muted-foreground mb-1">{t("dash.sHomework.pending")}</div>
           <div className="text-3xl font-bold text-amber-600">{pending.length}</div>
         </Card>
         <Card className="p-5">
-          <div className="text-sm text-muted-foreground mb-1">Submitted</div>
+          <div className="text-sm text-muted-foreground mb-1">{t("dash.sHomework.submitted")}</div>
           <div className="text-3xl font-bold text-indigo-600">{submitted.length}</div>
         </Card>
         <Card className="p-5">
-          <div className="text-sm text-muted-foreground mb-1">Graded</div>
+          <div className="text-sm text-muted-foreground mb-1">{t("dash.sHomework.graded")}</div>
           <div className="text-3xl font-bold text-emerald-600">{graded.length}</div>
         </Card>
       </div>
 
       <Card className="p-6 mb-10">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-medium">Completion rate</span>
+          <span className="text-sm font-medium">{t("dash.sHomework.completionRate")}</span>
           <span className="text-sm font-bold">{completionRate}%</span>
         </div>
         <Progress value={completionRate} className="h-2" />
@@ -162,14 +164,14 @@ function HomeworkPage() {
       <section className="mb-12">
         <div className="flex items-center gap-2 mb-5">
           <Clock className="w-5 h-5 text-amber-600" />
-          <h2 className="text-xl font-semibold">Pending Assignments</h2>
+          <h2 className="text-xl font-semibold">{t("dash.sHomework.pendingAssignments")}</h2>
           <Badge variant="secondary" className="ml-2">{pending.length}</Badge>
         </div>
         {pending.length === 0 ? (
           <Card className="p-8 text-center text-muted-foreground">
             <CheckCircle2 className="w-10 h-10 mx-auto mb-3 text-emerald-500" />
-            <p className="font-medium">All caught up!</p>
-            <p className="text-sm">You have no pending assignments.</p>
+            <p className="font-medium">{t("dash.sHomework.allCaughtUp")}</p>
+            <p className="text-sm">{t("dash.sHomework.noPending")}</p>
           </Card>
         ) : (
           <div className="space-y-4">
@@ -186,14 +188,14 @@ function HomeworkPage() {
                         <h3 className="font-semibold">{task.title}</h3>
                         <Badge variant="outline">{task.subject}</Badge>
                         {task.type === "speaking" && (
-                          <Badge className="bg-violet-100 text-violet-700 hover:bg-violet-100">Audio</Badge>
+                          <Badge className="bg-violet-100 text-violet-700 hover:bg-violet-100">{t("dash.sHomework.audio")}</Badge>
                         )}
                       </div>
                       <p className="text-sm text-muted-foreground mb-2">{task.description}</p>
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Calendar className="w-3.5 h-3.5" />
-                          Due {task.deadline}
+                          {t("dash.sHomework.due", { d: task.deadline })}
                         </span>
                       </div>
                     </div>
@@ -203,12 +205,12 @@ function HomeworkPage() {
                         <input type="file" ref={fileInputRef} className="hidden" accept=".pdf,.doc,.docx,.jpg,.png" onChange={e => { const f = e.target.files?.[0]; if (f) { setUploadedFile(f.name); toast.success("File attached: " + f.name, { description: "Click Submit to send your work." }); } }} />
                         <Button variant="outline" size="sm" className="gap-1" onClick={() => fileInputRef.current?.click()}>
                           <Upload className="w-4 h-4" />
-                          {uploadedFile ? uploadedFile.substring(0,12) + (uploadedFile.length > 12 ? "…" : "") : "Upload"}
+                          {uploadedFile ? uploadedFile.substring(0,12) + (uploadedFile.length > 12 ? "…" : "") : t("dash.sHomework.upload")}
                         </Button>
                       </>
                         <Button size="sm" className="gap-1" onClick={() => markSubmitted(task.id)}>
                           <CheckCircle2 className="w-4 h-4" />
-                          Submit
+                          {t("dash.sHomework.submit")}
                         </Button>
                       </div>
                     )}
@@ -231,7 +233,7 @@ function HomeworkPage() {
         <section className="mb-12">
           <div className="flex items-center gap-2 mb-5">
             <Circle className="w-5 h-5 text-indigo-600" />
-            <h2 className="text-xl font-semibold">Submitted</h2>
+            <h2 className="text-xl font-semibold">{t("dash.sHomework.submitted")}</h2>
             <Badge variant="secondary" className="ml-2">{submitted.length}</Badge>
           </div>
           <div className="space-y-4">
@@ -251,11 +253,11 @@ function HomeworkPage() {
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3.5 h-3.5" />
-                        Submitted on time
+                        {t("dash.sHomework.submittedOnTime")}
                       </span>
                     </div>
                   </div>
-                  <Badge className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100">Submitted</Badge>
+                  <Badge className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100">{t("dash.sHomework.submittedBadge")}</Badge>
                 </Card>
               );
             })}
@@ -267,7 +269,7 @@ function HomeworkPage() {
         <section>
           <div className="flex items-center gap-2 mb-5">
             <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-            <h2 className="text-xl font-semibold">Graded</h2>
+            <h2 className="text-xl font-semibold">{t("dash.sHomework.graded")}</h2>
             <Badge variant="secondary" className="ml-2">{graded.length}</Badge>
           </div>
           <div className="space-y-4">
@@ -287,7 +289,7 @@ function HomeworkPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
-                      Grade: {task.grade}
+                      {t("dash.sHomework.gradeLabel")} {task.grade}
                     </Badge>
                   </div>
                 </Card>
@@ -309,6 +311,7 @@ function SpeakingRecorder({
   maxMinutes: number;
   onSubmit: () => void;
 }) {
+  const { t } = useI18n();
   const [recording, setRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [elapsed, setElapsed] = useState(0);
@@ -387,7 +390,7 @@ function SpeakingRecorder({
     <div className="mt-5 rounded-lg border border-violet-700 bg-violet-900/20 p-4 space-y-3">
       <div>
         <div className="text-xs font-semibold uppercase tracking-wide text-violet-400 mb-1">
-          Teacher's prompt
+          {t("dash.sHomework.teacherPrompt")}
         </div>
         <p className="text-sm text-foreground/80">{prompt}</p>
       </div>
@@ -396,12 +399,12 @@ function SpeakingRecorder({
         {!recording ? (
           <Button size="sm" onClick={startRecording} className="gap-1 bg-violet-600 hover:bg-violet-700">
             <Mic className="w-4 h-4" />
-            {audioUrl ? "Re-record" : "Start recording"}
+            {audioUrl ? t("dash.sHomework.reRecord") : t("dash.sHomework.startRecording")}
           </Button>
         ) : (
           <Button size="sm" variant="destructive" onClick={stopRecording} className="gap-1">
             <Square className="w-4 h-4" />
-            Stop
+            {t("dash.sHomework.stop")}
           </Button>
         )}
 
@@ -412,7 +415,7 @@ function SpeakingRecorder({
         {recording && (
           <span className="flex items-center gap-1 text-xs text-rose-600">
             <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-            Recording…
+            {t("dash.sHomework.recording")}
           </span>
         )}
       </div>
@@ -422,11 +425,11 @@ function SpeakingRecorder({
           <audio src={audioUrl} controls className="h-9" />
           <Button size="sm" variant="outline" onClick={discard} className="gap-1">
             <Trash2 className="w-4 h-4" />
-            Discard
+            {t("dash.sHomework.discard")}
           </Button>
           <Button size="sm" onClick={submit} className="gap-1">
             <Play className="w-4 h-4" />
-            Submit recording
+            {t("dash.sHomework.submitRecording")}
           </Button>
         </div>
       )}

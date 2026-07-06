@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useI18n } from "@/lib/i18n";
 import { ChevronDown, ChevronRight, CheckCircle, Circle } from "lucide-react";
 
 export const Route = createFileRoute("/student/lessons/")({
@@ -14,6 +15,7 @@ interface Course { id: string; title: string; level: string; modules: Module[]; 
 function SkeletonLine() { return <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded animate-pulse w-full" />; }
 
 function LessonsPage() {
+  const { t } = useI18n();
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
@@ -69,8 +71,8 @@ function LessonsPage() {
 
   return (
     <div className="p-4 md:p-6 max-w-3xl space-y-8">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">My Lessons</h1>
-      {courses.length === 0 && <p className="text-gray-500 dark:text-slate-400">No courses available yet.</p>}
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t("dash.sLessons.title")}</h1>
+      {courses.length === 0 && <p className="text-gray-500 dark:text-slate-400">{t("dash.sLessons.none")}</p>}
       {courses.map(course => (
         <div key={course.id} className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden border border-gray-100 dark:border-slate-700 shadow-sm">
           <div className="bg-gray-50 dark:bg-slate-700/50 px-4 py-3 flex items-center justify-between border-b border-gray-100 dark:border-slate-700">
@@ -79,7 +81,7 @@ function LessonsPage() {
               <span className="text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded font-medium">{course.level}</span>
             </div>
             <span className="text-gray-500 dark:text-slate-400 text-sm hidden sm:inline">
-              {course.modules.reduce((acc, m) => acc + m.lessons.length, 0)} lessons
+              {t("dash.sLessons.lessons", { n: course.modules.reduce((acc, m) => acc + m.lessons.length, 0) })}
             </span>
           </div>
           <div className="divide-y divide-gray-100 dark:divide-slate-700">

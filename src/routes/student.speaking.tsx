@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Mic, Play, Square, RotateCcw, Volume2, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useI18n } from '@/lib/i18n';
 
 export const Route = createFileRoute('/student/speaking')({
   component: SpeakingLab,
@@ -23,6 +24,7 @@ const feedbackTemplates = [
 ];
 
 function SpeakingLab() {
+  const { t } = useI18n();
   const [selected, setSelected] = useState(prompts[0]);
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
@@ -78,8 +80,8 @@ function SpeakingLab() {
   return (
     <div className="max-w-3xl mx-auto py-8 px-4 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Speaking Lab</h1>
-        <p className="text-gray-500">Practice speaking and get instant AI feedback</p>
+        <h1 className="text-2xl font-bold">{t("dash.sSpeaking.title")}</h1>
+        <p className="text-gray-500">{t("dash.sSpeaking.subtitle")}</p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {prompts.map(p => (
@@ -113,30 +115,30 @@ function SpeakingLab() {
             <div className="flex flex-col items-center gap-3 w-full">
               <Volume2 className="w-8 h-8 text-green-500" />
               <audio src={audioUrl} controls className="w-full max-w-xs" />
-              <span className="text-sm text-gray-500">Duration: {fmt(timer)}</span>
+              <span className="text-sm text-gray-500">{t("dash.sSpeaking.duration")} {fmt(timer)}</span>
             </div>
           ) : (
             <div className="flex flex-col items-center gap-2 text-gray-400">
               <Mic className="w-12 h-12" />
-              <span className="text-sm">Click record to start</span>
+              <span className="text-sm">{t("dash.sSpeaking.clickRecord")}</span>
             </div>
           )}
         </div>
         <div className="flex gap-3 justify-center">
-          {!isRecording && !audioUrl && <Button onClick={startRec} className="gap-2 bg-red-500 hover:bg-red-600"><Mic className="w-4 h-4" /> Start Recording</Button>}
-          {isRecording && <Button onClick={stopRec} variant="destructive" className="gap-2"><Square className="w-4 h-4" /> Stop Recording</Button>}
-          {audioUrl && !analyzing && <Button onClick={reset} variant="outline" className="gap-2"><RotateCcw className="w-4 h-4" /> Record Again</Button>}
+          {!isRecording && !audioUrl && <Button onClick={startRec} className="gap-2 bg-red-500 hover:bg-red-600"><Mic className="w-4 h-4" /> {t("dash.sSpeaking.startRec")}</Button>}
+          {isRecording && <Button onClick={stopRec} variant="destructive" className="gap-2"><Square className="w-4 h-4" /> {t("dash.sSpeaking.stopRec")}</Button>}
+          {audioUrl && !analyzing && <Button onClick={reset} variant="outline" className="gap-2"><RotateCcw className="w-4 h-4" /> {t("dash.sSpeaking.recordAgain")}</Button>}
         </div>
-        {analyzing && <div className="mt-4 text-center text-sm text-gray-500 animate-pulse">Analyzing your pronunciation and fluency...</div>}
+        {analyzing && <div className="mt-4 text-center text-sm text-gray-500 animate-pulse">{t("dash.sSpeaking.analyzing")}</div>}
         {feedback && (
           <div className="mt-6 bg-green-50 rounded-xl p-5 border border-green-200">
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle2 className="w-5 h-5 text-green-600" />
-              <span className="font-semibold text-green-700">AI Feedback</span>
+              <span className="font-semibold text-green-700">{t("dash.sSpeaking.aiFeedback")}</span>
               <span className="ml-auto text-2xl font-bold text-green-700">{feedback.score}/100</span>
             </div>
             <div className="grid grid-cols-3 gap-3 text-sm mb-3">
-              {[['Fluency', feedback.fluency, 'green'],['Pronunciation', feedback.pronunciation, 'blue'],['Grammar', feedback.grammar, 'purple']].map(([label, val, color]) => (
+              {[[t('dash.sSpeaking.fluency'), feedback.fluency, 'green'],[t('dash.sSpeaking.pronunciation'), feedback.pronunciation, 'blue'],[t('dash.sSpeaking.grammar'), feedback.grammar, 'purple']].map(([label, val, color]) => (
                 <div key={label} className="bg-white rounded-lg p-2 text-center">
                   <div className="text-gray-500 text-xs mb-1">{label}</div>
                   <div className={"font-semibold text-" + color + "-700"}>{val}</div>

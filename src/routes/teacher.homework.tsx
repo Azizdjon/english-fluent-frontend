@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, CheckCircle, Clock, BookOpen } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/teacher/homework")({
   component: TeacherHomework,
@@ -36,6 +37,7 @@ interface Submission {
 }
 
 function TeacherHomework() {
+  const { t } = useI18n();
   const [homeworks, setHomeworks] = useState<Homework[]>([]);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,7 +81,7 @@ function TeacherHomework() {
   }
 
   async function createHomework() {
-    if (!newHw.title.trim()) { toast.error("Sarlavha kiriting"); return; }
+    if (!newHw.title.trim()) { toast.error(t("dash.tHomework.enterTitle")); return; }
     setSaving(true);
     const { data: { user } } = await supabase.auth.getUser();
     const { error } = await supabase.from("homework").insert({
@@ -90,23 +92,23 @@ function TeacherHomework() {
       due_date: newHw.due_date || null,
     });
     setSaving(false);
-    if (error) { toast.error("Xato: " + error.message); return; }
-    toast.success("Vazifa yaratildi!");
+    if (error) { toast.error(t("dash.tHomework.errorPrefix") + error.message); return; }
+    toast.success(t("dash.tHomework.taskCreated"));
     setShowNewModal(false);
     setNewHw({ title: "", description: "", type: "writing", due_date: "" });
     fetchData();
   }
 
   async function saveGrade() {
-    if (!gradeModal || !gradeValue) { toast.error("Baho tanlang"); return; }
+    if (!gradeModal || !gradeValue) { toast.error(t("dash.tHomework.selectGrade")); return; }
     setSaving(true);
     const { error } = await supabase
       .from("submissions")
       .update({ grade: gradeValue, feedback: feedbackValue, status: "graded", graded_at: new Date().toISOString() })
       .eq("id", gradeModal.id);
     setSaving(false);
-    if (error) { toast.error("Xato: " + error.message); return; }
-    toast.success("Baho saqlandi!");
+    if (error) { toast.error(t("dash.tHomework.errorPrefix") + error.message); return; }
+    toast.success(t("dash.tHomework.gradeSaved"));
     setGradeModal(null);
     setGradeValue("");
     setFeedbackValue("");
@@ -126,12 +128,12 @@ function TeacherHomework() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Vazifalar</h1>
-          <p className="text-gray-500">O'quvchilar vazifalarini boshqaring</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t("dash.tHomework.title")}</h1>
+          <p className="text-gray-500">{t("dash.tHomework.subtitle")}</p>
         </div>
         <Button onClick={() => setShowNewModal(true)} className="flex items-center gap-2">
           <Plus className="w-4 h-4" />
-          Yangi vazifa
+          {t("dash.tHomework.newTask")}
         </Button>
       </div>
 
@@ -142,7 +144,7 @@ function TeacherHomework() {
             <BookOpen className="w-8 h-8 text-blue-500" />
             <div>
               <p className="text-2xl font-bold">{homeworks.length}</p>
-              <p className="text-sm text-gray-500">Jami vazifalar</p>
+              <p className="text-sm text-gray-500">{t("dash.tHomework.totalTasks")}</p>
             </div>
           </CardContent>
         </Card>
@@ -151,7 +153,7 @@ function TeacherHomework() {
             <Clock className="w-8 h-8 text-orange-500" />
             <div>
               <p className="text-2xl font-bold">{submitted.length}</p>
-              <p className="text-sm text-gray-500">Topshirilgan</p>
+              <p className="text-sm text-gray-500">{t("dash.tHomework.submitted")}</p>
             </div>
           </CardContent>
         </Card>
@@ -160,7 +162,7 @@ function TeacherHomework() {
             <CheckCircle className="w-8 h-8 text-green-500" />
             <div>
               <p className="text-2xl font-bold">{graded.length}</p>
-              <p className="text-sm text-gray-500">Baholangan</p>
+              <p className="text-sm text-gray-500">{t("dash.tHomework.graded")}</p>
             </div>
           </CardContent>
         </Card>
@@ -170,7 +172,7 @@ function TeacherHomework() {
       {submitted.filter(s => s.status === "submitted").length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-orange-600">Baholash kutilmoqda</CardTitle>
+            <CardTitle className="text-orange-600">{t("dash.tHomework.awaitingGrade")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {submitted.filter(s => s.status === "submitted").map(sub => {
@@ -178,11 +180,11 @@ function TeacherHomework() {
               return (
                 <div key={sub.id} className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200">
                   <div>
-                    <p className="font-medium">{sub.profiles?.full_name || "O'quvchi"}</p>
-                    <p className="text-sm text-gray-500">{hw?.title || "Vazifa"}</p>
+                    <p className="font-medium">{sub.profiles?.full_name || t("dash.tHomework.student")}</p>
+                    <p className="text-sm text-gray-500">{hw?.title || t("dash.tHomework.task")}</p>
                   </div>
                   <Button size="sm" onClick={() => openGradeModal(sub)}>
-                    Baholash
+                    {t("dash.tHomework.gradeBtn")}
                   </Button>
                 </div>
               );
@@ -194,13 +196,13 @@ function TeacherHomework() {
       {/* Homework list */}
       <Card>
         <CardHeader>
-          <CardTitle>Barcha vazifalar</CardTitle>
+          <CardTitle>{t("dash.tHomework.allTasks")}</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <p className="text-center text-gray-400 py-8">Loading...</p>
+            <p className="text-center text-gray-400 py-8">{t("dash.tHomework.loading")}</p>
           ) : homeworks.length === 0 ? (
-            <p className="text-center text-gray-400 py-8">Hali vazifalar yo'q. Birinchi vazifani yarating!</p>
+            <p className="text-center text-gray-400 py-8">{t("dash.tHomework.noTasks")}</p>
           ) : (
             <div className="space-y-3">
               {homeworks.map(hw => {
@@ -221,8 +223,8 @@ function TeacherHomework() {
                         </div>
                       </div>
                       <div className="text-right text-sm text-gray-500">
-                        <p>{hwSubs.length} topshiriq</p>
-                        <p>{hwSubs.filter(s => s.status === "graded").length} baholangan</p>
+                        <p>{t("dash.tHomework.submissionsCount", { n: hwSubs.length })}</p>
+                        <p>{t("dash.tHomework.gradedCount", { n: hwSubs.filter(s => s.status === "graded").length })}</p>
                       </div>
                     </div>
                   </div>
@@ -237,43 +239,43 @@ function TeacherHomework() {
       <Dialog open={showNewModal} onOpenChange={setShowNewModal}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Yangi vazifa yaratish</DialogTitle>
+            <DialogTitle>{t("dash.tHomework.newTaskTitle")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium">Sarlavha *</label>
+              <label className="text-sm font-medium">{t("dash.tHomework.titleLabel")}</label>
               <Input
-                placeholder="Vazifa sarlavhasi"
+                placeholder={t("dash.tHomework.titlePlaceholder")}
                 value={newHw.title}
                 onChange={e => setNewHw(p => ({ ...p, title: e.target.value }))}
               />
             </div>
             <div>
-              <label className="text-sm font-medium">Tavsif</label>
+              <label className="text-sm font-medium">{t("dash.tHomework.descLabel")}</label>
               <Textarea
-                placeholder="Vazifa haqida qo'shimcha ma'lumot"
+                placeholder={t("dash.tHomework.descPlaceholder")}
                 value={newHw.description}
                 onChange={e => setNewHw(p => ({ ...p, description: e.target.value }))}
                 rows={3}
               />
             </div>
             <div>
-              <label className="text-sm font-medium">Turi</label>
+              <label className="text-sm font-medium">{t("dash.tHomework.typeLabel")}</label>
               <Select value={newHw.type} onValueChange={v => setNewHw(p => ({ ...p, type: v }))}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="writing">Yozish (Writing)</SelectItem>
-                  <SelectItem value="listening">Tinglash (Listening)</SelectItem>
-                  <SelectItem value="speaking">Gapirish (Speaking)</SelectItem>
-                  <SelectItem value="grammar">Grammatika</SelectItem>
-                  <SelectItem value="reading">O'qish (Reading)</SelectItem>
+                  <SelectItem value="writing">{t("dash.tHomework.typeWriting")}</SelectItem>
+                  <SelectItem value="listening">{t("dash.tHomework.typeListening")}</SelectItem>
+                  <SelectItem value="speaking">{t("dash.tHomework.typeSpeaking")}</SelectItem>
+                  <SelectItem value="grammar">{t("dash.tHomework.typeGrammar")}</SelectItem>
+                  <SelectItem value="reading">{t("dash.tHomework.typeReading")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <label className="text-sm font-medium">Topshirish muddati</label>
+              <label className="text-sm font-medium">{t("dash.tHomework.dueLabel")}</label>
               <Input
                 type="datetime-local"
                 value={newHw.due_date}
@@ -282,9 +284,9 @@ function TeacherHomework() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowNewModal(false)}>Bekor</Button>
+            <Button variant="outline" onClick={() => setShowNewModal(false)}>{t("dash.tHomework.cancel")}</Button>
             <Button onClick={createHomework} disabled={saving}>
-              {saving ? "Saqlanmoqda..." : "Yaratish"}
+              {saving ? t("dash.tHomework.saving") : t("dash.tHomework.createBtn")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -294,28 +296,28 @@ function TeacherHomework() {
       <Dialog open={!!gradeModal} onOpenChange={() => setGradeModal(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Baholash — {gradeModal?.profiles?.full_name}</DialogTitle>
+            <DialogTitle>{t("dash.tHomework.gradeModalTitle")} — {gradeModal?.profiles?.full_name}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium">Baho *</label>
+              <label className="text-sm font-medium">{t("dash.tHomework.gradeSelectLabel")}</label>
               <Select value={gradeValue} onValueChange={setGradeValue}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Baho tanlang" />
+                  <SelectValue placeholder={t("dash.tHomework.gradePlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="A">A — Ajoyib (90-100)</SelectItem>
-                  <SelectItem value="B">B — Yaxshi (75-89)</SelectItem>
-                  <SelectItem value="C">C — Qoniqarli (60-74)</SelectItem>
-                  <SelectItem value="D">D — Zaif (45-59)</SelectItem>
-                  <SelectItem value="F">F — Qoniqarsiz (&lt;45)</SelectItem>
+                  <SelectItem value="A">{t("dash.tHomework.gradeA")}</SelectItem>
+                  <SelectItem value="B">{t("dash.tHomework.gradeB")}</SelectItem>
+                  <SelectItem value="C">{t("dash.tHomework.gradeC")}</SelectItem>
+                  <SelectItem value="D">{t("dash.tHomework.gradeD")}</SelectItem>
+                  <SelectItem value="F">{t("dash.tHomework.gradeF")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <label className="text-sm font-medium">Fikr-mulohaza (Feedback)</label>
+              <label className="text-sm font-medium">{t("dash.tHomework.feedbackLabel")}</label>
               <Textarea
-                placeholder="O'quvchiga izoh yozing..."
+                placeholder={t("dash.tHomework.feedbackPlaceholder")}
                 value={feedbackValue}
                 onChange={e => setFeedbackValue(e.target.value)}
                 rows={4}
@@ -323,9 +325,9 @@ function TeacherHomework() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setGradeModal(null)}>Bekor</Button>
+            <Button variant="outline" onClick={() => setGradeModal(null)}>{t("dash.tHomework.cancel")}</Button>
             <Button onClick={saveGrade} disabled={saving}>
-              {saving ? "Saqlanmoqda..." : "Saqlash"}
+              {saving ? t("dash.tHomework.saving") : t("dash.tHomework.saveBtn")}
             </Button>
           </DialogFooter>
         </DialogContent>

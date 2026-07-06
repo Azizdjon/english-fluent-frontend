@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useI18n } from "@/lib/i18n";
 
 interface Course {
   id: string;
@@ -13,6 +14,7 @@ interface Course {
 export const Route = createFileRoute("/admin/courses")({ component: AdminCoursesPage });
 
 function AdminCoursesPage() {
+  const { t } = useI18n();
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -51,31 +53,31 @@ function AdminCoursesPage() {
   return (
     <div className="p-4 md:p-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-        <h1 className="text-2xl font-bold">Courses</h1>
+        <h1 className="text-2xl font-bold">{t("dash.adminCourses.title")}</h1>
         <div className="flex gap-2">
           <input
             className="border rounded px-3 py-1.5 text-sm flex-1 sm:flex-none sm:w-56"
-            placeholder="Search courses..."
+            placeholder={t("dash.adminCourses.search")}
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
           <button onClick={() => setShowModal(true)} className="bg-blue-600 text-white px-4 py-1.5 rounded text-sm hover:bg-blue-700">
-            + New Course
+            {t("dash.adminCourses.newCourse")}
           </button>
         </div>
       </div>
 
       {loading ? (
-        <div className="text-center py-12 text-gray-500">Loading...</div>
+        <div className="text-center py-12 text-gray-500">{t("dash.adminCourses.loading")}</div>
       ) : (
         <div className="overflow-x-auto rounded-lg border">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-gray-600 uppercase text-xs">
               <tr>
-                <th className="px-4 py-3 text-left">Title</th>
-                <th className="px-4 py-3 text-left hidden sm:table-cell">Level</th>
-                <th className="px-4 py-3 text-left hidden md:table-cell">Lessons</th>
-                <th className="px-4 py-3 text-center">Active</th>
+                <th className="px-4 py-3 text-left">{t("dash.adminCourses.colTitle")}</th>
+                <th className="px-4 py-3 text-left hidden sm:table-cell">{t("dash.adminCourses.colLevel")}</th>
+                <th className="px-4 py-3 text-left hidden md:table-cell">{t("dash.adminCourses.colLessons")}</th>
+                <th className="px-4 py-3 text-center">{t("dash.adminCourses.colActive")}</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -95,7 +97,7 @@ function AdminCoursesPage() {
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={4} className="px-4 py-8 text-center text-gray-400">No courses found</td></tr>
+                <tr><td colSpan={4} className="px-4 py-8 text-center text-gray-400">{t("dash.adminCourses.none")}</td></tr>
               )}
             </tbody>
           </table>
@@ -105,34 +107,34 @@ function AdminCoursesPage() {
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
-            <h2 className="text-lg font-semibold mb-4">New Course</h2>
+            <h2 className="text-lg font-semibold mb-4">{t("dash.adminCourses.modalTitle")}</h2>
             <div className="space-y-3">
               <div>
-                <label className="text-sm text-gray-600 block mb-1">Title</label>
+                <label className="text-sm text-gray-600 block mb-1">{t("dash.adminCourses.titleLabel")}</label>
                 <input
                   className="border rounded px-3 py-2 w-full text-sm"
-                  placeholder="Course title"
+                  placeholder={t("dash.adminCourses.titlePlaceholder")}
                   value={newTitle}
                   onChange={e => setNewTitle(e.target.value)}
                 />
               </div>
               <div>
-                <label className="text-sm text-gray-600 block mb-1">Level</label>
+                <label className="text-sm text-gray-600 block mb-1">{t("dash.adminCourses.level")}</label>
                 <select
                   className="border rounded px-3 py-2 w-full text-sm"
                   value={newLevel}
                   onChange={e => setNewLevel(e.target.value)}
                 >
-                  <option value="beginner">Beginner</option>
-                  <option value="intermediate">Intermediate</option>
-                  <option value="advanced">Advanced</option>
+                  <option value="beginner">{t("dash.adminCourses.beginner")}</option>
+                  <option value="intermediate">{t("dash.adminCourses.intermediate")}</option>
+                  <option value="advanced">{t("dash.adminCourses.advanced")}</option>
                 </select>
               </div>
             </div>
             <div className="flex gap-2 mt-5 justify-end">
-              <button onClick={() => setShowModal(false)} className="px-4 py-2 text-sm border rounded hover:bg-gray-50">Cancel</button>
+              <button onClick={() => setShowModal(false)} className="px-4 py-2 text-sm border rounded hover:bg-gray-50">{t("dash.adminCourses.cancel")}</button>
               <button onClick={createCourse} disabled={saving} className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50">
-                {saving ? "Creating..." : "Create"}
+                {saving ? t("dash.adminCourses.creating") : t("dash.adminCourses.create")}
               </button>
             </div>
           </div>
