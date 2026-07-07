@@ -524,7 +524,6 @@ export const translations: Record<Lang, Record<string, any>> = {
         viewDialogue: "View dialogue",
         practice: "Practice",
       },
-    },
       sWordwall: {
         badge: "Wordwall Games",
         title: "Wordwall Exercises",
@@ -537,6 +536,7 @@ export const translations: Record<Lang, Record<string, any>> = {
         tWriting: "Writing",
         tGeneral: "General",
       },
+    },
     loginPage: {
       heading: "Sign in",
       subtitle: "Sign in to your account",
@@ -1084,7 +1084,6 @@ export const translations: Record<Lang, Record<string, any>> = {
         viewDialogue: "Dialogni ko'rish",
         practice: "Mashq qilish",
       },
-    },
       sWordwall: {
         badge: "Wordwall o'yinlari",
         title: "Wordwall mashqlari",
@@ -1097,6 +1096,7 @@ export const translations: Record<Lang, Record<string, any>> = {
         tWriting: "Yozish",
         tGeneral: "Umumiy",
       },
+    },
     loginPage: {
       heading: "Kirish",
       subtitle: "Akkauntingizga kiring",
