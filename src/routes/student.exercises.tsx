@@ -1,136 +1,65 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useI18n } from "@/lib/i18n";
-import { GripVertical, Sparkles, Check, RotateCcw } from "lucide-react";
+import { Sparkles, ExternalLink } from "lucide-react";
 
 export const Route = createFileRoute("/student/exercises")({
   component: Exercises,
 });
 
-const WORDS = ["barely", "rarely", "usually", "always"];
-const CORRECT = "rarely";
+type Activity = { title: string; topicKey: string; url: string; emoji: string };
+
+const ACTIVITIES: Activity[] = [
+  { title: "Present Perfect", topicKey: "tGrammar", url: "https://wordwall.net/resource/103482545/present-perfect", emoji: "\u{1F550}" },
+  { title: "There is / There are", topicKey: "tGrammar", url: "https://wordwall.net/resource/92038304/there-is-there-are-quiz", emoji: "\u{1F3E0}" },
+  { title: "Have / Has", topicKey: "tGrammar", url: "https://wordwall.net/resource/89291697/havehas", emoji: "\u{270F}\u{FE0F}" },
+  { title: "Word Order", topicKey: "tSentence", url: "https://wordwall.net/resource/103531859/put-the-words-in-the-correct-order", emoji: "\u{1F524}" },
+  { title: "Word Search", topicKey: "tVocab", url: "https://wordwall.net/resource/89201291/word-search", emoji: "\u{1F50D}" },
+  { title: "Clothes", topicKey: "tVocab", url: "https://wordwall.net/resource/104678886/clothes", emoji: "\u{1F455}" },
+  { title: "Sports & Games", topicKey: "tVocab", url: "https://wordwall.net/resource/104119321/sport-games", emoji: "\u{26BD}" },
+  { title: "Pronunciation Test", topicKey: "tPron", url: "https://wordwall.net/resource/88766639/pronunciation-test", emoji: "\u{1F50A}" },
+  { title: "Report Writing", topicKey: "tWriting", url: "https://wordwall.net/resource/89928745/report-writing", emoji: "\u{1F4DD}" },
+  { title: "English Quiz", topicKey: "tGeneral", url: "https://wordwall.net/resource/98843630/english-quiz", emoji: "\u{1F3AF}" },
+];
 
 function Exercises() {
   const { t } = useI18n();
-  const [dragging, setDragging] = useState<string | null>(null);
-  const [dropped, setDropped] = useState<string | null>(null);
-  const [result, setResult] = useState<"correct" | "wrong" | null>(null);
-  const [fillAnswer, setFillAnswer] = useState("");
-  const [fillChecked, setFillChecked] = useState(false);
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    if (!dragging) return;
-    setDropped(dragging);
-    if (dragging === CORRECT) {
-      setResult("correct");
-      toast.success("Correct! \"Rarely\" — maybe once a year.", { duration: 3000 });
-    } else {
-      setResult("wrong");
-      toast.error(`"${dragging}" is not correct here. Try again!`, { duration: 3000 });
-    }
-    setDragging(null);
-  };
-
-  const reset = () => { setDropped(null); setResult(null); setDragging(null); };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="p-8 max-w-5xl mx-auto">
       <div className="mb-6">
-        <Badge variant="secondary" className="mb-2">{t("dash.sExercises.badge")}</Badge>
-        <h1 className="text-3xl font-bold">{t("dash.sExercises.title")}</h1>
-        <p className="text-muted-foreground mt-1">{t("dash.sExercises.subtitle")}</p>
+        <div className="flex items-center gap-2 mb-2">
+          <Sparkles className="w-5 h-5 text-primary" />
+          <Badge variant="secondary">{t("dash.sWordwall.badge")}</Badge>
+        </div>
+        <h1 className="text-3xl font-bold">{t("dash.sWordwall.title")}</h1>
+        <p className="text-muted-foreground mt-1">{t("dash.sWordwall.subtitle")}</p>
       </div>
 
-      {/* DRAG & DROP */}
-      <Card className="p-6 mb-6">
-        <div className="flex items-center gap-2 mb-1">
-          <Badge variant="outline" className="text-xs">{t("dash.sExercises.dragDrop")}</Badge>
-        </div>
-        <h2 className="font-semibold mb-1">{t("dash.sExercises.matchTitle")}</h2>
-        <p className="text-sm text-muted-foreground mb-4">{t("dash.sExercises.matchSub")}</p>
-
-        <div className="p-4 rounded-xl bg-muted/40 border mb-4 text-center text-lg font-medium flex items-center justify-center gap-2 flex-wrap">
-          <span>I</span>
-          <div
-            onDragOver={e => e.preventDefault()}
-            onDrop={handleDrop}
-            className={`min-w-[120px] h-10 rounded-lg border-2 border-dashed flex items-center justify-center text-sm font-semibold transition-all ${ result === "correct" ? "border-emerald-500 bg-emerald-50 text-emerald-700" : result === "wrong" ? "border-destructive bg-red-50 text-destructive" : "border-primary/40 bg-background text-muted-foreground" }`}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {ACTIVITIES.map((a) => (
+          <a
+            key={a.url}
+            href={a.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group"
           >
-            {dropped ? dropped : t("dash.sExercises.dropHere")}
-          </div>
-          <span>go to the gym on Sundays — maybe once a year.</span>
-        </div>
-
-        <div className="flex gap-3 flex-wrap mb-4">
-          {WORDS.filter(w => w !== dropped).map(word => (
-            <div
-              key={word}
-              draggable
-              onDragStart={() => setDragging(word)}
-              onDragEnd={() => setDragging(null)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 bg-background cursor-grab active:cursor-grabbing select-none transition-all ${ dragging === word ? "border-primary shadow-lg scale-105" : "border-border hover:border-primary/60" }`}
-            >
-              <GripVertical className="w-4 h-4 text-muted-foreground" />
-              {word}
-            </div>
-          ))}
-        </div>
-
-        {result && (
-          <div className="flex items-center gap-3">
-            {result === "correct" ? (
-              <div className="flex items-center gap-2 text-emerald-600 font-semibold"><Check className="w-5 h-5" /> {t("dash.sExercises.correct")}</div>
-            ) : (
-              <div className="flex items-center gap-2 text-destructive font-semibold">{t("dash.sExercises.wrongTry")}</div>
-            )}
-            <Button variant="outline" size="sm" onClick={reset}><RotateCcw className="w-4 h-4 mr-1" /> {t("dash.sExercises.reset")}</Button>
-          </div>
-        )}
-      </Card>
-
-      {/* FILL IN THE BLANK */}
-      <Card className="p-6 mb-6">
-        <Badge variant="outline" className="text-xs mb-1">{t("dash.sExercises.fillBlank")}</Badge>
-        <h2 className="font-semibold mb-4">{t("dash.sExercises.completeSentence")}</h2>
-        <div className="flex items-center gap-2 flex-wrap text-base mb-4">
-          <span>I</span>
-          <input
-            type="text"
-            value={fillAnswer}
-            onChange={e => { setFillAnswer(e.target.value); setFillChecked(false); }}
-            placeholder="verb..."
-            className="border-b-2 border-primary bg-transparent outline-none px-2 py-1 w-20 text-center"
-          />
-          <span>to the gym on Sundays.</span>
-        </div>
-        <div className="flex gap-2 items-center">
-          <Button size="sm" onClick={() => { setFillChecked(true); if(fillAnswer.toLowerCase().trim() === "go") toast.success("Correct! The answer is \"go\""); else toast.error(`"${fillAnswer}" is incorrect. Hint: present simple verb`); }}>{t("dash.sExercises.checkAnswer")}</Button>
-          {fillChecked && fillAnswer.toLowerCase().trim() === "go" && <span className="text-emerald-600 font-semibold flex items-center gap-1"><Check className="w-4 h-4" /> go</span>}
-        </div>
-      </Card>
-
-      {/* WORDWALL */}
-      <Card className="p-6 mb-4">
-        <div className="flex items-center gap-2 mb-3">
-          <Sparkles className="w-5 h-5 text-primary" />
-          <Badge variant="outline" className="text-xs">{t("dash.sExercises.wordwall")}</Badge>
-        </div>
-        <h2 className="font-semibold mb-1">{t("dash.sExercises.wordwallTitle")}</h2>
-        <p className="text-sm text-muted-foreground mb-4">{t("dash.sExercises.wordwallSub")}</p>
-        <a href="https://wordwall.net/resource/2077865" target="_blank" rel="noopener noreferrer"
-          className="flex items-center gap-3 p-4 rounded-xl border-2 border-border hover:border-primary/50 hover:bg-primary/5 transition-all group">
-          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-xl">🔤</div>
-          <div>
-            <div className="font-semibold">{t("dash.sExercises.anagram")}</div>
-            <div className="text-xs text-muted-foreground">{t("dash.sExercises.opensNewTab")}</div>
-          </div>
-        </a>
-      </Card>
+            <Card className="p-5 h-full flex flex-col gap-3 border-2 border-border hover:border-primary/50 hover:bg-primary/5 transition-all">
+              <div className="flex items-start justify-between">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-2xl">{a.emoji}</div>
+                <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              </div>
+              <div>
+                <h2 className="font-semibold leading-tight">{a.title}</h2>
+                <Badge variant="outline" className="text-xs mt-2">{t(`dash.sWordwall.${a.topicKey}`)}</Badge>
+              </div>
+              <div className="text-xs text-muted-foreground mt-auto">{t("dash.sWordwall.opensNewTab")}</div>
+            </Card>
+          </a>
+        ))}
+      </div>
     </div>
   );
 }
