@@ -527,8 +527,9 @@ export const translations: Record<Lang, Record<string, any>> = {
       sWordwall: {
         badge: "Wordwall Games",
         title: "Wordwall Exercises",
-        subtitle: "Interactive English games — click any card to play in a new tab.",
+        subtitle: "Interactive English games — click any card to play right here on the site.",
         opensNewTab: "Opens in new tab · Wordwall",
+        opensInSite: "Click to play · Wordwall",
         tGrammar: "Grammar",
         tVocab: "Vocabulary",
         tSentence: "Sentences",
@@ -1087,8 +1088,9 @@ export const translations: Record<Lang, Record<string, any>> = {
       sWordwall: {
         badge: "Wordwall o'yinlari",
         title: "Wordwall mashqlari",
-        subtitle: "Interaktiv ingliz tili o'yinlari — o'ynash uchun istalgan kartani bosing (yangi oynada ochiladi).",
+        subtitle: "Interaktiv ingliz tili o'yinlari — o'ynash uchun istalgan kartani bosing, mashq shu saytning o'zida ochiladi.",
         opensNewTab: "Yangi oynada ochiladi · Wordwall",
+        opensInSite: "O'ynash uchun bosing · Wordwall",
         tGrammar: "Grammatika",
         tVocab: "Lug'at",
         tSentence: "Gaplar",
