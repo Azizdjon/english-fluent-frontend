@@ -11,7 +11,8 @@ import {
   ExternalLink,
   Calendar,
   BookOpen,
-  Info,
+  GraduationCap,
+  Layers,
 } from "lucide-react";
 
 export const Route = createFileRoute("/research")({
@@ -21,27 +22,38 @@ export const Route = createFileRoute("/research")({
       {
         name: "description",
         content:
-          "Peer-reviewed articles and professional certificates in applied linguistics and English language teaching.",
+          "Peer-reviewed articles, conference papers, methodical guides and certificates by Dilnoza Yuldasheva in applied linguistics and English language teaching.",
       },
     ],
   }),
   component: ResearchPage,
 });
 
-// ---- DEMO DATA (bilingual). Replace with real content later. ----
+type Loc = { en: string; uz: string };
+
 type Article = {
   id: number;
-  title: { en: string; uz: string };
-  journal: { en: string; uz: string };
+  title: Loc;
+  journal: Loc;
   year: string;
-  abstract: { en: string; uz: string };
+  pages?: string;
+  abstract: Loc;
   tag: string;
+  url?: string;
+};
+
+type Manual = {
+  id: number;
+  title: Loc;
+  desc: Loc;
+  year: string;
+  pages: string;
 };
 
 type Certificate = {
   id: number;
-  title: { en: string; uz: string };
-  issuer: { en: string; uz: string };
+  title: Loc;
+  issuer: Loc;
   year: string;
   color: string;
 };
@@ -50,89 +62,217 @@ const ARTICLES: Article[] = [
   {
     id: 1,
     title: {
-      en: "Pragmatic Competence in EFL Learners: A Corpus-Based Study",
-      uz: "EFL o'quvchilarida pragmatik kompetensiya: korpusga asoslangan tadqiqot",
+      en: "The Place of Pragmatic Competence in Teaching a Foreign Language",
+      uz: "Chet tilini o'qitishda pragmatik kompetensiyaning o'rni",
     },
-    journal: { en: "Journal of Applied Linguistics", uz: "Amaliy tilshunoslik jurnali" },
-    year: "2024",
+    journal: {
+      en: "Foreign Linguistics & Linguodidactics · Vol 3 (6/S)",
+      uz: "Xorijiy lingvistika va lingvodidaktika · 3-jild (6/S)",
+    },
+    year: "2025",
+    pages: "278–287",
     abstract: {
-      en: "An analysis of speech-act realization across 400 learner interactions, revealing systematic gaps between grammatical and pragmatic competence.",
-      uz: "400 ta o'quvchi muloqotida nutq aktlarini amalga oshirishni tahlil qilib, grammatik va pragmatik kompetensiya o'rtasidagi tizimli farqlarni ochib beradi.",
+      en: "A review of pragmatics and pragmatic competence as an essential part of language competence, highlighting its pedagogical significance in foreign-language education.",
+      uz: "Pragmatika va pragmatik kompetensiyani til kompetensiyasining muhim qismi sifatida ko'rib chiqib, uning chet til ta'limidagi pedagogik ahamiyatini yoritadi.",
     },
     tag: "Pragmatics",
+    url: "https://inscience.uz/index.php/foreign-linguistics/article/view/7005",
   },
   {
     id: 2,
     title: {
-      en: "Adaptive Learning Paths and CEFR Progression: An Empirical Model",
-      uz: "Moslashuvchan o'quv yo'llari va CEFR taraqqiyoti: empirik model",
+      en: "Theoretical Foundations of Individual and Pragmatic Approaches in Teaching English",
+      uz: "Ingliz tilini o'qitishda individual va pragmatik yondashuvlarning nazariy asoslari",
     },
-    journal: { en: "Language Learning & Technology", uz: "Til o'rganish va texnologiya" },
-    year: "2023",
+    journal: {
+      en: "Inter Education & Global Study · 3(9)",
+      uz: "Inter Education & Global Study · 3(9)",
+    },
+    year: "2025",
+    pages: "161–168",
     abstract: {
-      en: "A predictive model showing how adaptive sequencing accelerates B1→C1 progression by an average of 3.2 months compared to fixed curricula.",
-      uz: "Moslashuvchan ketma-ketlik B1→C1 taraqqiyotini qat'iy dasturlarga nisbatan o'rtacha 3.2 oyga tezlashtirishini ko'rsatuvchi bashoratli model.",
+      en: "Examines the theoretical foundations of individual and pragmatic approaches oriented toward learners' personal characteristics and language as a practical tool.",
+      uz: "Individual va pragmatik yondashuvlarning nazariy asoslarini, o'quvchilarning shaxsiy xususiyatlari va tilni amaliy vosita sifatida qo'llashni yoritadi.",
     },
-    tag: "EdTech",
+    tag: "Methodology",
+    url: "https://www.researcher.uz/ru/article/ingliz-tilini-o-qitishda-individual-va-pragmatik-yondashuvlarning-nazariy-asoslari-105364",
   },
   {
     id: 3,
     title: {
-      en: "Automated Pronunciation Feedback: Phoneme-Level Accuracy Trials",
-      uz: "Avtomatlashtirilgan talaffuz fikri: fonema darajasidagi aniqlik sinovlari",
+      en: "Hybrid Deep Clustering Framework for Unsupervised Pattern Recognition in Complex Datasets",
+      uz: "Murakkab ma'lumotlar to'plamlarida nazoratsiz naqsh aniqlash uchun gibrid chuqur klasterlash tizimi",
     },
-    journal: { en: "Speech Communication Review", uz: "Nutq kommunikatsiyasi sharhi" },
-    year: "2023",
+    journal: {
+      en: "Springer · Lecture Notes in Networks and Systems, Vol 1944 (HMMOCS 2025)",
+      uz: "Springer · Lecture Notes in Networks and Systems, 1944-jild (HMMOCS 2025)",
+    },
+    year: "2026",
+    pages: "311–316",
     abstract: {
-      en: "Evaluating a browser-based speech engine against expert phoneticians, achieving 91% agreement on segmental error detection.",
-      uz: "Brauzerga asoslangan nutq mexanizmini ekspert fonetiklar bilan taqqoslab, segmental xatolarni aniqlashda 91% moslikka erishildi.",
+      en: "A co-authored conference paper introducing a hybrid deep-clustering framework for unsupervised pattern recognition in complex, high-dimensional datasets.",
+      uz: "Murakkab, yuqori o'lchamli ma'lumotlar to'plamlarida nazoratsiz naqsh aniqlash uchun gibrid chuqur klasterlash tizimini taqdim etuvchi hammualliflik konferensiya maqolasi.",
     },
-    tag: "Speech",
+    tag: "Conference",
+    url: "https://link.springer.com/chapter/10.1007/978-3-032-24402-4_32",
   },
   {
     id: 4,
     title: {
-      en: "Task-Based Instruction in Multilingual Classrooms",
-      uz: "Ko'p tilli sinflarda vazifaga asoslangan ta'lim",
+      en: "Technologies for Implementing Individual and Pragmatic Approaches in English Lessons",
+      uz: "Ingliz tili darslarida individual va pragmatik yondashuvni amalga oshirish texnologiyalari",
     },
-    journal: { en: "TESOL Quarterly", uz: "TESOL choraklik nashri" },
-    year: "2022",
+    journal: {
+      en: "Scientific-methodical journal",
+      uz: "Ilmiy-metodik jurnal",
+    },
+    year: "2025",
     abstract: {
-      en: "A classroom study across Uzbek and English contexts, demonstrating higher engagement and retention through task-based design.",
-      uz: "O'zbek va ingliz kontekstlarida sinf tadqiqoti bo'lib, vazifaga asoslangan dizayn orqali yuqori faollik va eslab qolishni ko'rsatadi.",
+      en: "Analyzes modern pedagogical technologies for individualized and pragmatic teaching; a pedagogical experiment shows significant gains in learners' communicative competence.",
+      uz: "Individual va pragmatik ta'limning zamonaviy pedagogik texnologiyalarini tahlil qiladi; pedagogik eksperiment o'quvchilarning kommunikativ kompetensiyasi sezilarli oshganini ko'rsatadi.",
     },
     tag: "Pedagogy",
+  },
+  {
+    id: 5,
+    title: {
+      en: "The Issues of Teaching Uzbek Students English",
+      uz: "O'zbek o'quvchilariga ingliz tilini o'qitish masalalari",
+    },
+    journal: {
+      en: "Academic Research in Modern Science (Int'l Conference)",
+      uz: "Academic Research in Modern Science (xalqaro konferensiya)",
+    },
+    year: "2024",
+    abstract: {
+      en: "Discusses methods and challenges of teaching English in Uzbekistan and the shift from teacher-centered to student-centered instruction.",
+      uz: "O'zbekistonda ingliz tilini o'qitish usullari va muammolarini, o'qituvchi-markazli yondashuvdan o'quvchi-markazli ta'limga o'tishni muhokama qiladi.",
+    },
+    tag: "ELT",
+    url: "https://doi.org/10.5281/zenodo.13828552",
+  },
+  {
+    id: 6,
+    title: {
+      en: "The Role of Teaching Literature in Higher Education",
+      uz: "Oliy ta'limda adabiyot o'qitishning o'rni",
+    },
+    journal: {
+      en: "Models and Methods in Modern Science (Int'l Conference)",
+      uz: "Models and Methods in Modern Science (xalqaro konferensiya)",
+    },
+    year: "2024",
+    abstract: {
+      en: "Explores the role of literature in higher education and its value for language and culture learning.",
+      uz: "Oliy ta'limda adabiyot o'qitishning o'rni va uning til hamda madaniyatni o'rganishdagi ahamiyatini yoritadi.",
+    },
+    tag: "Pedagogy",
+    url: "https://doi.org/10.5281/zenodo.13828567",
+  },
+  {
+    id: 7,
+    title: {
+      en: "Using Modern Technologies in Teaching and Learning English",
+      uz: "Ingliz tilini o'qitish va o'rganishda zamonaviy texnologiyalardan foydalanish",
+    },
+    journal: {
+      en: "Scientific-methodical article",
+      uz: "Ilmiy-metodik maqola",
+    },
+    year: "2024",
+    abstract: {
+      en: "On the appropriate use of modern technologies in English teaching and the teacher's role in keeping lessons engaging and effective.",
+      uz: "Ingliz tili o'qitishda zamonaviy texnologiyalardan o'rinli foydalanish va darslarni qiziqarli hamda samarali qilishda o'qituvchining roli haqida.",
+    },
+    tag: "EdTech",
+  },
+  {
+    id: 8,
+    title: {
+      en: "Modern Interactive Games in Teaching English",
+      uz: "Ingliz tilini o'qitishda zamonaviy interaktiv o'yinlar",
+    },
+    journal: {
+      en: "Scientific-methodical article",
+      uz: "Ilmiy-metodik maqola",
+    },
+    year: "2024",
+    abstract: {
+      en: "On integrating modern interactive games into English lessons to raise engagement and learning outcomes.",
+      uz: "Ingliz tili darslariga zamonaviy interaktiv o'yinlarni jalb qilib, faollik va natijadorlikni oshirish haqida.",
+    },
+    tag: "EdTech",
+  },
+];
+
+const MANUALS: Manual[] = [
+  {
+    id: 1,
+    title: {
+      en: "Improving Language-Teaching Effectiveness with Wordwall — A Methodical Manual for All Grades",
+      uz: "Wordwall dasturidan foydalanib til o'rgatish samaradorligini oshirish — barcha sinflar uchun metodik qo'llanma",
+    },
+    desc: {
+      en: "A comprehensive teaching manual on using the Wordwall program across all school grades.",
+      uz: "Barcha maktab sinflarida Wordwall dasturidan foydalanish bo'yicha keng qamrovli metodik qo'llanma.",
+    },
+    year: "2026",
+    pages: "43",
+  },
+  {
+    id: 2,
+    title: {
+      en: "Using Wordwall Program Games in English Lessons",
+      uz: "Ingliz tili darslarida Wordwall dasturi o'yinlaridan foydalanish",
+    },
+    desc: {
+      en: "A methodical recommendation on applying Wordwall interactive games in the classroom.",
+      uz: "Sinfda Wordwall interaktiv o'yinlarini qo'llash bo'yicha metodik tavsiya.",
+    },
+    year: "2025",
+    pages: "12",
   },
 ];
 
 const CERTIFICATES: Certificate[] = [
   {
     id: 1,
-    title: { en: "CELTA — Certificate in Teaching English", uz: "CELTA — Ingliz tili o'qitish sertifikati" },
-    issuer: { en: "University of Cambridge", uz: "Kembrij universiteti" },
-    year: "2021",
+    title: {
+      en: "Future English Teacher Development Programme",
+      uz: "Future English Teacher Development dasturi",
+    },
+    issuer: {
+      en: "British Council · Online Teacher Community",
+      uz: "British Council · Online Teacher Community",
+    },
+    year: "2023",
     color: "from-indigo-500 to-blue-600",
   },
   {
     id: 2,
-    title: { en: "IELTS — Band 8.5 (Academic)", uz: "IELTS — 8.5 ball (Akademik)" },
-    issuer: { en: "British Council", uz: "Britaniya kengashi" },
-    year: "2022",
-    color: "from-violet-500 to-purple-600",
-  },
-  {
-    id: 3,
-    title: { en: "TESOL Advanced Certificate", uz: "TESOL ilg'or sertifikati" },
-    issuer: { en: "Arizona State University", uz: "Arizona shtat universiteti" },
-    year: "2023",
+    title: {
+      en: "Certificate of Originality (89.84%)",
+      uz: "Originallik sertifikati (89.84%)",
+    },
+    issuer: {
+      en: "Perspective Team Anti-Plagiarism",
+      uz: "Perspective Team antiplagiat",
+    },
+    year: "2026",
     color: "from-emerald-500 to-teal-600",
   },
   {
-    id: 4,
-    title: { en: "Applied Linguistics Research Award", uz: "Amaliy tilshunoslik tadqiqot mukofoti" },
-    issuer: { en: "International Linguistics Association", uz: "Xalqaro tilshunoslik uyushmasi" },
-    year: "2024",
-    color: "from-amber-500 to-orange-600",
+    id: 3,
+    title: {
+      en: "Publication Certificate",
+      uz: "Nashr sertifikati",
+    },
+    issuer: {
+      en: "Foreign Linguistics & Linguodidactics",
+      uz: "Xorijiy lingvistika va lingvodidaktika",
+    },
+    year: "2025",
+    color: "from-violet-500 to-purple-600",
   },
 ];
 
@@ -177,10 +317,15 @@ function ResearchPage() {
             {t("research.subtitle")}
           </p>
 
-          {/* Demo notice */}
-          <div className="mt-8 inline-flex items-start gap-2.5 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-400/30 text-amber-200/90 text-sm max-w-2xl">
-            <Info className="w-4 h-4 mt-0.5 shrink-0" />
-            <span>{t("research.demoNotice")}</span>
+          {/* Author card */}
+          <div className="mt-8 inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.05] border border-white/15 max-w-2xl">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center shrink-0">
+              <GraduationCap className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <div className="font-semibold text-white text-sm">{t("research.authorName")}</div>
+              <div className="text-xs text-white/60">{t("research.authorRole")}</div>
+            </div>
           </div>
         </div>
       </section>
@@ -196,7 +341,7 @@ function ResearchPage() {
 
           <div className="grid md:grid-cols-2 gap-5">
             {ARTICLES.map((a) => (
-              <Card key={a.id} className="p-6 bg-white/[0.04] border-white/10 text-white hover:border-indigo-400/40 hover:bg-white/[0.06] transition-all">
+              <Card key={a.id} className="p-6 bg-white/[0.04] border-white/10 text-white hover:border-indigo-400/40 hover:bg-white/[0.06] transition-all flex flex-col">
                 <div className="flex items-center justify-between mb-3">
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-500/15 text-indigo-200 text-xs font-medium">
                     <BookOpen className="w-3 h-3" />
@@ -210,12 +355,51 @@ function ResearchPage() {
                 <h3 className="text-lg font-semibold mb-2 leading-snug">{a.title[lang]}</h3>
                 <div className="text-xs text-indigo-200/80 mb-3">
                   {t("research.publishedIn")}: {a.journal[lang]}
+                  {a.pages ? ` · ${t("research.pagesLabel")} ${a.pages}` : ""}
                 </div>
-                <p className="text-white/60 text-sm leading-relaxed mb-4">{a.abstract[lang]}</p>
-                <button className="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-300 hover:text-indigo-200 transition">
-                  {t("research.readMore")}
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </button>
+                <p className="text-white/60 text-sm leading-relaxed mb-4 flex-1">{a.abstract[lang]}</p>
+                {a.url ? (
+                  <a
+                    href={a.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-300 hover:text-indigo-200 transition self-start"
+                  >
+                    {t("research.viewSource")}
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                ) : null}
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* METHODICAL GUIDES */}
+      <section className="py-16 bg-slate-900">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex items-center gap-3 mb-2">
+            <Layers className="w-6 h-6 text-teal-300" />
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{t("research.manualsTitle")}</h2>
+          </div>
+          <p className="text-white/50 mb-10">{t("research.manualsSubtitle")}</p>
+
+          <div className="grid md:grid-cols-2 gap-5">
+            {MANUALS.map((m) => (
+              <Card key={m.id} className="p-6 bg-white/[0.04] border-white/10 text-white hover:border-teal-400/40 transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-teal-500/15 text-teal-200 text-xs font-medium">
+                    <BookOpen className="w-3 h-3" />
+                    {t("research.manualTag")}
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-xs text-white/50">
+                    <Calendar className="w-3 h-3" />
+                    {m.year}
+                  </span>
+                </div>
+                <h3 className="text-lg font-semibold mb-2 leading-snug">{m.title[lang]}</h3>
+                <p className="text-white/60 text-sm leading-relaxed mb-3">{m.desc[lang]}</p>
+                <div className="text-xs text-white/45">{m.pages} {t("research.pagesLabel")}</div>
               </Card>
             ))}
           </div>
@@ -223,7 +407,7 @@ function ResearchPage() {
       </section>
 
       {/* CERTIFICATES */}
-      <section className="py-16 bg-slate-900">
+      <section className="py-16 bg-gradient-to-b from-slate-900 to-slate-950">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex items-center gap-3 mb-2">
             <Award className="w-6 h-6 text-amber-300" />
@@ -231,18 +415,14 @@ function ResearchPage() {
           </div>
           <p className="text-white/50 mb-10">{t("research.certsSubtitle")}</p>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {CERTIFICATES.map((c) => (
-              <Card key={c.id} className="p-5 bg-white/[0.04] border-white/10 text-white hover:border-white/25 transition-all group">
+              <Card key={c.id} className="p-5 bg-white/[0.04] border-white/10 text-white hover:border-white/25 transition-all">
                 <div className={`w-full aspect-[4/3] rounded-xl bg-gradient-to-br ${c.color} flex items-center justify-center mb-4 shadow-lg`}>
                   <Award className="w-12 h-12 text-white/90" />
                 </div>
                 <h3 className="font-semibold text-sm leading-snug mb-1">{c.title[lang]}</h3>
-                <div className="text-xs text-white/50 mb-3">{c.issuer[lang]} · {c.year}</div>
-                <button className="inline-flex items-center gap-1.5 text-xs font-medium text-white/70 group-hover:text-white transition">
-                  {t("research.viewCertificate")}
-                  <ExternalLink className="w-3 h-3" />
-                </button>
+                <div className="text-xs text-white/50">{c.issuer[lang]} · {c.year}</div>
               </Card>
             ))}
           </div>
