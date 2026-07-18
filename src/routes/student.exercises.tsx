@@ -22,6 +22,13 @@ const ACTIVITIES: Activity[] = [
   { title: "Pronunciation Test", topicKey: "tPron", emoji: "\u{1F50A}", embed: "https://wordwall.net/embed/e1a028f00b9d4df38c85ffc2629bfd0b?themeId=50&templateId=5&fontStackId=0" },
   { title: "Report Writing", topicKey: "tWriting", emoji: "\u{1F4DD}", embed: "https://wordwall.net/embed/3b7632c2276c45418821f28019a0e207?themeId=1&templateId=8&fontStackId=0" },
   { title: "English Quiz", topicKey: "tGeneral", emoji: "\u{1F3AF}", embed: "https://wordwall.net/embed/4207ba896e014773a112bd86b642d6eb?themeId=1&templateId=5&fontStackId=0" },
+  { title: "Ice Breakers – 40 Questions", topicKey: "tSpeaking", emoji: "\u{1F9CA}", embed: "https://wordwall.net/embed/3b7de7d0cea94a20bb5a6274f4484d16?themeId=41&templateId=70&fontStackId=0" },
+  { title: "Revision: Random Questions", topicKey: "tSpeaking", emoji: "\u{1F504}", embed: "https://wordwall.net/embed/d08f7378570243809225c785075a2963?themeId=2&templateId=70&fontStackId=0" },
+  { title: "Speaking B1+ – 100 Questions", topicKey: "tSpeaking", emoji: "\u{1F5E3}\u{FE0F}", embed: "https://wordwall.net/embed/73e99b71ec8a4653a04076e8166b0d31?themeId=42&templateId=70&fontStackId=0" },
+  { title: "Mixed Tenses – Speaking", topicKey: "tSpeaking", emoji: "\u{23F3}", embed: "https://wordwall.net/embed/f5290aea00914446921dc18a17a3c491?themeId=51&templateId=70&fontStackId=0" },
+  { title: "Healthy Lifestyle – Conversation", topicKey: "tSpeaking", emoji: "\u{1F34E}", embed: "https://wordwall.net/embed/f32b61f8430e437995859a33a25f371f?themeId=42&templateId=70&fontStackId=0" },
+  { title: "Flyers Speaking – Answering Questions", topicKey: "tSpeaking", emoji: "\u{1F4CB}", embed: "https://wordwall.net/embed/87b460acc22342c1b12ab709d4be2075?themeId=2&templateId=70&fontStackId=0" },
+  { title: "Birthday: Speaking Questions", topicKey: "tSpeaking", emoji: "\u{1F382}", embed: "https://wordwall.net/embed/0654cd58e3134f6f9ae50dc835e3cceb?themeId=27&templateId=70&fontStackId=0" },
 ];
 
 function Exercises() {
