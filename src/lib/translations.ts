@@ -536,6 +536,7 @@ export const translations: Record<Lang, Record<string, any>> = {
         tPron: "Pronunciation",
         tWriting: "Writing",
         tGeneral: "General",
+        tSpeaking: "Speaking",
       },
     },
     loginPage: {
@@ -1102,6 +1103,7 @@ export const translations: Record<Lang, Record<string, any>> = {
         tPron: "Talaffuz",
         tWriting: "Yozish",
         tGeneral: "Umumiy",
+        tSpeaking: "Gapirish",
       },
     },
     loginPage: {
