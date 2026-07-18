@@ -48,6 +48,7 @@ type Manual = {
   desc: Loc;
   year: string;
   pages: string;
+  url: string;
 };
 
 type Certificate = {
@@ -56,6 +57,7 @@ type Certificate = {
   issuer: Loc;
   year: string;
   color: string;
+  url: string;
 };
 
 const ARTICLES: Article[] = [
@@ -132,6 +134,7 @@ const ARTICLES: Article[] = [
       uz: "Individual va pragmatik ta'limning zamonaviy pedagogik texnologiyalarini tahlil qiladi; pedagogik eksperiment o'quvchilarning kommunikativ kompetensiyasi sezilarli oshganini ko'rsatadi.",
     },
     tag: "Pedagogy",
+    url: "/research/pub-individual-pragmatic-tech.pdf",
   },
   {
     id: 5,
@@ -149,7 +152,7 @@ const ARTICLES: Article[] = [
       uz: "O'zbekistonda ingliz tilini o'qitish usullari va muammolarini, o'qituvchi-markazli yondashuvdan o'quvchi-markazli ta'limga o'tishni muhokama qiladi.",
     },
     tag: "ELT",
-    url: "https://doi.org/10.5281/zenodo.13828552",
+    url: "/research/pub-issues-teaching-english.pdf",
   },
   {
     id: 6,
@@ -167,7 +170,7 @@ const ARTICLES: Article[] = [
       uz: "Oliy ta'limda adabiyot o'qitishning o'rni va uning til hamda madaniyatni o'rganishdagi ahamiyatini yoritadi.",
     },
     tag: "Pedagogy",
-    url: "https://doi.org/10.5281/zenodo.13828567",
+    url: "/research/pub-teaching-literature.pdf",
   },
   {
     id: 7,
@@ -185,6 +188,7 @@ const ARTICLES: Article[] = [
       uz: "Ingliz tili o'qitishda zamonaviy texnologiyalardan o'rinli foydalanish va darslarni qiziqarli hamda samarali qilishda o'qituvchining roli haqida.",
     },
     tag: "EdTech",
+    url: "/research/pub-modern-technologies.pdf",
   },
   {
     id: 8,
@@ -202,6 +206,7 @@ const ARTICLES: Article[] = [
       uz: "Ingliz tili darslariga zamonaviy interaktiv o'yinlarni jalb qilib, faollik va natijadorlikni oshirish haqida.",
     },
     tag: "EdTech",
+    url: "/research/pub-interactive-games.pdf",
   },
 ];
 
@@ -218,6 +223,7 @@ const MANUALS: Manual[] = [
     },
     year: "2026",
     pages: "43",
+    url: "/research/guide-wordwall-manual.pdf",
   },
   {
     id: 2,
@@ -231,6 +237,7 @@ const MANUALS: Manual[] = [
     },
     year: "2025",
     pages: "12",
+    url: "/research/guide-wordwall-recommendation.pdf",
   },
 ];
 
@@ -247,6 +254,7 @@ const CERTIFICATES: Certificate[] = [
     },
     year: "2023",
     color: "from-indigo-500 to-blue-600",
+    url: "/research/cert-british-council.pdf",
   },
   {
     id: 2,
@@ -260,6 +268,7 @@ const CERTIFICATES: Certificate[] = [
     },
     year: "2026",
     color: "from-emerald-500 to-teal-600",
+    url: "/research/cert-originality.pdf",
   },
   {
     id: 3,
@@ -273,6 +282,7 @@ const CERTIFICATES: Certificate[] = [
     },
     year: "2025",
     color: "from-violet-500 to-purple-600",
+    url: "/research/cert-publication.pdf",
   },
 ];
 
@@ -386,7 +396,7 @@ function ResearchPage() {
 
           <div className="grid md:grid-cols-2 gap-5">
             {MANUALS.map((m) => (
-              <Card key={m.id} className="p-6 bg-white/[0.04] border-white/10 text-white hover:border-teal-400/40 transition-all">
+              <Card key={m.id} className="p-6 bg-white/[0.04] border-white/10 text-white hover:border-teal-400/40 transition-all flex flex-col">
                 <div className="flex items-center justify-between mb-3">
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-teal-500/15 text-teal-200 text-xs font-medium">
                     <BookOpen className="w-3 h-3" />
@@ -398,8 +408,19 @@ function ResearchPage() {
                   </span>
                 </div>
                 <h3 className="text-lg font-semibold mb-2 leading-snug">{m.title[lang]}</h3>
-                <p className="text-white/60 text-sm leading-relaxed mb-3">{m.desc[lang]}</p>
-                <div className="text-xs text-white/45">{m.pages} {t("research.pagesLabel")}</div>
+                <p className="text-white/60 text-sm leading-relaxed mb-3 flex-1">{m.desc[lang]}</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-white/45">{m.pages} {t("research.pagesLabel")}</span>
+                  <a
+                    href={m.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-teal-300 hover:text-teal-200 transition"
+                  >
+                    {t("research.viewSource")}
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
               </Card>
             ))}
           </div>
@@ -417,13 +438,25 @@ function ResearchPage() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {CERTIFICATES.map((c) => (
-              <Card key={c.id} className="p-5 bg-white/[0.04] border-white/10 text-white hover:border-white/25 transition-all">
-                <div className={`w-full aspect-[4/3] rounded-xl bg-gradient-to-br ${c.color} flex items-center justify-center mb-4 shadow-lg`}>
-                  <Award className="w-12 h-12 text-white/90" />
-                </div>
-                <h3 className="font-semibold text-sm leading-snug mb-1">{c.title[lang]}</h3>
-                <div className="text-xs text-white/50">{c.issuer[lang]} · {c.year}</div>
-              </Card>
+              <a
+                key={c.id}
+                href={c.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block group"
+              >
+                <Card className="p-5 bg-white/[0.04] border-white/10 text-white hover:border-white/25 transition-all h-full">
+                  <div className={`w-full aspect-[4/3] rounded-xl bg-gradient-to-br ${c.color} flex items-center justify-center mb-4 shadow-lg`}>
+                    <Award className="w-12 h-12 text-white/90" />
+                  </div>
+                  <h3 className="font-semibold text-sm leading-snug mb-1">{c.title[lang]}</h3>
+                  <div className="text-xs text-white/50 mb-3">{c.issuer[lang]} · {c.year}</div>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-medium text-white/70 group-hover:text-white transition">
+                    {t("research.viewCertificate")}
+                    <ExternalLink className="w-3 h-3" />
+                  </span>
+                </Card>
+              </a>
             ))}
           </div>
         </div>
