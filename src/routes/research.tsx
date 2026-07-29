@@ -290,6 +290,90 @@ const CERTIFICATES: Certificate[] = [
     color: "from-violet-500 to-purple-600",
     url: "/research/cert-publication.pdf",
   },
+  {
+    id: 4,
+    title: {
+      en: "Certificate of Conference Participant — WOC France",
+      uz: "Konferensiya ishtirokchisi sertifikati — WOC Fransiya",
+    },
+    issuer: {
+      en: "World Online Conferences · Models and Methods in Modern Science",
+      uz: "World Online Conferences · Models and Methods in Modern Science",
+    },
+    year: "2024",
+    color: "from-amber-500 to-orange-600",
+    url: certWocFrance.url,
+  },
+  {
+    id: 5,
+    title: {
+      en: "Certificate of Conference Participant — WOC USA",
+      uz: "Konferensiya ishtirokchisi sertifikati — WOC AQSH",
+    },
+    issuer: {
+      en: "World Online Conferences · Academic Research in Modern Science",
+      uz: "World Online Conferences · Academic Research in Modern Science",
+    },
+    year: "2024",
+    color: "from-rose-500 to-pink-600",
+    url: certWocUsa.url,
+  },
+  {
+    id: 6,
+    title: {
+      en: "Scopus Publication Confirmation",
+      uz: "Scopus nashri to'g'risida ma'lumotnoma",
+    },
+    issuer: {
+      en: "Bukhara State University · Scopus Consulting Center",
+      uz: "Buxoro Davlat Universiteti · Scopus Consulting Center",
+    },
+    year: "2025",
+    color: "from-cyan-500 to-sky-600",
+    url: certScopus.url,
+  },
+  {
+    id: 7,
+    title: {
+      en: "Republican Scientific-Practical Conference Participant",
+      uz: "Respublika ilmiy-amaliy konferensiyasi ishtirokchisi",
+    },
+    issuer: {
+      en: "Gulistan State University",
+      uz: "Guliston Davlat Universiteti",
+    },
+    year: "2024",
+    color: "from-fuchsia-500 to-pink-600",
+    url: certGuliston.url,
+  },
+  {
+    id: 8,
+    title: {
+      en: "Best-Practice Dissemination Certificate — District Level",
+      uz: "Ilg'or ish tajribasi ommalashtirilganligi sertifikati — tuman miqyosi",
+    },
+    issuer: {
+      en: "Avloniy National Institute of Pedagogical Excellence",
+      uz: "Abdulla Avloniy nomidagi Pedagogik Mahorat Milliy Instituti",
+    },
+    year: "2024",
+    color: "from-red-500 to-rose-600",
+    url: certOmmalashtirishTuman.url,
+  },
+  {
+    id: 9,
+    title: {
+      en: "Best-Practice Dissemination Certificate — Regional Level",
+      uz: "Ilg'or ish tajribasi ommalashtirilganligi sertifikati — viloyat miqyosi",
+    },
+    issuer: {
+      en: "Avloniy National Institute of Pedagogical Excellence",
+      uz: "Abdulla Avloniy nomidagi Pedagogik Mahorat Milliy Instituti",
+    },
+    year: "2024",
+    color: "from-lime-500 to-green-600",
+    url: certOmmalashtirishViloyat.url,
+  },
 ];
 
 function ResearchPage() {
