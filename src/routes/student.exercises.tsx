@@ -29,6 +29,15 @@ const ACTIVITIES: Activity[] = [
   { title: "Healthy Lifestyle – Conversation", topicKey: "tSpeaking", emoji: "\u{1F34E}", embed: "https://wordwall.net/embed/f32b61f8430e437995859a33a25f371f?themeId=42&templateId=70&fontStackId=0" },
   { title: "Flyers Speaking – Answering Questions", topicKey: "tSpeaking", emoji: "\u{1F4CB}", embed: "https://wordwall.net/embed/87b460acc22342c1b12ab709d4be2075?themeId=2&templateId=70&fontStackId=0" },
   { title: "Birthday: Speaking Questions", topicKey: "tSpeaking", emoji: "\u{1F382}", embed: "https://wordwall.net/embed/0654cd58e3134f6f9ae50dc835e3cceb?themeId=27&templateId=70&fontStackId=0" },
+  { title: "Hobbies B1+/B2", topicKey: "tSpeaking", emoji: "\u{1F3A8}", embed: "https://wordwall.net/embed/571d9164df4d4d109f6ec0065d0bfe5b?themeId=1&templateId=70&fontStackId=0" },
+  { title: "Speaking B2+", topicKey: "tSpeaking", emoji: "\u{1F4AC}", embed: "https://wordwall.net/embed/4304d70a31424017ba6944ff0af8b88c?themeId=1&templateId=70&fontStackId=0" },
+  { title: "RM B2+ Vocabulary Speaking", topicKey: "tSpeaking", emoji: "\u{1F4D6}", embed: "https://wordwall.net/embed/8c9fec69adb34b5099605963afc044c0?themeId=1&templateId=70&fontStackId=0" },
+  { title: "EGE Speaking 2/3", topicKey: "tSpeaking", emoji: "\u{1F393}", embed: "https://wordwall.net/embed/79da7a3f9d1540be8360bdf04596fd1b?themeId=1&templateId=70&fontStackId=0" },
+  { title: "Gateway B2 Unit 2 Speaking", topicKey: "tSpeaking", emoji: "\u{1F4BC}", embed: "https://wordwall.net/embed/ae789ca672814da4924de9ce5e92c01b?themeId=1&templateId=70&fontStackId=0" },
+  { title: "Speaking Cards B2", topicKey: "tSpeaking", emoji: "\u{1F0CF}", embed: "https://wordwall.net/embed/f704cb8323f943bf847a6008dcee422d?themeId=1&templateId=70&fontStackId=0" },
+  { title: "Shopping Speaking", topicKey: "tSpeaking", emoji: "\u{1F6D2}", embed: "https://wordwall.net/embed/d34a4d33c2ce437d9ede5df4f05e6f8d?themeId=1&templateId=70&fontStackId=0" },
+  { title: "Complete FCE Unit 5 Speaking", topicKey: "tSpeaking", emoji: "\u{1F4DA}", embed: "https://wordwall.net/embed/40efedd45927467c8b029caf1806688a?themeId=1&templateId=70&fontStackId=0" },
+  { title: "Christmas Speaking", topicKey: "tSpeaking", emoji: "\u{1F384}", embed: "https://wordwall.net/embed/a072c4686f4d4d32b1cbf90fea25f001?themeId=1&templateId=70&fontStackId=0" },
 ];
 
 function Exercises() {
