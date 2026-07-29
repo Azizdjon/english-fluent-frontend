@@ -14,6 +14,12 @@ import {
   GraduationCap,
   Layers,
 } from "lucide-react";
+import certWocFrance from "@/assets/cert-woc-france.jpg.asset.json";
+import certWocUsa from "@/assets/cert-woc-usa.jpg.asset.json";
+import certGuliston from "@/assets/cert-guliston-conference.pdf.asset.json";
+import certOmmalashtirishTuman from "@/assets/cert-ommalashtirish-tuman.pdf.asset.json";
+import certOmmalashtirishViloyat from "@/assets/cert-ommalashtirish-viloyat.pdf.asset.json";
+import certScopus from "@/assets/cert-scopus-confirmation.pdf.asset.json";
 
 export const Route = createFileRoute("/research")({
   head: () => ({
