@@ -17,7 +17,7 @@ const queryClient = new QueryClient();
 const PUBLIC_PATHS = ["/login", "/", "/research"];
 
 // Inline script to apply the stored theme before first paint (prevents FOUC). Dark is the default.
-const darkModeScript = `try{var t=localStorage.getItem('pragmalearn-theme');if(t!=='light'){document.documentElement.classList.add('dark');document.documentElement.style.colorScheme='dark';}else{document.documentElement.style.colorScheme='light';}}catch(e){document.documentElement.classList.add('dark');}`;
+const darkModeScript = `try{if(localStorage.getItem('pragmalearn-theme')!=='light'){document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}`;
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const [checking, setChecking] = useState(true);

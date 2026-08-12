@@ -243,3 +243,6 @@ html:not(.dark) [class~="to-slate-950/95"]:not(.keep-dark, .keep-dark *) {
 html:not(.dark) [class~="placeholder-gray-500"]:not(.keep-dark, .keep-dark *)::placeholder {
   color: #94a3b8;
 }
+
+:root { color-scheme: light; }
+.dark { color-scheme: dark; }
