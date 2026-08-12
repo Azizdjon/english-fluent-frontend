@@ -198,9 +198,12 @@ html:not(.dark) [class*="text-white"]:is(
   [class*="bg-fuchsia-"], [class*="bg-pink-"], [class*="bg-rose-"], [class*="bg-red-"],
   [class*="bg-orange-"], [class*="bg-amber-"], [class*="bg-yellow-"], [class*="bg-lime-"],
   [class*="bg-green-"], [class*="bg-emerald-"], [class*="bg-teal-"], [class*="bg-cyan-"],
-  [class*="bg-sky-"], [class*="bg-gradient"], [class~="bg-black"], [class*="bg-primary"],
-  [class*="bg-destructive"]
-) {
+  [class*="bg-sky-"], [class~="bg-black"], [class*="bg-primary"], [class*="bg-destructive"]
+):not(section, main, header, footer, body) {
+  color: #ffffff;
+}
+/* gradient chips, pills and buttons keep white text; gradient page sections do not */
+html:not(.dark) [class*="text-white"][class*="bg-gradient"][class*="rounded"]:not(section, main, header, footer) {
   color: #ffffff;
 }
 
