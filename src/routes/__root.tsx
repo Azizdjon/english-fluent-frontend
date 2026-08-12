@@ -69,12 +69,14 @@ function RootComponent() {
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
-          <LanguageProvider>
-            <AuthGuard>
-              <Outlet />
-            </AuthGuard>
-            <Toaster />
-          </LanguageProvider>
+          <ThemeProvider>
+            <LanguageProvider>
+              <AuthGuard>
+                <Outlet />
+              </AuthGuard>
+              <Toaster />
+            </LanguageProvider>
+          </ThemeProvider>
         </QueryClientProvider>
         <Scripts />
       </body>
