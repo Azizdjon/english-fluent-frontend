@@ -131,3 +131,115 @@ nav, aside, .sidebar {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
+
+/* ==========================================================================
+   Light mode compatibility layer.
+   Many screens were authored with hard-coded dark utilities. In light mode
+   (html without .dark) we remap those tokens to a light, high-contrast
+   palette. Subtrees marked with `.keep-dark` (video hero etc.) stay dark.
+   ========================================================================== */
+
+html:not(.dark) [class~="bg-slate-950"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="bg-gray-950"]:not(.keep-dark, .keep-dark *) {
+  background-color: #f1f5f9;
+}
+html:not(.dark) [class~="bg-slate-900"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="bg-gray-900"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="bg-slate-800"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="bg-gray-800"]:not(.keep-dark, .keep-dark *) {
+  background-color: #ffffff;
+}
+html:not(.dark) [class~="bg-slate-900/95"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="bg-slate-900/80"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="bg-slate-950/60"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="bg-slate-800/60"]:not(.keep-dark, .keep-dark *) {
+  background-color: rgb(255 255 255 / 0.85);
+}
+html:not(.dark) [class~="bg-slate-700"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="bg-gray-700"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="bg-gray-700/40"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="bg-gray-300"]:not(.keep-dark, .keep-dark *) {
+  background-color: #f1f5f9;
+}
+html:not(.dark) [class~="bg-white/5"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="bg-white/10"]:not(.keep-dark, .keep-dark *) {
+  background-color: rgb(15 23 42 / 0.05);
+}
+html:not(.dark) [class~="bg-black/40"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="bg-black/60"]:not(.keep-dark, .keep-dark *) {
+  background-color: rgb(15 23 42 / 0.45);
+}
+
+/* Text */
+html:not(.dark) [class~="text-white"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="text-white/90"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="text-white/85"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="text-gray-200"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="text-slate-200"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="text-gray-300"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="text-slate-300"]:not(.keep-dark, .keep-dark *) {
+  color: #0f172a;
+}
+html:not(.dark) [class~="text-white/80"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="text-white/75"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="text-white/70"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="text-white/60"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="text-white/50"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="text-white/45"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="text-white/40"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="text-gray-400"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="text-slate-400"]:not(.keep-dark, .keep-dark *) {
+  color: #475569;
+}
+
+/* Keep white text on saturated / gradient backgrounds and dark pills */
+html:not(.dark) [class*="text-white"]:is(
+  [class*="bg-blue-"], [class*="bg-indigo-"], [class*="bg-violet-"], [class*="bg-purple-"],
+  [class*="bg-fuchsia-"], [class*="bg-pink-"], [class*="bg-rose-"], [class*="bg-red-"],
+  [class*="bg-orange-"], [class*="bg-amber-"], [class*="bg-yellow-"], [class*="bg-lime-"],
+  [class*="bg-green-"], [class*="bg-emerald-"], [class*="bg-teal-"], [class*="bg-cyan-"],
+  [class*="bg-sky-"], [class*="bg-gradient"], [class~="bg-black"], [class*="bg-primary"],
+  [class*="bg-destructive"]
+) {
+  color: #ffffff;
+}
+
+/* Borders & dividers */
+html:not(.dark) [class~="border-slate-800"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="border-slate-700"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="border-slate-600"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="border-gray-800"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="border-gray-700"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="border-gray-700/50"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="border-gray-600"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="border-white/10"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="border-white/15"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="border-white/20"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="border-white/30"]:not(.keep-dark, .keep-dark *) {
+  border-color: #e2e8f0;
+}
+html:not(.dark) [class~="divide-gray-700"]:not(.keep-dark, .keep-dark *) > * + *,
+html:not(.dark) [class~="divide-slate-800"]:not(.keep-dark, .keep-dark *) > * + * {
+  border-color: #e2e8f0;
+}
+
+/* Dark gradient stops -> light */
+html:not(.dark) [class~="from-slate-950"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="from-slate-950/80"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="from-slate-900"]:not(.keep-dark, .keep-dark *) {
+  --tw-gradient-from: #f8fafc;
+}
+html:not(.dark) [class~="via-slate-950/60"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="via-slate-900"]:not(.keep-dark, .keep-dark *) {
+  --tw-gradient-via: #f1f5f9;
+}
+html:not(.dark) [class~="to-slate-900"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="to-slate-950"]:not(.keep-dark, .keep-dark *),
+html:not(.dark) [class~="to-slate-950/95"]:not(.keep-dark, .keep-dark *) {
+  --tw-gradient-to: #ffffff;
+}
+
+/* Inputs on remapped surfaces */
+html:not(.dark) [class~="placeholder-gray-500"]:not(.keep-dark, .keep-dark *)::placeholder {
+  color: #94a3b8;
+}
