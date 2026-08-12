@@ -11,12 +11,13 @@ import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { LanguageProvider } from "@/lib/i18n";
+import { ThemeProvider } from "@/lib/theme";
 
 const queryClient = new QueryClient();
 const PUBLIC_PATHS = ["/login", "/", "/research"];
 
-// Inline script to apply dark class before first paint (prevents FOUC)
-const darkModeScript = `document.documentElement.classList.add('dark');`;
+// Inline script to apply the stored theme before first paint (prevents FOUC). Dark is the default.
+const darkModeScript = `try{if(localStorage.getItem('pragmalearn-theme')!=='light'){document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}`;
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const [checking, setChecking] = useState(true);
@@ -68,12 +69,14 @@ function RootComponent() {
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
-          <LanguageProvider>
-            <AuthGuard>
-              <Outlet />
-            </AuthGuard>
-            <Toaster />
-          </LanguageProvider>
+          <ThemeProvider>
+            <LanguageProvider>
+              <AuthGuard>
+                <Outlet />
+              </AuthGuard>
+              <Toaster />
+            </LanguageProvider>
+          </ThemeProvider>
         </QueryClientProvider>
         <Scripts />
       </body>
