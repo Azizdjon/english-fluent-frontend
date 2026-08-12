@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useI18n } from "@/lib/i18n";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export interface NavItem {
   to: string;
@@ -79,7 +80,7 @@ export function AppShell({ role, navItems, children, userName }: Props) {
           {t(`roles.${role.toLowerCase()}`)}
           {userName && <span className="ml-1 opacity-70">· {userName.split(" ")[0]}</span>}
         </span>
-        <LanguageToggle variant="light" />
+        <div className="flex items-center gap-1.5"><LanguageToggle variant="light" /><ThemeToggle variant="light" /></div>
       </div>
 
       {/* Navigation */}

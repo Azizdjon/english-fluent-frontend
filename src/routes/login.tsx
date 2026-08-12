@@ -8,6 +8,7 @@ import { GraduationCap, BookOpen, Shield, Eye, EyeOff, Loader2 } from 'lucide-re
 import { toast } from 'sonner';
 import { useI18n } from '@/lib/i18n';
 import { LanguageToggle } from '@/components/LanguageToggle';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
@@ -60,6 +61,7 @@ function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex items-center justify-center p-4">
       <div className="absolute top-4 right-4">
         <LanguageToggle variant="dark" />
+        <ThemeToggle variant="dark" />
       </div>
       <div className="w-full max-w-4xl grid md:grid-cols-2 gap-6">
 

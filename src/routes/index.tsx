@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 import { useI18n } from "@/lib/i18n";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   GraduationCap,
   Users,
@@ -142,6 +143,7 @@ function Landing() {
           </nav>
           <div className="flex items-center gap-3">
             <LanguageToggle variant="dark" />
+            <ThemeToggle variant="dark" />
             <a href="#login">
               <Button size="sm" className="bg-white text-slate-900 hover:bg-white/90 font-semibold">
                 {t("common.getStarted")}
@@ -153,7 +155,7 @@ function Landing() {
       </header>
 
       {/* ============ HERO with video bg ============ */}
-      <section id="top" className="relative min-h-screen flex items-center overflow-hidden">
+      <section id="top" className="keep-dark relative min-h-screen flex items-center overflow-hidden">
         <video
           className="absolute inset-0 w-full h-full object-cover"
           autoPlay

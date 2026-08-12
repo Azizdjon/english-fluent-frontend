@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -392,6 +393,7 @@ function ResearchPage() {
           </Link>
           <div className="flex items-center gap-3">
             <LanguageToggle variant="dark" />
+            <ThemeToggle variant="dark" />
             <Link to="/">
               <Button size="sm" variant="outline" className="bg-white/5 border-white/30 text-white hover:bg-white/10 hover:text-white">
                 <ArrowLeft className="w-4 h-4 mr-1.5" />
