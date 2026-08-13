@@ -173,12 +173,13 @@ function Landing() {
           <div className="flex items-center gap-3">
             <LanguageToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
             <ThemeToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
-            <a href="#login">
+            <Link to="/register">
               <Button size="sm" className="bg-white text-slate-900 hover:bg-white/90 font-semibold shadow-sm">
                 {t("common.getStarted")}
                 <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
-            </a>
+            </Link>
+
           </div>
         </div>
       </header>
