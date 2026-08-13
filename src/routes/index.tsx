@@ -46,9 +46,18 @@ export const Route = createFileRoute("/")({
 function Landing() {
   const navigate = useNavigate();
   const { t } = useI18n();
+  const { theme } = useTheme();
   const [email, setEmail] = useState("alex@example.com");
   const [password, setPassword] = useState("demo1234");
   const [loading, setLoading] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 16);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const roles = [
     { key: "student", to: "/student", icon: GraduationCap, color: "from-indigo-500 to-blue-500" },
