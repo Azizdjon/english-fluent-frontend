@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 import { useI18n } from "@/lib/i18n";
+import { useTheme } from "@/lib/theme";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import {
@@ -45,9 +46,18 @@ export const Route = createFileRoute("/")({
 function Landing() {
   const navigate = useNavigate();
   const { t } = useI18n();
+  const { theme } = useTheme();
   const [email, setEmail] = useState("alex@example.com");
   const [password, setPassword] = useState("demo1234");
   const [loading, setLoading] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 16);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const roles = [
     { key: "student", to: "/student", icon: GraduationCap, color: "from-indigo-500 to-blue-500" },
@@ -123,29 +133,48 @@ function Landing() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* ============ NAV ============ */}
-      <header className="fixed top-0 inset-x-0 z-40 backdrop-blur-md bg-background/40 border-b border-white/10">
+      <header
+        className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${
+          theme === "dark"
+            ? "backdrop-blur-md bg-background/40 border-b border-white/10"
+            : scrolled
+              ? "backdrop-blur-md bg-white/70 border-b border-gray-200/50 shadow-sm"
+              : "bg-transparent border-b border-transparent"
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <a href="#top" className="flex items-center gap-2 text-white">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center font-bold shadow-lg shadow-indigo-500/30">
+          <a
+            href="#top"
+            className={`flex items-center gap-2 font-bold text-lg tracking-tight transition-colors ${
+              theme === "dark" || (theme === "light" && !scrolled) ? "text-white" : "text-slate-900"
+            }`}
+          >
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center font-bold shadow-lg shadow-indigo-500/30 text-white">
               PL
             </div>
-            <span className="font-bold text-lg tracking-tight">PragmaLearn</span>
+            PragmaLearn
           </a>
-          <nav className="hidden md:flex items-center gap-8 text-sm text-white/70">
-            <a href="#features" className="hover:text-white transition">{t("nav.features")}</a>
-            <a href="#journey" className="hover:text-white transition">{t("nav.howItWorks")}</a>
-            <a href="#stories" className="hover:text-white transition">{t("nav.stories")}</a>
-            <Link to="/research" className="hover:text-white transition inline-flex items-center gap-1.5">
+          <nav
+            className={`hidden md:flex items-center gap-8 text-sm transition-colors ${
+              theme === "dark" || (theme === "light" && !scrolled)
+                ? "text-white/70 hover:text-white"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            <a href="#features" className="transition">{t("nav.features")}</a>
+            <a href="#journey" className="transition">{t("nav.howItWorks")}</a>
+            <a href="#stories" className="transition">{t("nav.stories")}</a>
+            <Link to="/research" className="transition inline-flex items-center gap-1.5">
               <FlaskConical className="w-4 h-4" />
               {t("nav.research")}
             </Link>
-            <a href="#login" className="hover:text-white transition">{t("nav.signIn")}</a>
+            <a href="#login" className="transition">{t("nav.signIn")}</a>
           </nav>
           <div className="flex items-center gap-3">
-            <LanguageToggle variant="dark" />
-            <ThemeToggle variant="dark" />
+            <LanguageToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
+            <ThemeToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
             <a href="#login">
-              <Button size="sm" className="bg-white text-slate-900 hover:bg-white/90 font-semibold">
+              <Button size="sm" className="bg-white text-slate-900 hover:bg-white/90 font-semibold shadow-sm">
                 {t("common.getStarted")}
                 <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
