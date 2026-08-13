@@ -161,14 +161,14 @@ function Landing() {
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            <a href="#features" className="hover:opacity-100 transition">{t("nav.features")}</a>
-            <a href="#journey" className="hover:opacity-100 transition">{t("nav.howItWorks")}</a>
-            <a href="#stories" className="hover:opacity-100 transition">{t("nav.stories")}</a>
-            <Link to="/research" className="hover:opacity-100 transition inline-flex items-center gap-1.5">
+            <a href="#features" className="transition">{t("nav.features")}</a>
+            <a href="#journey" className="transition">{t("nav.howItWorks")}</a>
+            <a href="#stories" className="transition">{t("nav.stories")}</a>
+            <Link to="/research" className="transition inline-flex items-center gap-1.5">
               <FlaskConical className="w-4 h-4" />
               {t("nav.research")}
             </Link>
-            <a href="#login" className="hover:opacity-100 transition">{t("nav.signIn")}</a>
+            <a href="#login" className="transition">{t("nav.signIn")}</a>
           </nav>
           <div className="flex items-center gap-3">
             <LanguageToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
