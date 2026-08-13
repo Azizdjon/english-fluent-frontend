@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { GraduationCap, BookOpen, Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useI18n } from '@/lib/i18n';
 import { LanguageToggle } from '@/components/LanguageToggle';
@@ -40,22 +40,6 @@ function LoginPage() {
     } finally { setLoading(false); }
   };
 
-  const handleDemoLogin = async (role: 'student' | 'teacher' | 'admin') => {
-    const creds = {
-      student: { email: 'student@pragmalearn.com', password: 'student123' },
-      teacher: { email: 'teacher@pragmalearn.com', password: 'teacher123' },
-      admin:   { email: 'admin@pragmalearn.com',   password: 'admin123' },
-    };
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithPassword(creds[role]);
-      if (error) throw error;
-    } catch (_) {}
-    finally { setLoading(false); }
-    if (role === 'teacher') navigate({ to: '/teacher' });
-    else if (role === 'admin') navigate({ to: '/admin' });
-    else navigate({ to: '/student' });
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex items-center justify-center p-4">
@@ -63,9 +47,9 @@ function LoginPage() {
         <LanguageToggle variant="dark" />
         <ThemeToggle variant="dark" />
       </div>
-      <div className="w-full max-w-4xl grid md:grid-cols-2 gap-6">
+      <div className="w-full max-w-md">
 
-        {/* LEFT - Login form */}
+        {/* Login form */}
         <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-8 flex flex-col justify-center">
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-6">
@@ -104,39 +88,8 @@ function LoginPage() {
           </form>
         </div>
 
-        {/* RIGHT - Demo buttons */}
-        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-8 flex flex-col justify-center">
-          <div className="mb-6">
-            <p className="text-slate-400 text-xs uppercase tracking-widest font-semibold mb-1">{t('landing.login.eyebrow')}</p>
-            <h2 className="text-2xl font-bold text-white">{t('landing.login.title')}</h2>
-          </div>
-          <div className="space-y-3">
-            <p className="text-slate-500 text-xs uppercase tracking-wider font-semibold">{t('landing.login.continueAs')}</p>
-            {(['student','teacher','admin'] as const).map(role => {
-              const cfg = {
-                student: { icon: GraduationCap, color: 'bg-indigo-600', border: 'hover:border-indigo-500', arrow: 'group-hover:text-indigo-400' },
-                teacher: { icon: BookOpen,      color: 'bg-purple-600', border: 'hover:border-purple-500', arrow: 'group-hover:text-purple-400' },
-                admin:   { icon: Shield,        color: 'bg-green-600',  border: 'hover:border-green-500',  arrow: 'group-hover:text-green-400' },
-              }[role];
-              const Icon = cfg.icon;
-              return (
-                <button key={role} onClick={() => handleDemoLogin(role)} disabled={loading}
-                  className={`w-full flex items-center gap-4 p-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 ${cfg.border} transition group text-left`}>
-                  <div className={`w-10 h-10 rounded-lg ${cfg.color} flex items-center justify-center flex-shrink-0`}>
-                    <Icon className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-white font-semibold text-sm">{t('landing.login.loginAs', { role: t('landing.login.' + role) })}</div>
-                    <div className="text-slate-400 text-xs">{t('landing.login.' + role + 'Desc')}</div>
-                  </div>
-                  <span className={`ml-auto text-slate-500 ${cfg.arrow} transition`}>→</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
       </div>
     </div>
+
   );
 }
