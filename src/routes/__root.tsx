@@ -15,7 +15,7 @@ import { LanguageProvider } from "@/lib/i18n";
 import { ThemeProvider } from "@/lib/theme";
 
 const queryClient = new QueryClient();
-const PUBLIC_PATHS = ["/login", "/", "/research"];
+const PUBLIC_PATHS = ["/login", "/register", "/", "/research"];
 
 function isPublic(path: string) {
   const clean = path.length > 1 && path.endsWith("/") ? path.slice(0, -1) : path;
