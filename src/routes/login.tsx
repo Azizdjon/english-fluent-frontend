@@ -40,22 +40,6 @@ function LoginPage() {
     } finally { setLoading(false); }
   };
 
-  const handleDemoLogin = async (role: 'student' | 'teacher' | 'admin') => {
-    const creds = {
-      student: { email: 'student@pragmalearn.com', password: 'student123' },
-      teacher: { email: 'teacher@pragmalearn.com', password: 'teacher123' },
-      admin:   { email: 'admin@pragmalearn.com',   password: 'admin123' },
-    };
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithPassword(creds[role]);
-      if (error) throw error;
-    } catch (_) {}
-    finally { setLoading(false); }
-    if (role === 'teacher') navigate({ to: '/teacher' });
-    else if (role === 'admin') navigate({ to: '/admin' });
-    else navigate({ to: '/student' });
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex items-center justify-center p-4">
