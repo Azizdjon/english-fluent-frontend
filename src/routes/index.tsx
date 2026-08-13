@@ -59,11 +59,8 @@ function Landing() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const roles = [
-    { key: "student", to: "/student", icon: GraduationCap, color: "from-indigo-500 to-blue-500" },
-    { key: "teacher", to: "/teacher", icon: Users, color: "from-violet-500 to-purple-500" },
-    { key: "admin", to: "/admin", icon: Shield, color: "from-emerald-500 to-teal-500" },
-  ] as const;
+
+
 
   const features = [
     { icon: Brain, title: t("landing.features.items.adaptiveTitle"), desc: t("landing.features.items.adaptiveDesc") },
