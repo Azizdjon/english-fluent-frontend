@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeacherRouteImport } from './routes/teacher'
 import { Route as StudentRouteImport } from './routes/student'
 import { Route as ResearchRouteImport } from './routes/research'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as SplatRouteImport } from './routes/$'
@@ -52,6 +53,11 @@ const StudentRoute = StudentRouteImport.update({
 const ResearchRoute = ResearchRouteImport.update({
   id: '/research',
   path: '/research',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -191,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/$': typeof SplatRoute
   '/admin': typeof AdminRouteWithChildren
   '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/research': typeof ResearchRoute
   '/student': typeof StudentRouteWithChildren
   '/teacher': typeof TeacherRouteWithChildren
@@ -221,6 +228,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/research': typeof ResearchRoute
   '/admin/courses': typeof AdminCoursesRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -250,6 +258,7 @@ export interface FileRoutesById {
   '/$': typeof SplatRoute
   '/admin': typeof AdminRouteWithChildren
   '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/research': typeof ResearchRoute
   '/student': typeof StudentRouteWithChildren
   '/teacher': typeof TeacherRouteWithChildren
@@ -283,6 +292,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/admin'
     | '/login'
+    | '/register'
     | '/research'
     | '/student'
     | '/teacher'
@@ -313,6 +323,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/login'
+    | '/register'
     | '/research'
     | '/admin/courses'
     | '/admin/settings'
@@ -341,6 +352,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/admin'
     | '/login'
+    | '/register'
     | '/research'
     | '/student'
     | '/teacher'
@@ -373,6 +385,7 @@ export interface RootRouteChildren {
   SplatRoute: typeof SplatRoute
   AdminRoute: typeof AdminRouteWithChildren
   LoginRoute: typeof LoginRoute
+  RegisterRoute: typeof RegisterRoute
   ResearchRoute: typeof ResearchRoute
   StudentRoute: typeof StudentRouteWithChildren
   TeacherRoute: typeof TeacherRouteWithChildren
@@ -399,6 +412,13 @@ declare module '@tanstack/react-router' {
       path: '/research'
       fullPath: '/research'
       preLoaderRoute: typeof ResearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -671,6 +691,7 @@ const rootRouteChildren: RootRouteChildren = {
   SplatRoute: SplatRoute,
   AdminRoute: AdminRouteWithChildren,
   LoginRoute: LoginRoute,
+  RegisterRoute: RegisterRoute,
   ResearchRoute: ResearchRoute,
   StudentRoute: StudentRouteWithChildren,
   TeacherRoute: TeacherRouteWithChildren,

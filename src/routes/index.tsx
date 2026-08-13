@@ -59,11 +59,8 @@ function Landing() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const roles = [
-    { key: "student", to: "/student", icon: GraduationCap, color: "from-indigo-500 to-blue-500" },
-    { key: "teacher", to: "/teacher", icon: Users, color: "from-violet-500 to-purple-500" },
-    { key: "admin", to: "/admin", icon: Shield, color: "from-emerald-500 to-teal-500" },
-  ] as const;
+
+
 
   const features = [
     { icon: Brain, title: t("landing.features.items.adaptiveTitle"), desc: t("landing.features.items.adaptiveDesc") },
@@ -173,12 +170,13 @@ function Landing() {
           <div className="flex items-center gap-3">
             <LanguageToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
             <ThemeToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
-            <a href="#login">
+            <Link to="/register">
               <Button size="sm" className="bg-white text-slate-900 hover:bg-white/90 font-semibold shadow-sm">
                 {t("common.getStarted")}
                 <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
-            </a>
+            </Link>
+
           </div>
         </div>
       </header>
@@ -438,66 +436,46 @@ function Landing() {
             </p>
           </div>
 
-          <Card className="p-8 md:p-10 bg-white/[0.04] border-white/10 backdrop-blur-xl text-white shadow-2xl">
-            <div className="grid md:grid-cols-2 gap-8">
-              <form
-                onSubmit={(e) => { e.preventDefault(); handleLogin(); }}
-                className="space-y-4"
-              >
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-white/80">{t("common.email")}</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="bg-white/5 border-white/15 text-white placeholder:text-white/40"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-white/80">{t("common.password")}</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="bg-white/5 border-white/15 text-white placeholder:text-white/40"
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-white text-slate-900 hover:bg-white/90 font-semibold"
-                >
-                  {loading ? t("common.signingIn") : t("common.signIn")}
-                </Button>
-              </form>
-
-              <div className="space-y-3">
-                <div className="text-xs font-semibold uppercase tracking-wider text-white/60 mb-2">
-                  {t("landing.login.continueAs")}
-                </div>
-                {roles.map((r) => (
-                  <Link key={r.key} to="/login">
-                    <button className="w-full group flex items-center gap-4 p-4 rounded-xl border border-white/10 hover:border-white/30 bg-white/[0.02] hover:bg-white/[0.06] transition-all text-left">
-                      <div
-                        className={`w-11 h-11 rounded-lg bg-gradient-to-br ${r.color} flex items-center justify-center text-white shadow-lg`}
-                      >
-                        <r.icon className="w-5 h-5" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-semibold">{t("landing.login.loginAs", { role: t("landing.login." + r.key) })}</div>
-                        <div className="text-xs text-white/50">{t("landing.login." + r.key + "Desc")}</div>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-white/40 group-hover:text-white group-hover:translate-x-1 transition" />
-                    </button>
-                  </Link>
-                ))}
+          <Card className="p-8 md:p-10 bg-white/[0.04] border-white/10 backdrop-blur-xl text-white shadow-2xl max-w-md mx-auto">
+            <form
+              onSubmit={(e) => { e.preventDefault(); handleLogin(); }}
+              className="space-y-4"
+            >
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-white/80">{t("common.email")}</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-white/5 border-white/15 text-white placeholder:text-white/40"
+                />
               </div>
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-white/80">{t("common.password")}</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="bg-white/5 border-white/15 text-white placeholder:text-white/40"
+                />
+              </div>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-white text-slate-900 hover:bg-white/90 font-semibold"
+              >
+                {loading ? t("common.signingIn") : t("common.signIn")}
+              </Button>
+              <p className="text-center text-sm text-white/60">
+                <Link to="/register" className="underline hover:text-white">{t("common.getStarted")}</Link>
+              </p>
+            </form>
           </Card>
+
         </div>
       </section>
 

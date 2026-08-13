@@ -135,9 +135,9 @@ export const translations: Record<Lang, Record<string, any>> = {
       },
       login: {
         eyebrow: "Step inside",
-        title: "Pick your portal.",
+        title: "Sign in to your account.",
         subtitle:
-          "Demo mode — choose a role to explore the full experience instantly.",
+          "Use your email and password. New here? Create an account in seconds.",
         continueAs: "Continue as",
         loginAs: "Login as {role}",
         student: "Student",
@@ -702,9 +702,9 @@ export const translations: Record<Lang, Record<string, any>> = {
       },
       login: {
         eyebrow: "Ichkariga qadam qo'ying",
-        title: "Portalingizni tanlang.",
+        title: "Hisobingizga kiring.",
         subtitle:
-          "Demo rejim — to'liq tajribani darhol ko'rish uchun rol tanlang.",
+          "Email va parolingizdan foydalaning. Yangi foydalanuvchimisiz? Bir necha soniyada ro'yxatdan o'ting.",
         continueAs: "Sifatida davom eting",
         loginAs: "{role} sifatida kirish",
         student: "O'quvchi",
