@@ -43,11 +43,16 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex items-center justify-center p-4">
+      <Link to="/" className="absolute top-4 left-4 flex items-center gap-2 font-semibold text-white hover:opacity-90 transition-opacity">
+        <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">PL</div>
+        PragmaLearn
+      </Link>
       <div className="absolute top-4 right-4">
         <LanguageToggle variant="dark" />
         <ThemeToggle variant="dark" />
       </div>
       <div className="w-full max-w-md">
+
 
         {/* Login form */}
         <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-8 flex flex-col justify-center">
