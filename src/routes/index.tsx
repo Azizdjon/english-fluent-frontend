@@ -214,8 +214,8 @@ function Landing() {
             />
             {/* Panel */}
             <div
-              className={`relative w-full flex-1 overflow-y-auto px-6 py-8 backdrop-blur-xl ${
-                theme === "dark" ? "bg-slate-950/95 text-white" : "bg-white/95 text-slate-900"
+              className={`relative w-full flex-1 overflow-y-auto px-6 py-10 backdrop-blur-xl ${
+                theme === "dark" ? "bg-slate-950 text-white" : "bg-white text-slate-900"
               }`}
             >
               <nav className="flex flex-col items-center text-center gap-2">
