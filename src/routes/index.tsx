@@ -23,6 +23,8 @@ import {
   CheckCircle2,
   Quote,
   FlaskConical,
+  Menu,
+  X,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -51,6 +53,8 @@ function Landing() {
   const [password, setPassword] = useState("demo1234");
   const [loading, setLoading] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16);
@@ -139,20 +143,20 @@ function Landing() {
               : "bg-transparent border-b border-transparent"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
           <a
             href="#top"
-            className={`flex items-center gap-2 font-bold text-lg tracking-tight transition-colors ${
+            className={`flex items-center gap-2 font-bold text-base sm:text-lg tracking-tight transition-colors shrink-0 ${
               theme === "dark" || (theme === "light" && !scrolled) ? "text-white" : "text-slate-900"
             }`}
           >
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center font-bold shadow-lg shadow-indigo-500/30 text-white">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center font-bold shadow-lg shadow-indigo-500/30 text-white shrink-0">
               PL
             </div>
             PragmaLearn
           </a>
           <nav
-            className={`hidden md:flex items-center gap-8 text-sm transition-colors ${
+            className={`hidden md:flex items-center gap-6 lg:gap-8 text-sm transition-colors ${
               theme === "dark" || (theme === "light" && !scrolled)
                 ? "text-white/70 hover:text-white"
                 : "text-slate-600 hover:text-slate-900"
@@ -167,19 +171,66 @@ function Landing() {
             </Link>
             <a href="#login" className="transition">{t("nav.signIn")}</a>
           </nav>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <LanguageToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
             <ThemeToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
-            <Link to="/register">
+            <Link to="/register" className="hidden sm:block">
               <Button size="sm" className="bg-white text-slate-900 hover:bg-white/90 font-semibold shadow-sm">
                 {t("common.getStarted")}
                 <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
             </Link>
-
+            <button
+              type="button"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label="Toggle menu"
+              aria-expanded={menuOpen}
+              className={`md:hidden p-2 rounded-lg transition-colors ${
+                theme === "dark" || (theme === "light" && !scrolled)
+                  ? "text-white hover:bg-white/10"
+                  : "text-slate-900 hover:bg-slate-900/5"
+              }`}
+            >
+              {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile menu */}
+        {menuOpen && (
+          <div
+            className={`md:hidden border-t ${
+              theme === "dark"
+                ? "bg-slate-950/95 border-white/10 text-white"
+                : "bg-white/95 border-gray-200 text-slate-900"
+            } backdrop-blur-md`}
+          >
+            <nav className="px-4 py-3 flex flex-col text-sm">
+              {[
+                { href: "#features", label: t("nav.features") },
+                { href: "#journey", label: t("nav.howItWorks") },
+                { href: "#stories", label: t("nav.stories") },
+                { href: "#login", label: t("nav.signIn") },
+              ].map((l) => (
+                <a key={l.href} href={l.href} onClick={() => setMenuOpen(false)} className="py-2.5">
+                  {l.label}
+                </a>
+              ))}
+              <Link to="/research" onClick={() => setMenuOpen(false)} className="py-2.5 inline-flex items-center gap-1.5">
+                <FlaskConical className="w-4 h-4" />
+                {t("nav.research")}
+              </Link>
+              <Link to="/register" onClick={() => setMenuOpen(false)} className="mt-2">
+                <Button size="sm" className="w-full bg-indigo-600 text-white hover:bg-indigo-500 font-semibold">
+                  {t("common.getStarted")}
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                </Button>
+              </Link>
+            </nav>
+          </div>
+        )}
       </header>
+
 
       {/* ============ HERO with video bg ============ */}
       <section id="top" className="keep-dark relative min-h-screen flex items-center overflow-hidden">
