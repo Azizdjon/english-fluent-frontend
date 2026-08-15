@@ -126,16 +126,17 @@ function TeacherHomework() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t("dash.tHomework.title")}</h1>
-          <p className="text-gray-500">{t("dash.tHomework.subtitle")}</p>
+          <p className="text-gray-500 text-sm sm:text-base">{t("dash.tHomework.subtitle")}</p>
         </div>
-        <Button onClick={() => setShowNewModal(true)} className="flex items-center gap-2">
+        <Button onClick={() => setShowNewModal(true)} className="flex items-center gap-2 w-full sm:w-auto shrink-0">
           <Plus className="w-4 h-4" />
           {t("dash.tHomework.newTask")}
         </Button>
       </div>
+
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
