@@ -155,6 +155,7 @@ function Landing() {
             </div>
             PragmaLearn
           </a>
+          {/* Desktop navigation — hidden below md (768px) */}
           <nav
             className={`hidden md:flex items-center gap-6 lg:gap-8 text-sm transition-colors ${
               theme === "dark" || (theme === "light" && !scrolled)
@@ -171,7 +172,9 @@ function Landing() {
             </Link>
             <a href="#login" className="transition">{t("nav.signIn")}</a>
           </nav>
+
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Desktop utilities — hidden below md */}
             <div className="hidden md:flex items-center gap-2 sm:gap-3">
               <LanguageToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
               <ThemeToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
@@ -183,6 +186,7 @@ function Landing() {
               </Link>
             </div>
 
+            {/* Mobile hamburger — visible only below md */}
             <button
               type="button"
               onClick={() => setMenuOpen((v) => !v)}
@@ -199,42 +203,60 @@ function Landing() {
           </div>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile full-screen menu overlay */}
         {menuOpen && (
-          <div
-            className={`md:hidden border-t ${
-              theme === "dark"
-                ? "bg-slate-950/95 border-white/10 text-white"
-                : "bg-white/95 border-gray-200 text-slate-900"
-            } backdrop-blur-md`}
-          >
-            <nav className="px-4 py-3 flex flex-col text-sm">
-              {[
-                { href: "#features", label: t("nav.features") },
-                { href: "#journey", label: t("nav.howItWorks") },
-                { href: "#stories", label: t("nav.stories") },
-                { href: "#login", label: t("nav.signIn") },
-              ].map((l) => (
-                <a key={l.href} href={l.href} onClick={() => setMenuOpen(false)} className="py-2.5">
-                  {l.label}
-                </a>
-              ))}
-              <Link to="/research" onClick={() => setMenuOpen(false)} className="py-2.5 inline-flex items-center gap-1.5">
-                <FlaskConical className="w-4 h-4" />
-                {t("nav.research")}
-              </Link>
-              <div className="flex items-center gap-2 py-2.5">
-                <LanguageToggle variant={theme === "dark" ? "dark" : "light"} />
-                <ThemeToggle variant={theme === "dark" ? "dark" : "light"} />
-              </div>
-              <Link to="/register" onClick={() => setMenuOpen(false)} className="mt-1">
-                <Button size="sm" className="w-full bg-indigo-600 text-white hover:bg-indigo-500 font-semibold">
-                  {t("common.getStarted")}
-                  <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
-              </Link>
+          <div className="md:hidden fixed left-0 right-0 top-16 z-50 flex flex-col h-[calc(100dvh-4rem)]">
+            {/* Backdrop */}
+            <div
+              className="absolute inset-0 bg-black/40 dark:bg-black/60"
+              onClick={() => setMenuOpen(false)}
+              aria-hidden="true"
+            />
+            {/* Panel */}
+            <div
+              className={`relative w-full flex-1 overflow-y-auto px-6 py-10 backdrop-blur-xl ${
+                theme === "dark" ? "bg-slate-950 text-white" : "bg-white text-slate-900"
+              }`}
+            >
+              <nav className="flex flex-col items-center text-center gap-2">
+                {[
+                  { href: "#features", label: t("nav.features") },
+                  { href: "#journey", label: t("nav.howItWorks") },
+                  { href: "#stories", label: t("nav.stories") },
+                  { href: "#login", label: t("nav.signIn") },
+                ].map((l) => (
+                  <a
+                    key={l.href}
+                    href={l.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="w-full py-4 text-lg font-medium rounded-xl transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+                  >
+                    {l.label}
+                  </a>
+                ))}
+                <Link
+                  to="/research"
+                  onClick={() => setMenuOpen(false)}
+                  className="w-full py-4 text-lg font-medium rounded-xl transition-colors hover:bg-black/5 dark:hover:bg-white/10 inline-flex items-center justify-center gap-2"
+                >
+                  <FlaskConical className="w-5 h-5" />
+                  {t("nav.research")}
+                </Link>
+              </nav>
 
-            </nav>
+              <div className="mt-8 flex flex-col items-center gap-4">
+                <div className="flex items-center gap-3">
+                  <LanguageToggle variant={theme === "dark" ? "dark" : "light"} />
+                  <ThemeToggle variant={theme === "dark" ? "dark" : "light"} />
+                </div>
+                <Link to="/register" onClick={() => setMenuOpen(false)} className="w-full max-w-xs">
+                  <Button size="lg" className="w-full bg-indigo-600 text-white hover:bg-indigo-500 font-semibold">
+                    {t("common.getStarted")}
+                    <ArrowRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </div>
         )}
       </header>
