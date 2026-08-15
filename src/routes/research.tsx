@@ -384,7 +384,7 @@ function ResearchPage() {
     <div className="min-h-screen bg-slate-950 text-white">
       {/* NAV */}
       <header className="fixed top-0 inset-x-0 z-40 backdrop-blur-md bg-slate-950/60 border-b border-white/10">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 text-white">
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center font-bold shadow-lg shadow-indigo-500/30">
               PL
@@ -407,7 +407,7 @@ function ResearchPage() {
       {/* HERO */}
       <section className="relative pt-32 pb-16 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.25),transparent_55%),radial-gradient(circle_at_80%_60%,rgba(139,92,246,0.2),transparent_55%)]" />
-        <div className="relative max-w-6xl mx-auto px-6">
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white/90 text-xs font-medium mb-6">
             <FlaskConical className="w-3.5 h-3.5 text-indigo-300" />
             {t("research.badge")}
@@ -434,7 +434,7 @@ function ResearchPage() {
 
       {/* ARTICLES */}
       <section className="py-16 bg-gradient-to-b from-slate-950 to-slate-900">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center gap-3 mb-2">
             <FileText className="w-6 h-6 text-indigo-300" />
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{t("research.articlesTitle")}</h2>
@@ -479,7 +479,7 @@ function ResearchPage() {
 
       {/* METHODICAL GUIDES */}
       <section className="py-16 bg-slate-900">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center gap-3 mb-2">
             <Layers className="w-6 h-6 text-teal-300" />
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{t("research.manualsTitle")}</h2>
@@ -521,7 +521,7 @@ function ResearchPage() {
 
       {/* CERTIFICATES */}
       <section className="py-16 bg-gradient-to-b from-slate-900 to-slate-950">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center gap-3 mb-2">
             <Award className="w-6 h-6 text-amber-300" />
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{t("research.certsTitle")}</h2>
@@ -556,7 +556,7 @@ function ResearchPage() {
 
       {/* FOOTER */}
       <footer className="bg-slate-950 text-white/60 py-12 border-t border-white/10">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center text-white font-bold text-sm">
               PL

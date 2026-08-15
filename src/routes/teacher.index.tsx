@@ -20,7 +20,7 @@ function TeacherDashboard() {
   ];
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold">{t("dash.teacher.greeting")} 👋</h1>
         <p className="text-muted-foreground mt-1">{t("dash.teacher.submissionsAwaiting")}</p>

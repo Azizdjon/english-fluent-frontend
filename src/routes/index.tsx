@@ -139,7 +139,7 @@ function Landing() {
               : "bg-transparent border-b border-transparent"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <a
             href="#top"
             className={`flex items-center gap-2 font-bold text-lg tracking-tight transition-colors ${
@@ -200,7 +200,7 @@ function Landing() {
         <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/60 to-slate-950/95" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(99,102,241,0.35),transparent_50%),radial-gradient(circle_at_80%_70%,rgba(139,92,246,0.25),transparent_50%)]" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-20 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-32 pb-20 w-full">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white/90 text-xs font-medium mb-6 animate-fade-in">
               <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
@@ -253,8 +253,8 @@ function Landing() {
       </section>
 
       {/* ============ FEATURES ============ */}
-      <section id="features" className="py-28 bg-gradient-to-b from-slate-950 to-slate-900 text-white">
-        <div className="max-w-7xl mx-auto px-6">
+      <section id="features" className="py-16 sm:py-20 lg:py-28 bg-gradient-to-b from-slate-950 to-slate-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="max-w-2xl mb-16">
             <div className="text-xs uppercase tracking-[0.2em] text-indigo-300 mb-3">{t("landing.features.eyebrow")}</div>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
@@ -287,9 +287,9 @@ function Landing() {
       </section>
 
       {/* ============ JOURNEY ============ */}
-      <section id="journey" className="py-28 bg-slate-900 text-white relative overflow-hidden">
+      <section id="journey" className="py-16 sm:py-20 lg:py-28 bg-slate-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(139,92,246,0.15),transparent_60%)]" />
-        <div className="relative max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-16 items-center">
           <div>
             <div className="text-xs uppercase tracking-[0.2em] text-violet-300 mb-3">{t("landing.journey.eyebrow")}</div>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
@@ -335,8 +335,8 @@ function Landing() {
       </section>
 
       {/* ============ SPEAKING LAB SHOWCASE ============ */}
-      <section className="py-28 bg-slate-950 text-white relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+      <section className="py-16 sm:py-20 lg:py-28 bg-slate-950 text-white relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-16 items-center">
           <div className="relative rounded-3xl overflow-hidden border border-white/10 aspect-video bg-black order-2 lg:order-1">
             <video
               className="w-full h-full object-cover opacity-80"
@@ -396,8 +396,8 @@ function Landing() {
       </section>
 
       {/* ============ TESTIMONIALS ============ */}
-      <section id="stories" className="py-28 bg-gradient-to-b from-slate-950 to-slate-900 text-white">
-        <div className="max-w-7xl mx-auto px-6">
+      <section id="stories" className="py-16 sm:py-20 lg:py-28 bg-gradient-to-b from-slate-950 to-slate-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="max-w-2xl mb-14">
             <div className="text-xs uppercase tracking-[0.2em] text-emerald-300 mb-3">{t("landing.stories.eyebrow")}</div>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
@@ -422,10 +422,10 @@ function Landing() {
       {/* ============ LOGIN / ROLES ============ */}
       <section
         id="login"
-        className="py-28 bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-950 text-white relative overflow-hidden"
+        className="py-16 sm:py-20 lg:py-28 bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-950 text-white relative overflow-hidden"
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(99,102,241,0.35),transparent_60%)]" />
-        <div className="relative max-w-5xl mx-auto px-6">
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <div className="text-xs uppercase tracking-[0.2em] text-indigo-300 mb-3">{t("landing.login.eyebrow")}</div>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
@@ -481,7 +481,7 @@ function Landing() {
 
       {/* ============ FOOTER ============ */}
       <footer className="bg-slate-950 text-white/60 py-12 border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center text-white font-bold text-sm">
               PL
