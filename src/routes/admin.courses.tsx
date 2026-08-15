@@ -53,7 +53,7 @@ function AdminCoursesPage() {
   return (
     <div className="p-4 md:p-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-        <h1 className="text-2xl font-bold">{t("dash.adminCourses.title")}</h1>
+        <h1 className="text-xl sm:text-2xl font-bold">{t("dash.adminCourses.title")}</h1>
         <div className="flex gap-2">
           <input
             className="border rounded px-3 py-1.5 text-sm flex-1 sm:flex-none sm:w-56"

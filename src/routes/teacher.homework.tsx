@@ -128,7 +128,7 @@ function TeacherHomework() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t("dash.tHomework.title")}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t("dash.tHomework.title")}</h1>
           <p className="text-gray-500">{t("dash.tHomework.subtitle")}</p>
         </div>
         <Button onClick={() => setShowNewModal(true)} className="flex items-center gap-2">
@@ -143,7 +143,7 @@ function TeacherHomework() {
           <CardContent className="pt-6 flex items-center gap-3">
             <BookOpen className="w-8 h-8 text-blue-500" />
             <div>
-              <p className="text-2xl font-bold">{homeworks.length}</p>
+              <p className="text-xl sm:text-2xl font-bold">{homeworks.length}</p>
               <p className="text-sm text-gray-500">{t("dash.tHomework.totalTasks")}</p>
             </div>
           </CardContent>
@@ -152,7 +152,7 @@ function TeacherHomework() {
           <CardContent className="pt-6 flex items-center gap-3">
             <Clock className="w-8 h-8 text-orange-500" />
             <div>
-              <p className="text-2xl font-bold">{submitted.length}</p>
+              <p className="text-xl sm:text-2xl font-bold">{submitted.length}</p>
               <p className="text-sm text-gray-500">{t("dash.tHomework.submitted")}</p>
             </div>
           </CardContent>
@@ -161,7 +161,7 @@ function TeacherHomework() {
           <CardContent className="pt-6 flex items-center gap-3">
             <CheckCircle className="w-8 h-8 text-green-500" />
             <div>
-              <p className="text-2xl font-bold">{graded.length}</p>
+              <p className="text-xl sm:text-2xl font-bold">{graded.length}</p>
               <p className="text-sm text-gray-500">{t("dash.tHomework.graded")}</p>
             </div>
           </CardContent>

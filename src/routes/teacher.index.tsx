@@ -22,7 +22,7 @@ function TeacherDashboard() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">{t("dash.teacher.greeting")} 👋</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">{t("dash.teacher.greeting")} 👋</h1>
         <p className="text-muted-foreground mt-1">{t("dash.teacher.submissionsAwaiting")}</p>
       </div>
 
@@ -32,7 +32,7 @@ function TeacherDashboard() {
             <div className="flex items-start justify-between">
               <div>
                 <div className="text-sm text-muted-foreground">{s.label}</div>
-                <div className="text-2xl font-bold mt-1">{s.value}</div>
+                <div className="text-xl sm:text-2xl font-bold mt-1">{s.value}</div>
               </div>
               <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${s.tint}`}>
                 <s.icon className="w-5 h-5" />

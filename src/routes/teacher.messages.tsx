@@ -50,7 +50,7 @@ function MessagesPage() {
 
   return (
     <div className="p-4 md:p-6 max-w-4xl">
-      <h1 className="text-2xl font-bold text-white mb-6">{t("dash.teacherMessages.title")}</h1>
+      <h1 className="text-xl sm:text-2xl font-bold text-white mb-6">{t("dash.teacherMessages.title")}</h1>
       <div className="bg-gray-800 rounded-xl flex h-[500px] overflow-hidden">
         <div className="w-48 md:w-64 border-r border-gray-700 overflow-y-auto flex-shrink-0">
           {students.map(s => {

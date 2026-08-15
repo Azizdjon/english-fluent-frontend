@@ -15,7 +15,7 @@ function Settings() {
   const { t } = useI18n();
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">{t("dash.settings.title")}</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6">{t("dash.settings.title")}</h1>
 
       <Card className="p-6 mb-4">
         <h2 className="font-semibold mb-4">{t("dash.settings.platform")}</h2>

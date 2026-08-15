@@ -51,7 +51,7 @@ function Exercises() {
           <Sparkles className="w-5 h-5 text-primary" />
           <Badge variant="secondary">{t("dash.sWordwall.badge")}</Badge>
         </div>
-        <h1 className="text-3xl font-bold">{t("dash.sWordwall.title")}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">{t("dash.sWordwall.title")}</h1>
         <p className="text-muted-foreground mt-1">{t("dash.sWordwall.subtitle")}</p>
       </div>
 

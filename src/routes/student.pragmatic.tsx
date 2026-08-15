@@ -318,7 +318,7 @@ function PracticeMode({
               {state.step + 1} / {bLines.length}
             </span>
           </div>
-          <h2 className="text-2xl font-bold">{scenario.title}</h2>
+          <h2 className="text-xl sm:text-2xl font-bold">{scenario.title}</h2>
           <p className="text-muted-foreground text-sm">{scenario.context}</p>
         </div>
         <Button variant="ghost" size="sm" onClick={onExit}>
@@ -464,7 +464,7 @@ function PragmaticDialogues() {
         <Badge variant="secondary" className="mb-2">
           {t("dash.sPragmatic.badge")}
         </Badge>
-        <h1 className="text-3xl font-bold">{t("dash.sPragmatic.title")}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">{t("dash.sPragmatic.title")}</h1>
         <p className="text-muted-foreground mt-1">
           {t("dash.sPragmatic.subtitle")}
         </p>
