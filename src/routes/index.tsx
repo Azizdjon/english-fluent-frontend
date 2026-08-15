@@ -205,7 +205,7 @@ function Landing() {
 
         {/* Mobile full-screen menu overlay */}
         {menuOpen && (
-          <div className="md:hidden fixed inset-x-0 bottom-0 top-16 z-50 flex flex-col">
+          <div className="md:hidden fixed left-0 right-0 top-16 z-50 flex flex-col h-[calc(100dvh-4rem)]">
             {/* Backdrop */}
             <div
               className="absolute inset-0 bg-black/40 dark:bg-black/60"
