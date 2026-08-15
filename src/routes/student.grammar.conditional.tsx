@@ -198,7 +198,7 @@ function ConditionalPage() {
       <div className="flex items-center justify-center min-h-[50vh] px-4">
         <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 max-w-md w-full text-center shadow-lg border border-gray-200 dark:border-slate-700">
           <div className="text-5xl mb-4">🎉</div>
-          <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">{t("dash.gCond.done")}</h2>
+          <h2 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 dark:text-white">{t("dash.gCond.done")}</h2>
           <p className="text-gray-500 dark:text-slate-400 mb-4">{t("dash.gCond.finishedTest", { title: selected.title })}</p>
           {hasKey ? (
             <>
@@ -252,7 +252,7 @@ function ConditionalPage() {
   return (
     <div className="p-4 md:p-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Conditional</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Conditional</h1>
         <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">{t("dash.gCond.subtitle")}</p>
       </div>
 
@@ -261,7 +261,7 @@ function ConditionalPage() {
           {LESSON_IDS.map((l, i) => (
             <button key={l.id} onClick={() => startLesson(l)}
               className="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-400 transition-all text-left shadow-sm">
-              <span className="text-2xl font-bold text-gray-400 dark:text-slate-500">{i + 1}</span>
+              <span className="text-xl sm:text-2xl font-bold text-gray-400 dark:text-slate-500">{i + 1}</span>
               <div>
                 <div className="font-semibold text-gray-900 dark:text-white">{l.title}</div>
                 <div className="text-sm text-gray-500 dark:text-slate-400">{t("dash.gCond.quiz5min")}</div>

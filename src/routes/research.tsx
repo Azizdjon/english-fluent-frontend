@@ -384,35 +384,36 @@ function ResearchPage() {
     <div className="min-h-screen bg-slate-950 text-white">
       {/* NAV */}
       <header className="fixed top-0 inset-x-0 z-40 backdrop-blur-md bg-slate-950/60 border-b border-white/10">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-white">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center font-bold shadow-lg shadow-indigo-500/30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2 text-white min-w-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center font-bold shadow-lg shadow-indigo-500/30 shrink-0">
               PL
             </div>
-            <span className="font-bold text-lg tracking-tight">PragmaLearn</span>
+            <span className="font-bold text-base sm:text-lg tracking-tight truncate">PragmaLearn</span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <LanguageToggle variant="dark" />
             <ThemeToggle variant="dark" />
             <Link to="/">
-              <Button size="sm" variant="outline" className="bg-white/5 border-white/30 text-white hover:bg-white/10 hover:text-white">
-                <ArrowLeft className="w-4 h-4 mr-1.5" />
-                {t("research.backHome")}
+              <Button size="sm" variant="outline" className="bg-white/5 border-white/30 text-white hover:bg-white/10 hover:text-white px-2 sm:px-3">
+                <ArrowLeft className="w-4 h-4 sm:mr-1.5" />
+                <span className="hidden sm:inline">{t("research.backHome")}</span>
               </Button>
             </Link>
           </div>
+
         </div>
       </header>
 
       {/* HERO */}
       <section className="relative pt-32 pb-16 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.25),transparent_55%),radial-gradient(circle_at_80%_60%,rgba(139,92,246,0.2),transparent_55%)]" />
-        <div className="relative max-w-6xl mx-auto px-6">
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white/90 text-xs font-medium mb-6">
             <FlaskConical className="w-3.5 h-3.5 text-indigo-300" />
             {t("research.badge")}
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-5">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight mb-5">
             {t("research.title")}
           </h1>
           <p className="text-lg text-white/70 max-w-2xl leading-relaxed">
@@ -434,16 +435,16 @@ function ResearchPage() {
 
       {/* ARTICLES */}
       <section className="py-16 bg-gradient-to-b from-slate-950 to-slate-900">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center gap-3 mb-2">
             <FileText className="w-6 h-6 text-indigo-300" />
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{t("research.articlesTitle")}</h2>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("research.articlesTitle")}</h2>
           </div>
           <p className="text-white/50 mb-10">{t("research.articlesSubtitle")}</p>
 
           <div className="grid md:grid-cols-2 gap-5">
             {ARTICLES.map((a) => (
-              <Card key={a.id} className="p-6 bg-white/[0.04] border-white/10 text-white hover:border-indigo-400/40 hover:bg-white/[0.06] transition-all flex flex-col">
+              <Card key={a.id} className="p-5 sm:p-6 bg-white/[0.04] border-white/10 text-white hover:border-indigo-400/40 hover:bg-white/[0.06] transition-all flex flex-col">
                 <div className="flex items-center justify-between mb-3">
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-500/15 text-indigo-200 text-xs font-medium">
                     <BookOpen className="w-3 h-3" />
@@ -479,16 +480,16 @@ function ResearchPage() {
 
       {/* METHODICAL GUIDES */}
       <section className="py-16 bg-slate-900">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center gap-3 mb-2">
             <Layers className="w-6 h-6 text-teal-300" />
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{t("research.manualsTitle")}</h2>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("research.manualsTitle")}</h2>
           </div>
           <p className="text-white/50 mb-10">{t("research.manualsSubtitle")}</p>
 
           <div className="grid md:grid-cols-2 gap-5">
             {MANUALS.map((m) => (
-              <Card key={m.id} className="p-6 bg-white/[0.04] border-white/10 text-white hover:border-teal-400/40 transition-all flex flex-col">
+              <Card key={m.id} className="p-5 sm:p-6 bg-white/[0.04] border-white/10 text-white hover:border-teal-400/40 transition-all flex flex-col">
                 <div className="flex items-center justify-between mb-3">
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-teal-500/15 text-teal-200 text-xs font-medium">
                     <BookOpen className="w-3 h-3" />
@@ -521,10 +522,10 @@ function ResearchPage() {
 
       {/* CERTIFICATES */}
       <section className="py-16 bg-gradient-to-b from-slate-900 to-slate-950">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center gap-3 mb-2">
             <Award className="w-6 h-6 text-amber-300" />
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{t("research.certsTitle")}</h2>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("research.certsTitle")}</h2>
           </div>
           <p className="text-white/50 mb-10">{t("research.certsSubtitle")}</p>
 
@@ -556,7 +557,7 @@ function ResearchPage() {
 
       {/* FOOTER */}
       <footer className="bg-slate-950 text-white/60 py-12 border-t border-white/10">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center text-white font-bold text-sm">
               PL

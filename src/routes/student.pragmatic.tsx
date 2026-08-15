@@ -211,7 +211,7 @@ function PracticeMode({
     const total = state.answers.length;
     const pct = Math.round((correct / total) * 100);
     return (
-      <div className="p-8 max-w-2xl mx-auto">
+      <div className="p-4 sm:p-6 lg:p-8 max-w-2xl mx-auto">
         <div className="text-center mb-8">
           <div
             className={`text-6xl font-bold mb-2 ${
@@ -307,7 +307,7 @@ function PracticeMode({
   const currentAnswer = state.answers[state.step];
 
   return (
-    <div className="p-8 max-w-2xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-2xl mx-auto">
       <div className="flex items-start justify-between mb-6">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -318,7 +318,7 @@ function PracticeMode({
               {state.step + 1} / {bLines.length}
             </span>
           </div>
-          <h2 className="text-2xl font-bold">{scenario.title}</h2>
+          <h2 className="text-xl sm:text-2xl font-bold">{scenario.title}</h2>
           <p className="text-muted-foreground text-sm">{scenario.context}</p>
         </div>
         <Button variant="ghost" size="sm" onClick={onExit}>
@@ -459,12 +459,12 @@ function PragmaticDialogues() {
   }
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto">
       <div className="mb-6">
         <Badge variant="secondary" className="mb-2">
           {t("dash.sPragmatic.badge")}
         </Badge>
-        <h1 className="text-3xl font-bold">{t("dash.sPragmatic.title")}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">{t("dash.sPragmatic.title")}</h1>
         <p className="text-muted-foreground mt-1">
           {t("dash.sPragmatic.subtitle")}
         </p>

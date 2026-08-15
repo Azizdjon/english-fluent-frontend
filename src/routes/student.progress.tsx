@@ -48,7 +48,7 @@ function ProgressPage() {
 
   return (
     <div className="p-4 md:p-6 max-w-4xl space-y-6">
-      <h1 className="text-2xl font-bold text-white">{t("dash.progress.title")}</h1>
+      <h1 className="text-xl sm:text-2xl font-bold text-white">{t("dash.progress.title")}</h1>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: t("dash.progress.lessonsDone"), value: stats.completedLessons, color: "text-blue-400" },
@@ -57,7 +57,7 @@ function ProgressPage() {
           { label: t("dash.progress.certificates"), value: stats.certificates, color: "text-green-400" },
         ].map(s => (
           <div key={s.label} className="bg-gray-800 rounded-xl p-4 text-center">
-            <div className={`text-3xl font-bold ${s.color}`}>{s.value}</div>
+            <div className={`text-2xl sm:text-3xl font-bold ${s.color}`}>{s.value}</div>
             <div className="text-gray-400 text-sm mt-1">{s.label}</div>
           </div>
         ))}

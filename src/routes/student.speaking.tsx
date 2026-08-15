@@ -110,7 +110,7 @@ function SpeakingLab() {
   return (
     <div className="max-w-3xl mx-auto py-8 px-4 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">{t("dash.sSpeaking.title")}</h1>
+        <h1 className="text-xl sm:text-2xl font-bold">{t("dash.sSpeaking.title")}</h1>
         <p className="text-gray-500">{t("dash.sSpeaking.subtitle")}</p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -165,7 +165,7 @@ function SpeakingLab() {
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle2 className="w-5 h-5 text-green-600" />
               <span className="font-semibold text-green-700">{t("dash.sSpeaking.aiFeedback")}</span>
-              <span className="ml-auto text-2xl font-bold text-green-700">{feedback.score}/100</span>
+              <span className="ml-auto text-xl sm:text-2xl font-bold text-green-700">{feedback.score}/100</span>
             </div>
             <div className="grid grid-cols-3 gap-3 text-sm mb-3">
               {[[t('dash.sSpeaking.fluency'), feedback.fluency, 'green'],[t('dash.sSpeaking.pronunciation'), feedback.pronunciation, 'blue'],[t('dash.sSpeaking.grammar'), feedback.grammar, 'purple']].map(([label, val, color]) => (

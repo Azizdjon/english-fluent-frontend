@@ -23,6 +23,8 @@ import {
   CheckCircle2,
   Quote,
   FlaskConical,
+  Menu,
+  X,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -51,6 +53,8 @@ function Landing() {
   const [password, setPassword] = useState("demo1234");
   const [loading, setLoading] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16);
@@ -139,20 +143,20 @@ function Landing() {
               : "bg-transparent border-b border-transparent"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
           <a
             href="#top"
-            className={`flex items-center gap-2 font-bold text-lg tracking-tight transition-colors ${
+            className={`flex items-center gap-2 font-bold text-base sm:text-lg tracking-tight transition-colors shrink-0 ${
               theme === "dark" || (theme === "light" && !scrolled) ? "text-white" : "text-slate-900"
             }`}
           >
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center font-bold shadow-lg shadow-indigo-500/30 text-white">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center font-bold shadow-lg shadow-indigo-500/30 text-white shrink-0">
               PL
             </div>
             PragmaLearn
           </a>
           <nav
-            className={`hidden md:flex items-center gap-8 text-sm transition-colors ${
+            className={`hidden md:flex items-center gap-6 lg:gap-8 text-sm transition-colors ${
               theme === "dark" || (theme === "light" && !scrolled)
                 ? "text-white/70 hover:text-white"
                 : "text-slate-600 hover:text-slate-900"
@@ -167,19 +171,66 @@ function Landing() {
             </Link>
             <a href="#login" className="transition">{t("nav.signIn")}</a>
           </nav>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <LanguageToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
             <ThemeToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
-            <Link to="/register">
+            <Link to="/register" className="hidden sm:block">
               <Button size="sm" className="bg-white text-slate-900 hover:bg-white/90 font-semibold shadow-sm">
                 {t("common.getStarted")}
                 <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
             </Link>
-
+            <button
+              type="button"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label="Toggle menu"
+              aria-expanded={menuOpen}
+              className={`md:hidden p-2 rounded-lg transition-colors ${
+                theme === "dark" || (theme === "light" && !scrolled)
+                  ? "text-white hover:bg-white/10"
+                  : "text-slate-900 hover:bg-slate-900/5"
+              }`}
+            >
+              {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile menu */}
+        {menuOpen && (
+          <div
+            className={`md:hidden border-t ${
+              theme === "dark"
+                ? "bg-slate-950/95 border-white/10 text-white"
+                : "bg-white/95 border-gray-200 text-slate-900"
+            } backdrop-blur-md`}
+          >
+            <nav className="px-4 py-3 flex flex-col text-sm">
+              {[
+                { href: "#features", label: t("nav.features") },
+                { href: "#journey", label: t("nav.howItWorks") },
+                { href: "#stories", label: t("nav.stories") },
+                { href: "#login", label: t("nav.signIn") },
+              ].map((l) => (
+                <a key={l.href} href={l.href} onClick={() => setMenuOpen(false)} className="py-2.5">
+                  {l.label}
+                </a>
+              ))}
+              <Link to="/research" onClick={() => setMenuOpen(false)} className="py-2.5 inline-flex items-center gap-1.5">
+                <FlaskConical className="w-4 h-4" />
+                {t("nav.research")}
+              </Link>
+              <Link to="/register" onClick={() => setMenuOpen(false)} className="mt-2">
+                <Button size="sm" className="w-full bg-indigo-600 text-white hover:bg-indigo-500 font-semibold">
+                  {t("common.getStarted")}
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                </Button>
+              </Link>
+            </nav>
+          </div>
+        )}
       </header>
+
 
       {/* ============ HERO with video bg ============ */}
       <section id="top" className="keep-dark relative min-h-screen flex items-center overflow-hidden">
@@ -200,20 +251,20 @@ function Landing() {
         <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/60 to-slate-950/95" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(99,102,241,0.35),transparent_50%),radial-gradient(circle_at_80%_70%,rgba(139,92,246,0.25),transparent_50%)]" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-20 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-28 sm:pt-32 pb-16 sm:pb-20 w-full">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white/90 text-xs font-medium mb-6 animate-fade-in">
               <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
               {t("landing.heroBadge")}
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white leading-[1.05] mb-6 animate-fade-in">
+            <h1 className="text-[2.1rem] sm:text-5xl md:text-7xl font-bold tracking-tight text-white leading-[1.05] mb-6 animate-fade-in">
               {t("landing.heroTitle1")}
               <br />
               <span className="bg-gradient-to-r from-indigo-300 via-violet-300 to-fuchsia-300 bg-clip-text text-transparent">
                 {t("landing.heroTitle2")}
               </span>
             </h1>
-            <p className="text-lg md:text-xl text-white/75 max-w-2xl mb-10 leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-white/75 max-w-2xl mb-10 leading-relaxed">
               {t("landing.heroSubtitle")}
             </p>
             <div className="flex flex-wrap gap-4">
@@ -235,10 +286,10 @@ function Landing() {
               </a>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-2xl">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-5 sm:gap-6 mt-10 sm:mt-16 max-w-2xl">
               {stats.map((s) => (
                 <div key={s.label}>
-                  <div className="text-3xl md:text-4xl font-bold text-white">{s.value}</div>
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">{s.value}</div>
                   <div className="text-xs text-white/60 mt-1 uppercase tracking-wider">{s.label}</div>
                 </div>
               ))}
@@ -253,11 +304,11 @@ function Landing() {
       </section>
 
       {/* ============ FEATURES ============ */}
-      <section id="features" className="py-28 bg-gradient-to-b from-slate-950 to-slate-900 text-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="max-w-2xl mb-16">
+      <section id="features" className="py-16 sm:py-20 lg:py-28 bg-gradient-to-b from-slate-950 to-slate-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="max-w-2xl mb-10 sm:mb-16">
             <div className="text-xs uppercase tracking-[0.2em] text-indigo-300 mb-3">{t("landing.features.eyebrow")}</div>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight mb-4">
               {t("landing.features.title")}
             </h2>
             <p className="text-white/60 text-lg">
@@ -269,7 +320,7 @@ function Landing() {
             {features.map((f, i) => (
               <div
                 key={f.title}
-                className="group relative p-7 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-indigo-400/40 hover:bg-white/[0.06] transition-all overflow-hidden"
+                className="group relative p-5 sm:p-7 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-indigo-400/40 hover:bg-white/[0.06] transition-all overflow-hidden"
                 style={{ animationDelay: `${i * 60}ms` }}
               >
                 <div className="absolute -top-12 -right-12 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/30 transition" />
@@ -287,12 +338,12 @@ function Landing() {
       </section>
 
       {/* ============ JOURNEY ============ */}
-      <section id="journey" className="py-28 bg-slate-900 text-white relative overflow-hidden">
+      <section id="journey" className="py-16 sm:py-20 lg:py-28 bg-slate-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(139,92,246,0.15),transparent_60%)]" />
-        <div className="relative max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <div>
             <div className="text-xs uppercase tracking-[0.2em] text-violet-300 mb-3">{t("landing.journey.eyebrow")}</div>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight mb-6">
               {t("landing.journey.title")}
             </h2>
             <p className="text-white/60 text-lg mb-10">
@@ -320,9 +371,9 @@ function Landing() {
               src="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=1400&q=80"
               alt="Students learning together"
               loading="lazy"
-              className="relative rounded-3xl border border-white/10 shadow-2xl w-full object-cover aspect-[4/5]"
+              className="relative rounded-3xl border border-white/10 shadow-2xl w-full object-cover aspect-[4/5] max-h-[70vh]"
             />
-            <div className="absolute -bottom-6 -left-6 bg-white text-slate-900 rounded-2xl p-5 shadow-xl max-w-[230px]">
+            <div className="absolute -bottom-4 left-2 sm:-bottom-6 sm:-left-6 bg-white text-slate-900 rounded-2xl p-4 sm:p-5 shadow-xl max-w-[200px] sm:max-w-[230px]">
               <div className="flex items-center gap-1 text-amber-500 mb-1">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star key={i} className="w-4 h-4 fill-current" />
@@ -335,8 +386,8 @@ function Landing() {
       </section>
 
       {/* ============ SPEAKING LAB SHOWCASE ============ */}
-      <section className="py-28 bg-slate-950 text-white relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+      <section className="py-16 sm:py-20 lg:py-28 bg-slate-950 text-white relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <div className="relative rounded-3xl overflow-hidden border border-white/10 aspect-video bg-black order-2 lg:order-1">
             <video
               className="w-full h-full object-cover opacity-80"
@@ -371,7 +422,7 @@ function Landing() {
 
           <div className="order-1 lg:order-2">
             <div className="text-xs uppercase tracking-[0.2em] text-fuchsia-300 mb-3">{t("landing.speakingLab.eyebrow")}</div>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight mb-6">
               {t("landing.speakingLab.title")}
             </h2>
             <p className="text-white/60 text-lg mb-8">
@@ -396,17 +447,17 @@ function Landing() {
       </section>
 
       {/* ============ TESTIMONIALS ============ */}
-      <section id="stories" className="py-28 bg-gradient-to-b from-slate-950 to-slate-900 text-white">
-        <div className="max-w-7xl mx-auto px-6">
+      <section id="stories" className="py-16 sm:py-20 lg:py-28 bg-gradient-to-b from-slate-950 to-slate-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="max-w-2xl mb-14">
             <div className="text-xs uppercase tracking-[0.2em] text-emerald-300 mb-3">{t("landing.stories.eyebrow")}</div>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight">
               {t("landing.stories.title")}
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {testimonials.map((tm) => (
-              <Card key={tm.name} className="p-7 bg-white/[0.04] border-white/10 text-white">
+              <Card key={tm.name} className="p-5 sm:p-7 bg-white/[0.04] border-white/10 text-white">
                 <Quote className="w-8 h-8 text-indigo-300 mb-4" />
                 <p className="text-white/85 leading-relaxed mb-6">"{tm.quote}"</p>
                 <div className="pt-4 border-t border-white/10">
@@ -422,13 +473,13 @@ function Landing() {
       {/* ============ LOGIN / ROLES ============ */}
       <section
         id="login"
-        className="py-28 bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-950 text-white relative overflow-hidden"
+        className="py-16 sm:py-20 lg:py-28 bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-950 text-white relative overflow-hidden"
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(99,102,241,0.35),transparent_60%)]" />
-        <div className="relative max-w-5xl mx-auto px-6">
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <div className="text-xs uppercase tracking-[0.2em] text-indigo-300 mb-3">{t("landing.login.eyebrow")}</div>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight mb-4">
               {t("landing.login.title")}
             </h2>
             <p className="text-white/60 text-lg max-w-xl mx-auto">
@@ -436,7 +487,7 @@ function Landing() {
             </p>
           </div>
 
-          <Card className="p-8 md:p-10 bg-white/[0.04] border-white/10 backdrop-blur-xl text-white shadow-2xl max-w-md mx-auto">
+          <Card className="p-6 sm:p-8 md:p-10 bg-white/[0.04] border-white/10 backdrop-blur-xl text-white shadow-2xl max-w-md mx-auto">
             <form
               onSubmit={(e) => { e.preventDefault(); handleLogin(); }}
               className="space-y-4"
@@ -481,7 +532,7 @@ function Landing() {
 
       {/* ============ FOOTER ============ */}
       <footer className="bg-slate-950 text-white/60 py-12 border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center text-white font-bold text-sm">
               PL
@@ -489,7 +540,7 @@ function Landing() {
             <span className="font-semibold text-white">PragmaLearn</span>
           </div>
           <p className="text-sm">{t("landing.footer.copyright")}</p>
-          <div className="flex gap-5 text-sm">
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-5 text-sm">
             <a href="#features" className="hover:text-white">{t("nav.features")}</a>
             <a href="#journey" className="hover:text-white">{t("nav.howItWorks")}</a>
             <Link to="/research" className="hover:text-white">{t("nav.research")}</Link>

@@ -158,7 +158,7 @@ function StudentCertificates() {
         <div className="flex items-center gap-3 mb-8">
           <Award className="w-8 h-8 text-yellow-400" />
           <div>
-            <h1 className="text-2xl font-bold text-white">My Certificates</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-white">My Certificates</h1>
             <p className="text-slate-400 text-sm">Your earned achievements</p>
           </div>
         </div>

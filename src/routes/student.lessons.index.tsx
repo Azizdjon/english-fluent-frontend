@@ -71,7 +71,7 @@ function LessonsPage() {
 
   return (
     <div className="p-4 md:p-6 max-w-3xl space-y-8">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t("dash.sLessons.title")}</h1>
+      <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{t("dash.sLessons.title")}</h1>
       {courses.length === 0 && <p className="text-gray-500 dark:text-slate-400">{t("dash.sLessons.none")}</p>}
       {courses.map(course => (
         <div key={course.id} className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden border border-gray-100 dark:border-slate-700 shadow-sm">

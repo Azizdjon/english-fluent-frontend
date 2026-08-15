@@ -34,7 +34,7 @@ function AdminUsersPage() {
 
   return (
     <div className="p-4 md:p-6">
-      <h1 className="text-2xl font-bold text-white mb-6">{t("dash.adminUsers.title", { n: users.length })}</h1>
+      <h1 className="text-xl sm:text-2xl font-bold text-white mb-6">{t("dash.adminUsers.title", { n: users.length })}</h1>
       <input value={search} onChange={e => setSearch(e.target.value)} placeholder={t("dash.adminUsers.search")}
         className="mb-4 w-full max-w-md bg-gray-800 text-white rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
       <div className="bg-gray-800 rounded-xl overflow-x-auto">

@@ -213,7 +213,7 @@ function GrammarTopicPage() {
   }, [activeLesson, selected, currentQ, answers, userId]);
 
   if (!config) return (
-    <div className="p-8 text-center">
+    <div className="p-4 sm:p-6 lg:p-8 text-center">
       <h2 className="text-xl text-red-500">{t("dash.gTopic.topicNotFound")}{topic}</h2>
       <Button onClick={() => navigate({ to: '/student' })} className="mt-4">{t("dash.gTopic.back")}</Button>
     </div>
@@ -229,7 +229,7 @@ function GrammarTopicPage() {
         <div className="min-h-screen bg-gray-950 text-white flex flex-col items-center justify-center p-8">
           <div className="bg-gray-900 rounded-2xl p-10 max-w-md w-full text-center shadow-xl">
             <div className="text-6xl mb-4">🎉</div>
-            <h2 className="text-2xl font-bold mb-2">{activeLesson.title}</h2>
+            <h2 className="text-xl sm:text-2xl font-bold mb-2">{activeLesson.title}</h2>
             <p className="text-4xl font-extrabold text-green-400 mb-1">{pct}%</p>
             <p className="text-gray-400 mb-3">{score} / {total} {t("dash.gTopic.correct")}</p>
             <div className="text-3xl text-yellow-400 mb-6">{'★'.repeat(stars)}{'☆'.repeat(5 - stars)}</div>
@@ -245,7 +245,7 @@ function GrammarTopicPage() {
     const progress = activeLesson.questions.length ? (currentQ / activeLesson.questions.length) * 100 : 0;
     if (!q) {
       return (
-        <div className="p-8 text-center">
+        <div className="p-4 sm:p-6 lg:p-8 text-center">
           <p className="text-gray-500">{t("dash.gTopic.noQuestions")}</p>
           <Button onClick={() => setActiveLesson(null)} className="mt-4">{t("dash.gTopic.back")}</Button>
         </div>
@@ -280,14 +280,14 @@ function GrammarTopicPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{config.label}</h1>
+      <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1">{config.label}</h1>
       <p className="text-gray-500 dark:text-slate-400 mb-6">{t("dash.gTopic.quizzesFor", { label: config.label })}</p>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 grid gap-4">
           {loading ? <p className="text-gray-500">{t("dash.gTopic.loading")}</p> : lessons.length === 0 ? <p className="text-gray-500">{t("dash.gTopic.noLesson")}</p> : (
             lessons.map((l, i) => (
               <button key={l.id} onClick={() => startLesson(l)} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 dark:border-slate-700 hover:border-blue-500 bg-white dark:bg-slate-800 transition-all text-left shadow-sm">
-                <span className="text-2xl font-bold text-gray-400 dark:text-slate-500">{i + 1}</span>
+                <span className="text-xl sm:text-2xl font-bold text-gray-400 dark:text-slate-500">{i + 1}</span>
                 <div>
                   <div className="font-semibold text-gray-900 dark:text-white">{l.title}</div>
                   <div className="text-sm text-gray-500 dark:text-slate-400">{l.questions.length > 0 ? t("dash.gTopic.quizN", { n: l.questions.length }) : t("dash.gTopic.quiz5min")}</div>

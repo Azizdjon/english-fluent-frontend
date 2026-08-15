@@ -41,7 +41,7 @@ if (loading) return <div className="p-6 text-center text-gray-400">{t("dash.prof
 
 return (
 <div className="p-4 md:p-6 max-w-lg">
-<h1 className="text-2xl font-bold mb-6 text-white">{t("dash.profile.title")}</h1>
+<h1 className="text-xl sm:text-2xl font-bold mb-6 text-white">{t("dash.profile.title")}</h1>
 
 {toast && (
 <div className="mb-4 bg-green-900/40 border border-green-700 text-green-400 px-4 py-3 rounded-lg text-sm">

@@ -188,7 +188,7 @@ function StudentDashboard() {
                 {initials}
               </div>
               <div>
-                <h1 className="text-xl md:text-2xl font-bold text-white">
+                <h1 className="text-xl md:text-xl sm:text-2xl font-bold text-white">
                   {t("dash.student.welcome", { name: profile?.full_name?.split(" ")[0] ?? t("dash.student.defaultName") })}
                 </h1>
                 <Badge className="bg-blue-600/20 text-blue-400 border-blue-600/30 mt-1">
@@ -227,7 +227,7 @@ function StudentDashboard() {
                     <div className={"w-8 h-8 rounded-lg " + s.bg + " flex items-center justify-center mb-3"}>
                       <s.icon className={"w-4 h-4 " + s.color} />
                     </div>
-                    <p className={"text-2xl font-bold " + s.color}>{s.value}</p>
+                    <p className={"text-xl sm:text-2xl font-bold " + s.color}>{s.value}</p>
                     <p className="text-slate-400 text-xs mt-1">{s.label}</p>
                   </CardContent>
                 </Card>

@@ -45,13 +45,13 @@ function Exercises() {
   const [active, setActive] = useState<Activity | null>(null);
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto">
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-2">
           <Sparkles className="w-5 h-5 text-primary" />
           <Badge variant="secondary">{t("dash.sWordwall.badge")}</Badge>
         </div>
-        <h1 className="text-3xl font-bold">{t("dash.sWordwall.title")}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">{t("dash.sWordwall.title")}</h1>
         <p className="text-muted-foreground mt-1">{t("dash.sWordwall.subtitle")}</p>
       </div>
 

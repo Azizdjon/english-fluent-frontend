@@ -68,13 +68,13 @@ function DiagnosticTest() {
           <div className="flex justify-center mb-4">
             <Trophy className="w-16 h-16 text-yellow-500" />
           </div>
-          <h1 className="text-2xl font-bold mb-1">{t("dash.sTest.completed")}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold mb-1">{t("dash.sTest.completed")}</h1>
           <p className="text-gray-500 mb-6">{t("dash.sTest.resultsSub")}</p>
 
           <div className="bg-gray-700/40 rounded-xl p-6 mb-6">
             <div className={`text-5xl font-bold ${color} mb-1`}>{level}</div>
             <div className="text-lg font-semibold text-gray-700">{label}</div>
-            <div className="mt-3 text-3xl font-bold">{score}/{total} <span className="text-base font-normal text-gray-500">{t("dash.sTest.correctSuffix")} ({pct}%)</span></div>
+            <div className="mt-3 text-2xl sm:text-3xl font-bold">{score}/{total} <span className="text-base font-normal text-gray-500">{t("dash.sTest.correctSuffix")} ({pct}%)</span></div>
           </div>
 
           <div className="mb-6">

@@ -126,9 +126,9 @@ function HomeworkPage() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">{t("dash.sHomework.title")}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">{t("dash.sHomework.title")}</h1>
         <p className="text-muted-foreground mt-1">
           {t("dash.sHomework.subtitle")}
         </p>
@@ -137,19 +137,19 @@ function HomeworkPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
         <Card className="p-5">
           <div className="text-sm text-muted-foreground mb-1">{t("dash.sHomework.totalTasks")}</div>
-          <div className="text-3xl font-bold">{tasks.length}</div>
+          <div className="text-2xl sm:text-3xl font-bold">{tasks.length}</div>
         </Card>
         <Card className="p-5">
           <div className="text-sm text-muted-foreground mb-1">{t("dash.sHomework.pending")}</div>
-          <div className="text-3xl font-bold text-amber-600">{pending.length}</div>
+          <div className="text-2xl sm:text-3xl font-bold text-amber-600">{pending.length}</div>
         </Card>
         <Card className="p-5">
           <div className="text-sm text-muted-foreground mb-1">{t("dash.sHomework.submitted")}</div>
-          <div className="text-3xl font-bold text-indigo-600">{submitted.length}</div>
+          <div className="text-2xl sm:text-3xl font-bold text-indigo-600">{submitted.length}</div>
         </Card>
         <Card className="p-5">
           <div className="text-sm text-muted-foreground mb-1">{t("dash.sHomework.graded")}</div>
-          <div className="text-3xl font-bold text-emerald-600">{graded.length}</div>
+          <div className="text-2xl sm:text-3xl font-bold text-emerald-600">{graded.length}</div>
         </Card>
       </div>
 
@@ -168,7 +168,7 @@ function HomeworkPage() {
           <Badge variant="secondary" className="ml-2">{pending.length}</Badge>
         </div>
         {pending.length === 0 ? (
-          <Card className="p-8 text-center text-muted-foreground">
+          <Card className="p-4 sm:p-6 lg:p-8 text-center text-muted-foreground">
             <CheckCircle2 className="w-10 h-10 mx-auto mb-3 text-emerald-500" />
             <p className="font-medium">{t("dash.sHomework.allCaughtUp")}</p>
             <p className="text-sm">{t("dash.sHomework.noPending")}</p>
