@@ -241,7 +241,7 @@ function Landing() {
 
 
       {/* ============ HERO with video bg ============ */}
-      <section id="top" className="keep-dark relative min-h-screen flex items-center overflow-hidden">
+      <section id="top" className="keep-dark relative min-h-[560px] sm:min-h-[680px] md:min-h-screen flex items-center overflow-hidden">
         <video
           className="absolute inset-0 w-full h-full object-cover"
           autoPlay
