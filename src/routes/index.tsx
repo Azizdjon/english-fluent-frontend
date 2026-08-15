@@ -172,14 +172,17 @@ function Landing() {
             <a href="#login" className="transition">{t("nav.signIn")}</a>
           </nav>
           <div className="flex items-center gap-2 sm:gap-3">
-            <LanguageToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
-            <ThemeToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
-            <Link to="/register" className="hidden sm:block">
-              <Button size="sm" className="bg-white text-slate-900 hover:bg-white/90 font-semibold shadow-sm">
-                {t("common.getStarted")}
-                <ArrowRight className="w-4 h-4 ml-1" />
-              </Button>
-            </Link>
+            <div className="hidden md:flex items-center gap-2 sm:gap-3">
+              <LanguageToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
+              <ThemeToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
+              <Link to="/register">
+                <Button size="sm" className="bg-white text-slate-900 hover:bg-white/90 font-semibold shadow-sm">
+                  {t("common.getStarted")}
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                </Button>
+              </Link>
+            </div>
+
             <button
               type="button"
               onClick={() => setMenuOpen((v) => !v)}
@@ -220,12 +223,17 @@ function Landing() {
                 <FlaskConical className="w-4 h-4" />
                 {t("nav.research")}
               </Link>
-              <Link to="/register" onClick={() => setMenuOpen(false)} className="mt-2">
+              <div className="flex items-center gap-2 py-2.5">
+                <LanguageToggle variant={theme === "dark" ? "dark" : "light"} />
+                <ThemeToggle variant={theme === "dark" ? "dark" : "light"} />
+              </div>
+              <Link to="/register" onClick={() => setMenuOpen(false)} className="mt-1">
                 <Button size="sm" className="w-full bg-indigo-600 text-white hover:bg-indigo-500 font-semibold">
                   {t("common.getStarted")}
                   <ArrowRight className="w-4 h-4 ml-1" />
                 </Button>
               </Link>
+
             </nav>
           </div>
         )}
@@ -233,7 +241,7 @@ function Landing() {
 
 
       {/* ============ HERO with video bg ============ */}
-      <section id="top" className="keep-dark relative min-h-screen flex items-center overflow-hidden">
+      <section id="top" className="keep-dark relative min-h-[560px] sm:min-h-[680px] md:min-h-screen flex items-center overflow-hidden">
         <video
           className="absolute inset-0 w-full h-full object-cover"
           autoPlay
@@ -251,34 +259,34 @@ function Landing() {
         <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/60 to-slate-950/95" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(99,102,241,0.35),transparent_50%),radial-gradient(circle_at_80%_70%,rgba(139,92,246,0.25),transparent_50%)]" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-28 sm:pt-32 pb-16 sm:pb-20 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-12 sm:pb-20 w-full">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white/90 text-xs font-medium mb-6 animate-fade-in">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white/90 text-xs font-medium mb-4 sm:mb-6 animate-fade-in">
               <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
               {t("landing.heroBadge")}
             </div>
-            <h1 className="text-[2.1rem] sm:text-5xl md:text-7xl font-bold tracking-tight text-white leading-[1.05] mb-6 animate-fade-in">
+            <h1 className="text-[1.85rem] sm:text-5xl md:text-7xl font-bold tracking-tight text-white leading-[1.1] sm:leading-[1.05] mb-4 sm:mb-6 animate-fade-in">
               {t("landing.heroTitle1")}
               <br />
               <span className="bg-gradient-to-r from-indigo-300 via-violet-300 to-fuchsia-300 bg-clip-text text-transparent">
                 {t("landing.heroTitle2")}
               </span>
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-white/75 max-w-2xl mb-10 leading-relaxed">
+            <p className="text-sm sm:text-lg md:text-xl text-white/75 max-w-2xl mb-6 sm:mb-10 leading-relaxed">
               {t("landing.heroSubtitle")}
             </p>
-            <div className="flex flex-wrap gap-4">
-              <a href="#login">
-                <Button size="lg" className="bg-white text-slate-900 hover:bg-white/90 font-semibold h-12 px-6">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4">
+              <a href="#login" className="w-full sm:w-auto">
+                <Button size="lg" className="w-full sm:w-auto bg-white text-slate-900 hover:bg-white/90 font-semibold h-12 px-6">
                   {t("landing.startFree")}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </a>
-              <a href="#journey">
+              <a href="#journey" className="w-full sm:w-auto">
                 <Button
                   size="lg"
                   variant="outline"
-                  className="bg-white/5 border-white/30 text-white hover:bg-white/10 hover:text-white h-12 px-6 backdrop-blur"
+                  className="w-full sm:w-auto bg-white/5 border-white/30 text-white hover:bg-white/10 hover:text-white h-12 px-6 backdrop-blur"
                 >
                   <Play className="w-4 h-4 mr-2 fill-white" />
                   {t("landing.seeHow")}
@@ -286,18 +294,19 @@ function Landing() {
               </a>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-5 sm:gap-6 mt-10 sm:mt-16 max-w-2xl">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-8 sm:mt-16 max-w-2xl">
               {stats.map((s) => (
-                <div key={s.label}>
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">{s.value}</div>
-                  <div className="text-xs text-white/60 mt-1 uppercase tracking-wider">{s.label}</div>
+                <div key={s.label} className="min-w-0">
+                  <div className="text-xl sm:text-3xl md:text-4xl font-bold text-white">{s.value}</div>
+                  <div className="text-[10px] sm:text-xs text-white/60 mt-1 uppercase tracking-wider">{s.label}</div>
                 </div>
               ))}
             </div>
+
           </div>
         </div>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-white/60 text-xs flex flex-col items-center gap-2 animate-bounce">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-white/60 text-xs hidden md:flex flex-col items-center gap-2 animate-bounce">
           <span className="uppercase tracking-widest">{t("landing.scroll")}</span>
           <div className="w-px h-8 bg-white/40" />
         </div>
