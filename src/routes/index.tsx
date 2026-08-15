@@ -223,12 +223,17 @@ function Landing() {
                 <FlaskConical className="w-4 h-4" />
                 {t("nav.research")}
               </Link>
-              <Link to="/register" onClick={() => setMenuOpen(false)} className="mt-2">
+              <div className="flex items-center gap-2 py-2.5">
+                <LanguageToggle variant={theme === "dark" ? "dark" : "light"} />
+                <ThemeToggle variant={theme === "dark" ? "dark" : "light"} />
+              </div>
+              <Link to="/register" onClick={() => setMenuOpen(false)} className="mt-1">
                 <Button size="sm" className="w-full bg-indigo-600 text-white hover:bg-indigo-500 font-semibold">
                   {t("common.getStarted")}
                   <ArrowRight className="w-4 h-4 ml-1" />
                 </Button>
               </Link>
+
             </nav>
           </div>
         )}
