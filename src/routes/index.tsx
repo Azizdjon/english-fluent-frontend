@@ -251,20 +251,20 @@ function Landing() {
         <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/60 to-slate-950/95" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(99,102,241,0.35),transparent_50%),radial-gradient(circle_at_80%_70%,rgba(139,92,246,0.25),transparent_50%)]" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-32 pb-20 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-28 sm:pt-32 pb-16 sm:pb-20 w-full">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white/90 text-xs font-medium mb-6 animate-fade-in">
               <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
               {t("landing.heroBadge")}
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white leading-[1.05] mb-6 animate-fade-in">
+            <h1 className="text-[2.1rem] sm:text-5xl md:text-7xl font-bold tracking-tight text-white leading-[1.05] mb-6 animate-fade-in">
               {t("landing.heroTitle1")}
               <br />
               <span className="bg-gradient-to-r from-indigo-300 via-violet-300 to-fuchsia-300 bg-clip-text text-transparent">
                 {t("landing.heroTitle2")}
               </span>
             </h1>
-            <p className="text-lg md:text-xl text-white/75 max-w-2xl mb-10 leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-white/75 max-w-2xl mb-10 leading-relaxed">
               {t("landing.heroSubtitle")}
             </p>
             <div className="flex flex-wrap gap-4">
@@ -286,10 +286,10 @@ function Landing() {
               </a>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-2xl">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-5 sm:gap-6 mt-10 sm:mt-16 max-w-2xl">
               {stats.map((s) => (
                 <div key={s.label}>
-                  <div className="text-3xl md:text-4xl font-bold text-white">{s.value}</div>
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">{s.value}</div>
                   <div className="text-xs text-white/60 mt-1 uppercase tracking-wider">{s.label}</div>
                 </div>
               ))}
@@ -306,9 +306,9 @@ function Landing() {
       {/* ============ FEATURES ============ */}
       <section id="features" className="py-16 sm:py-20 lg:py-28 bg-gradient-to-b from-slate-950 to-slate-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="max-w-2xl mb-16">
+          <div className="max-w-2xl mb-10 sm:mb-16">
             <div className="text-xs uppercase tracking-[0.2em] text-indigo-300 mb-3">{t("landing.features.eyebrow")}</div>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight mb-4">
               {t("landing.features.title")}
             </h2>
             <p className="text-white/60 text-lg">
@@ -320,7 +320,7 @@ function Landing() {
             {features.map((f, i) => (
               <div
                 key={f.title}
-                className="group relative p-7 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-indigo-400/40 hover:bg-white/[0.06] transition-all overflow-hidden"
+                className="group relative p-5 sm:p-7 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-indigo-400/40 hover:bg-white/[0.06] transition-all overflow-hidden"
                 style={{ animationDelay: `${i * 60}ms` }}
               >
                 <div className="absolute -top-12 -right-12 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/30 transition" />
@@ -340,10 +340,10 @@ function Landing() {
       {/* ============ JOURNEY ============ */}
       <section id="journey" className="py-16 sm:py-20 lg:py-28 bg-slate-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(139,92,246,0.15),transparent_60%)]" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-16 items-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <div>
             <div className="text-xs uppercase tracking-[0.2em] text-violet-300 mb-3">{t("landing.journey.eyebrow")}</div>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight mb-6">
               {t("landing.journey.title")}
             </h2>
             <p className="text-white/60 text-lg mb-10">
@@ -371,9 +371,9 @@ function Landing() {
               src="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=1400&q=80"
               alt="Students learning together"
               loading="lazy"
-              className="relative rounded-3xl border border-white/10 shadow-2xl w-full object-cover aspect-[4/5]"
+              className="relative rounded-3xl border border-white/10 shadow-2xl w-full object-cover aspect-[4/5] max-h-[70vh]"
             />
-            <div className="absolute -bottom-6 -left-6 bg-white text-slate-900 rounded-2xl p-5 shadow-xl max-w-[230px]">
+            <div className="absolute -bottom-4 left-2 sm:-bottom-6 sm:-left-6 bg-white text-slate-900 rounded-2xl p-4 sm:p-5 shadow-xl max-w-[200px] sm:max-w-[230px]">
               <div className="flex items-center gap-1 text-amber-500 mb-1">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star key={i} className="w-4 h-4 fill-current" />
@@ -387,7 +387,7 @@ function Landing() {
 
       {/* ============ SPEAKING LAB SHOWCASE ============ */}
       <section className="py-16 sm:py-20 lg:py-28 bg-slate-950 text-white relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-16 items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <div className="relative rounded-3xl overflow-hidden border border-white/10 aspect-video bg-black order-2 lg:order-1">
             <video
               className="w-full h-full object-cover opacity-80"
@@ -422,7 +422,7 @@ function Landing() {
 
           <div className="order-1 lg:order-2">
             <div className="text-xs uppercase tracking-[0.2em] text-fuchsia-300 mb-3">{t("landing.speakingLab.eyebrow")}</div>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight mb-6">
               {t("landing.speakingLab.title")}
             </h2>
             <p className="text-white/60 text-lg mb-8">
@@ -451,13 +451,13 @@ function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="max-w-2xl mb-14">
             <div className="text-xs uppercase tracking-[0.2em] text-emerald-300 mb-3">{t("landing.stories.eyebrow")}</div>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight">
               {t("landing.stories.title")}
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {testimonials.map((tm) => (
-              <Card key={tm.name} className="p-7 bg-white/[0.04] border-white/10 text-white">
+              <Card key={tm.name} className="p-5 sm:p-7 bg-white/[0.04] border-white/10 text-white">
                 <Quote className="w-8 h-8 text-indigo-300 mb-4" />
                 <p className="text-white/85 leading-relaxed mb-6">"{tm.quote}"</p>
                 <div className="pt-4 border-t border-white/10">
@@ -479,7 +479,7 @@ function Landing() {
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <div className="text-xs uppercase tracking-[0.2em] text-indigo-300 mb-3">{t("landing.login.eyebrow")}</div>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight mb-4">
               {t("landing.login.title")}
             </h2>
             <p className="text-white/60 text-lg max-w-xl mx-auto">
@@ -487,7 +487,7 @@ function Landing() {
             </p>
           </div>
 
-          <Card className="p-8 md:p-10 bg-white/[0.04] border-white/10 backdrop-blur-xl text-white shadow-2xl max-w-md mx-auto">
+          <Card className="p-6 sm:p-8 md:p-10 bg-white/[0.04] border-white/10 backdrop-blur-xl text-white shadow-2xl max-w-md mx-auto">
             <form
               onSubmit={(e) => { e.preventDefault(); handleLogin(); }}
               className="space-y-4"
@@ -540,7 +540,7 @@ function Landing() {
             <span className="font-semibold text-white">PragmaLearn</span>
           </div>
           <p className="text-sm">{t("landing.footer.copyright")}</p>
-          <div className="flex gap-5 text-sm">
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-5 text-sm">
             <a href="#features" className="hover:text-white">{t("nav.features")}</a>
             <a href="#journey" className="hover:text-white">{t("nav.howItWorks")}</a>
             <Link to="/research" className="hover:text-white">{t("nav.research")}</Link>

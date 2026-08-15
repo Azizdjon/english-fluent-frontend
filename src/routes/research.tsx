@@ -412,7 +412,7 @@ function ResearchPage() {
             <FlaskConical className="w-3.5 h-3.5 text-indigo-300" />
             {t("research.badge")}
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-5">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight mb-5">
             {t("research.title")}
           </h1>
           <p className="text-lg text-white/70 max-w-2xl leading-relaxed">
@@ -437,13 +437,13 @@ function ResearchPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center gap-3 mb-2">
             <FileText className="w-6 h-6 text-indigo-300" />
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{t("research.articlesTitle")}</h2>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("research.articlesTitle")}</h2>
           </div>
           <p className="text-white/50 mb-10">{t("research.articlesSubtitle")}</p>
 
           <div className="grid md:grid-cols-2 gap-5">
             {ARTICLES.map((a) => (
-              <Card key={a.id} className="p-6 bg-white/[0.04] border-white/10 text-white hover:border-indigo-400/40 hover:bg-white/[0.06] transition-all flex flex-col">
+              <Card key={a.id} className="p-5 sm:p-6 bg-white/[0.04] border-white/10 text-white hover:border-indigo-400/40 hover:bg-white/[0.06] transition-all flex flex-col">
                 <div className="flex items-center justify-between mb-3">
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-500/15 text-indigo-200 text-xs font-medium">
                     <BookOpen className="w-3 h-3" />
@@ -482,13 +482,13 @@ function ResearchPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center gap-3 mb-2">
             <Layers className="w-6 h-6 text-teal-300" />
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{t("research.manualsTitle")}</h2>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("research.manualsTitle")}</h2>
           </div>
           <p className="text-white/50 mb-10">{t("research.manualsSubtitle")}</p>
 
           <div className="grid md:grid-cols-2 gap-5">
             {MANUALS.map((m) => (
-              <Card key={m.id} className="p-6 bg-white/[0.04] border-white/10 text-white hover:border-teal-400/40 transition-all flex flex-col">
+              <Card key={m.id} className="p-5 sm:p-6 bg-white/[0.04] border-white/10 text-white hover:border-teal-400/40 transition-all flex flex-col">
                 <div className="flex items-center justify-between mb-3">
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-teal-500/15 text-teal-200 text-xs font-medium">
                     <BookOpen className="w-3 h-3" />
@@ -524,7 +524,7 @@ function ResearchPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center gap-3 mb-2">
             <Award className="w-6 h-6 text-amber-300" />
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{t("research.certsTitle")}</h2>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("research.certsTitle")}</h2>
           </div>
           <p className="text-white/50 mb-10">{t("research.certsSubtitle")}</p>
 
