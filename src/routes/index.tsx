@@ -306,7 +306,7 @@ function Landing() {
           </div>
         </div>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-white/60 text-xs flex flex-col items-center gap-2 animate-bounce">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-white/60 text-xs hidden md:flex flex-col items-center gap-2 animate-bounce">
           <span className="uppercase tracking-widest">{t("landing.scroll")}</span>
           <div className="w-px h-8 bg-white/40" />
         </div>
