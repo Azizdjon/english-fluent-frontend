@@ -385,22 +385,23 @@ function ResearchPage() {
       {/* NAV */}
       <header className="fixed top-0 inset-x-0 z-40 backdrop-blur-md bg-slate-950/60 border-b border-white/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-white">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center font-bold shadow-lg shadow-indigo-500/30">
+          <Link to="/" className="flex items-center gap-2 text-white min-w-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center font-bold shadow-lg shadow-indigo-500/30 shrink-0">
               PL
             </div>
-            <span className="font-bold text-lg tracking-tight">PragmaLearn</span>
+            <span className="font-bold text-base sm:text-lg tracking-tight truncate">PragmaLearn</span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <LanguageToggle variant="dark" />
             <ThemeToggle variant="dark" />
             <Link to="/">
-              <Button size="sm" variant="outline" className="bg-white/5 border-white/30 text-white hover:bg-white/10 hover:text-white">
-                <ArrowLeft className="w-4 h-4 mr-1.5" />
-                {t("research.backHome")}
+              <Button size="sm" variant="outline" className="bg-white/5 border-white/30 text-white hover:bg-white/10 hover:text-white px-2 sm:px-3">
+                <ArrowLeft className="w-4 h-4 sm:mr-1.5" />
+                <span className="hidden sm:inline">{t("research.backHome")}</span>
               </Button>
             </Link>
           </div>
+
         </div>
       </header>
 
