@@ -172,14 +172,17 @@ function Landing() {
             <a href="#login" className="transition">{t("nav.signIn")}</a>
           </nav>
           <div className="flex items-center gap-2 sm:gap-3">
-            <LanguageToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
-            <ThemeToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
-            <Link to="/register" className="hidden sm:block">
-              <Button size="sm" className="bg-white text-slate-900 hover:bg-white/90 font-semibold shadow-sm">
-                {t("common.getStarted")}
-                <ArrowRight className="w-4 h-4 ml-1" />
-              </Button>
-            </Link>
+            <div className="hidden md:flex items-center gap-2 sm:gap-3">
+              <LanguageToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
+              <ThemeToggle variant={theme === "dark" || (theme === "light" && !scrolled) ? "dark" : "light"} />
+              <Link to="/register">
+                <Button size="sm" className="bg-white text-slate-900 hover:bg-white/90 font-semibold shadow-sm">
+                  {t("common.getStarted")}
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                </Button>
+              </Link>
+            </div>
+
             <button
               type="button"
               onClick={() => setMenuOpen((v) => !v)}
