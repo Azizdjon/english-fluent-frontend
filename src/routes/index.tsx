@@ -148,7 +148,7 @@ function Landing() {
           <a
             href="#top"
             className={`flex items-center gap-2 font-bold text-base sm:text-lg tracking-tight transition-colors shrink-0 ${
-              theme === "dark" || (theme === "light" && !scrolled) ? "text-white" : "text-slate-900"
+              theme === "dark" && scrolled ? "text-white" : "text-slate-900"
             }`}
           >
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center font-bold shadow-lg shadow-indigo-500/30 text-white shrink-0">
