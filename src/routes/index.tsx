@@ -159,7 +159,7 @@ function Landing() {
           {/* Desktop navigation — hidden below md (768px) */}
           <nav
             className={`hidden md:flex items-center gap-6 lg:gap-8 text-sm transition-colors ${
-              theme === "dark" || (theme === "light" && !scrolled)
+              theme === "dark" && scrolled
                 ? "text-white/70 hover:text-white"
                 : "text-slate-600 hover:text-slate-900"
             }`}
