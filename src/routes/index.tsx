@@ -194,7 +194,7 @@ function Landing() {
               aria-label="Toggle menu"
               aria-expanded={menuOpen}
               className={`md:hidden p-2 rounded-lg transition-colors ${
-                theme === "dark" || (theme === "light" && !scrolled)
+                theme === "dark" && scrolled
                   ? "text-white hover:bg-white/10"
                   : "text-slate-900 hover:bg-slate-900/5"
               }`}
