@@ -6,6 +6,7 @@ import { useI18n } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import heroImage from "@/assets/hero-bright-education.jpg.asset.json";
 import {
   GraduationCap,
   Users,
