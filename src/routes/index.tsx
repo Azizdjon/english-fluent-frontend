@@ -263,44 +263,39 @@ function Landing() {
       </header>
 
 
-      {/* ============ HERO with video bg ============ */}
-      <section id="top" className="keep-dark relative min-h-[560px] sm:min-h-[680px] md:min-h-screen flex items-center overflow-hidden">
-        <video
+      {/* ============ HERO with bright educational image bg ============ */}
+      <section id="top" className="relative min-h-[560px] sm:min-h-[680px] md:min-h-screen flex items-center overflow-hidden">
+        <img
+          src={heroImage.url}
+          alt="Students learning together in a bright modern library"
           className="absolute inset-0 w-full h-full object-cover"
-          autoPlay
-          muted
-          loop
-          playsInline
-          poster="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=2000&q=80"
-        >
-          <source
-            src="https://cdn.coverr.co/videos/coverr-a-group-of-young-students-studying-1572/1080p.mp4"
-            type="video/mp4"
-          />
-        </video>
-        {/* gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/60 to-slate-950/95" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(99,102,241,0.35),transparent_50%),radial-gradient(circle_at_80%_70%,rgba(139,92,246,0.25),transparent_50%)]" />
+          width={1920}
+          height={1080}
+          fetchPriority="high"
+        />
+        {/* very light overlays for text readability while keeping image bright */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-white/80" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-12 sm:pb-20 w-full">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white/90 text-xs font-medium mb-4 sm:mb-6 animate-fade-in">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 backdrop-blur border border-slate-200 text-slate-700 text-xs font-medium mb-4 sm:mb-6 animate-fade-in shadow-sm">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
               {t("landing.heroBadge")}
             </div>
-            <h1 className="text-[1.85rem] sm:text-5xl md:text-7xl font-bold tracking-tight text-white leading-[1.1] sm:leading-[1.05] mb-4 sm:mb-6 animate-fade-in">
+            <h1 className="text-[1.85rem] sm:text-5xl md:text-7xl font-bold tracking-tight text-slate-900 leading-[1.1] sm:leading-[1.05] mb-4 sm:mb-6 animate-fade-in">
               {t("landing.heroTitle1")}
               <br />
-              <span className="bg-gradient-to-r from-indigo-300 via-violet-300 to-fuchsia-300 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
                 {t("landing.heroTitle2")}
               </span>
             </h1>
-            <p className="text-sm sm:text-lg md:text-xl text-white/75 max-w-2xl mb-6 sm:mb-10 leading-relaxed">
+            <p className="text-sm sm:text-lg md:text-xl text-slate-600 max-w-2xl mb-6 sm:mb-10 leading-relaxed">
               {t("landing.heroSubtitle")}
             </p>
             <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4">
               <a href="#login" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full sm:w-auto bg-white text-slate-900 hover:bg-white/90 font-semibold h-12 px-6">
+                <Button size="lg" className="w-full sm:w-auto bg-indigo-600 text-white hover:bg-indigo-500 font-semibold h-12 px-6 shadow-lg shadow-indigo-600/20">
                   {t("landing.startFree")}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
@@ -309,9 +304,9 @@ function Landing() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="w-full sm:w-auto bg-white/5 border-white/30 text-white hover:bg-white/10 hover:text-white h-12 px-6 backdrop-blur"
+                  className="w-full sm:w-auto bg-white/70 border-slate-300 text-slate-700 hover:bg-white hover:text-slate-900 h-12 px-6 backdrop-blur"
                 >
-                  <Play className="w-4 h-4 mr-2 fill-white" />
+                  <Play className="w-4 h-4 mr-2 fill-indigo-600 text-indigo-600" />
                   {t("landing.seeHow")}
                 </Button>
               </a>
@@ -320,8 +315,8 @@ function Landing() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-8 sm:mt-16 max-w-2xl">
               {stats.map((s) => (
                 <div key={s.label} className="min-w-0">
-                  <div className="text-xl sm:text-3xl md:text-4xl font-bold text-white">{s.value}</div>
-                  <div className="text-[10px] sm:text-xs text-white/60 mt-1 uppercase tracking-wider">{s.label}</div>
+                  <div className="text-xl sm:text-3xl md:text-4xl font-bold text-slate-900">{s.value}</div>
+                  <div className="text-[10px] sm:text-xs text-slate-500 mt-1 uppercase tracking-wider">{s.label}</div>
                 </div>
               ))}
             </div>
@@ -329,9 +324,9 @@ function Landing() {
           </div>
         </div>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-white/60 text-xs hidden md:flex flex-col items-center gap-2 animate-bounce">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-slate-400 text-xs hidden md:flex flex-col items-center gap-2 animate-bounce">
           <span className="uppercase tracking-widest">{t("landing.scroll")}</span>
-          <div className="w-px h-8 bg-white/40" />
+          <div className="w-px h-8 bg-slate-300" />
         </div>
       </section>
 
