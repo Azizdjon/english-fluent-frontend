@@ -273,24 +273,23 @@ function Landing() {
           height={1080}
           fetchPriority="high"
         />
-        {/* very light overlays for text readability while keeping image bright */}
-        <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/30 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-white/80" />
+        {/* subtle full-section fade at the bottom only; left text panel has its own overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/60 pointer-events-none" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-12 sm:pb-20 w-full">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 backdrop-blur border border-slate-200 text-slate-700 text-xs font-medium mb-4 sm:mb-6 animate-fade-in shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+          <div className="max-w-3xl rounded-3xl bg-white/[0.45] backdrop-blur-md border border-white/60 shadow-xl shadow-slate-900/5 p-6 sm:p-10 animate-fade-in">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 backdrop-blur border border-slate-200 text-slate-800 text-xs font-medium mb-4 sm:mb-6 shadow-sm">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-700" />
               {t("landing.heroBadge")}
             </div>
-            <h1 className="text-[1.85rem] sm:text-5xl md:text-7xl font-bold tracking-tight text-slate-900 leading-[1.1] sm:leading-[1.05] mb-4 sm:mb-6 animate-fade-in">
+            <h1 className="text-[1.85rem] sm:text-5xl md:text-7xl font-bold tracking-tight text-slate-900 leading-[1.1] sm:leading-[1.05] mb-4 sm:mb-6">
               {t("landing.heroTitle1")}
               <br />
-              <span className="bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-indigo-800 via-violet-800 to-fuchsia-800 bg-clip-text text-transparent">
                 {t("landing.heroTitle2")}
               </span>
             </h1>
-            <p className="text-sm sm:text-lg md:text-xl text-slate-600 max-w-2xl mb-6 sm:mb-10 leading-relaxed">
+            <p className="text-sm sm:text-lg md:text-xl text-slate-700 max-w-2xl mb-6 sm:mb-10 leading-relaxed">
               {t("landing.heroSubtitle")}
             </p>
             <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4">
